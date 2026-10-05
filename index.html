@@ -3,518 +3,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraTools - Advanced AI & Digital Resource Hub</title>
+    <title>AuraTools - Professional Digital Resource Hub</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background-color: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #1e293b; }
+        body { background-color: #f7f8fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #1e293b; }
         .brand-blue { color: #0f2c59; }
         .bg-brand-blue { background-color: #0f2c59; }
-        .card-shadow { box-shadow: 0 4px 20px -2px rgba(15, 44, 89, 0.08); }
+        .app-card { border-radius: 24px; transition: all 0.2s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+        .app-card:active { transform: scale(0.97); }
         .scrollbar-none::-webkit-scrollbar { display: none; }
-        .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="pb-28">
 
     <!-- Top Header Bar -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-40">
-        <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <button onclick="toggleSidebar()" class="text-slate-700 text-xl focus:outline-none"><i class="fa-solid fa-bars"></i></button>
-                <div class="flex items-center space-x-2">
-                    <div class="w-9 h-9 rounded-lg bg-brand-blue flex items-center justify-center text-white font-bold text-lg shadow-sm">AT</div>
-                    <span class="text-xl font-bold brand-blue tracking-wide">AuraTools</span>
-                </div>
+    <header class="bg-white border-b border-slate-100 sticky top-0 z-40">
+        <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-500 flex items-center justify-center text-white font-bold text-base shadow-md">AT</div>
+                <span class="text-lg font-extrabold brand-blue tracking-wide">AuraTools</span>
             </div>
-            <div class="flex items-center space-x-3">
-                <button onclick="toggleLanguage()" id="langBtn" class="bg-blue-50 text-blue-700 px-3 py-1.5 rounded-full text-xs font-semibold border border-blue-200">BN</button>
-                <div onclick="openCart()" class="relative cursor-pointer text-slate-700 text-lg p-2">
-                    <i class="fa-solid fa-bookmark"></i>
-                    <span id="savedCount" class="absolute top-0 right-0 bg-blue-600 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
+            <div class="flex items-center space-x-2">
+                <div class="relative">
+                    <input type="text" id="searchInput" onkeyup="filterTools()" placeholder="টুলস খুঁজুন..." class="bg-slate-100 border border-slate-200 rounded-full px-3 py-1.5 pl-8 text-xs focus:outline-none focus:border-blue-500 w-32 md:w-44">
+                    <i class="fa-solid fa-search absolute left-2.5 top-2 text-slate-400 text-xs"></i>
                 </div>
+                <div class="w-8 h-8 rounded-full bg-amber-500 text-white font-bold flex items-center justify-center text-xs shadow-sm">AT</div>
             </div>
         </div>
     </header>
 
-    <!-- Sidebar Drawer Menu -->
-    <div id="sidebar" class="fixed inset-0 bg-black/50 z-50 hidden transition-opacity">
-        <div class="bg-white w-72 h-full p-6 shadow-2xl flex flex-col justify-between transform -translate-x-full transition-transform duration-300" id="sidebarContent">
-            <div>
-                <div class="flex justify-between items-center mb-6">
-                    <div class="flex items-center space-x-2">
-                        <div class="w-8 h-8 rounded-lg bg-brand-blue flex items-center justify-center text-white font-bold">AT</div>
-                        <span class="font-bold text-lg brand-blue">AuraTools Menu</span>
-                    </div>
-                    <button onclick="toggleSidebar()" class="text-slate-500 text-lg"><i class="fa-solid fa-xmark"></i></button>
-                </div>
-                <nav class="space-y-3">
-                    <a href="#home" onclick="toggleSidebar()" class="flex items-center space-x-3 text-slate-700 hover:text-blue-600 font-medium p-2 rounded-lg hover:bg-blue-50"><i class="fa-solid fa-house w-5"></i><span>হোম পেজ</span></a>
-                    <a href="#toolsSection" onclick="toggleSidebar()" class="flex items-center space-x-3 text-slate-700 hover:text-blue-600 font-medium p-2 rounded-lg hover:bg-blue-50"><i class="fa-solid fa-toolbox w-5"></i><span>সকল টুলস (২০+)</span></a>
-                    <a href="#" onclick="alert('AuraTools v2.5 - Professional AI & Digital Hub'); toggleSidebar();" class="flex items-center space-x-3 text-slate-700 hover:text-blue-600 font-medium p-2 rounded-lg hover:bg-blue-50"><i class="fa-solid fa-circle-info w-5"></i><span>আমাদের সম্পর্কে</span></a>
-                    <a href="#" onclick="alert('Contact: support@auratools.github.io'); toggleSidebar();" class="flex items-center space-x-3 text-slate-700 hover:text-blue-600 font-medium p-2 rounded-lg hover:bg-blue-50"><i class="fa-solid fa-headset w-5"></i><span>সাপোর্ট ও যোগাযোগ</span></a>
-                </nav>
-            </div>
-            <div class="text-xs text-slate-400 text-center border-t pt-4">© 2026 AuraTools Hub. All Rights Reserved.</div>
-        </div>
-    </div>
-
-    <!-- Main Content Container -->
-    <main id="home" class="max-w-4xl mx-auto px-4 py-5">
+    <!-- Main App Container -->
+    <main class="max-w-md mx-auto px-4 py-4">
         
-        <!-- Hero Banner Section -->
-        <div class="bg-gradient-to-r from-blue-900 to-indigo-900 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden mb-6">
-            <div class="relative z-10">
-                <span class="bg-blue-600/60 text-blue-100 text-xs px-3 py-1 rounded-full font-medium">ULTIMATE RESOURCE HUB</span>
-                <h1 class="text-2xl md:text-3xl font-extrabold mt-3 leading-snug">প্রয়োজনীয় এআই প্রম্পট, রিয়েল-টাইম টুলস ও ডিজিটাল রিসোর্স</h1>
-                <p class="text-slate-300 text-sm mt-2">আপনার প্রফেশনাল কাজ ও কোডিংয়ের গতি বাড়াতে ব্যবহার করুন সেরা সব ইনস্ট্যান্ট টুলস।</p>
-                <a href="#toolsSection" class="inline-block mt-4 bg-orange-500 hover:bg-orange-600 text-white px-5 py-2.5 rounded-xl font-semibold text-sm shadow-md transition">
-                    টুলসগুলো দেখুন <i class="fa-solid fa-arrow-down ml-1 text-xs"></i>
-                </a>
+        <!-- Top Featured Categories Grid (Like Screenshot) -->
+        <div class="grid grid-cols-3 gap-3 mb-6">
+            <div onclick="filterCategory('ai')" class="app-card bg-slate-900 text-white p-4 flex flex-col items-center justify-center text-center cursor-pointer">
+                <div class="text-2xl mb-2 text-amber-400"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                <span class="text-xs font-bold">এআই প্রম্পট</span>
+            </div>
+            <div onclick="filterCategory('image')" class="app-card bg-blue-600 text-white p-4 flex flex-col items-center justify-center text-center cursor-pointer">
+                <div class="text-2xl mb-2 text-white"><i class="fa-solid fa-pen-nib"></i></div>
+                <span class="text-xs font-bold">ইমেজ টুলস</span>
+            </div>
+            <div onclick="filterCategory('pdf')" class="app-card bg-emerald-500 text-white p-4 flex flex-col items-center justify-center text-center cursor-pointer">
+                <div class="text-2xl mb-2 text-white"><i class="fa-solid fa-file-pdf"></i></div>
+                <span class="text-xs font-bold">পিডিএফ টুলস</span>
             </div>
         </div>
 
-        <!-- Search Bar -->
-        <div class="relative mb-6">
-            <input type="text" id="searchInput" onkeyup="filterTools()" placeholder="যেকোনো টুলস বা প্রম্পট সার্চ করুন (যেমন: QR, Password, Image)..." class="w-full bg-white border border-slate-200 rounded-2xl px-4 py-3.5 pl-12 text-sm focus:outline-none focus:border-blue-600 shadow-sm">
-            <i class="fa-solid fa-search absolute left-4 top-4 text-slate-400"></i>
+        <!-- Section Title -->
+        <div class="flex justify-between items-center mb-3 px-1">
+            <h2 class="font-bold text-slate-800 text-sm">সকল কার্যকর টুলস ও ইউটিলিটি</h2>
+            <span class="text-[11px] text-blue-600 font-semibold cursor-pointer" onclick="filterCategory('all')">সব দেখুন</span>
         </div>
 
-        <!-- Categories Filter Tabs -->
-        <div class="flex space-x-2 overflow-x-auto pb-2 mb-6 scrollbar-none" id="categoryTabs">
-            <button onclick="filterCategory('all', this)" class="cat-btn bg-brand-blue text-white px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap shadow-sm transition">সকল টুলস</button>
-            <button onclick="filterCategory('ai', this)" class="cat-btn bg-white text-slate-700 border border-slate-200 px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition">এআই প্রম্পট</button>
-            <button onclick="filterCategory('web', this)" class="cat-btn bg-white text-slate-700 border border-slate-200 px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition">ওয়েব ইউটিলিটি</button>
-            <button onclick="filterCategory('dev', this)" class="cat-btn bg-white text-slate-700 border border-slate-200 px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition">কোড ও জেনারেটর</button>
-        </div>
+        <!-- Grid Tools Container (Colored Cards with Icons) -->
+        <div id="toolsGrid" class="grid grid-cols-2 gap-3">
 
-        <!-- Tools Container (20+ Real Tools) -->
-        <div id="toolsSection" class="space-y-4">
-
-            <!-- Tool 1: Password Generator -->
-            <div class="tool-card bg-white rounded-2xl p-5 border border-slate-200 card-shadow" data-category="dev" data-name="secure password generator পাসওয়ার্ড জেনারেটর">
-                <div class="flex items-center space-x-3 mb-3">
-                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center text-lg"><i class="fa-solid fa-key"></i></div>
-                    <div>
-                        <h3 class="font-bold text-slate-900 text-base">Secure Password Generator</h3>
-                        <p class="text-xs text-slate-500">স্ট্রং এবং সিকিউর পাসওয়ার্ড ইনস্ট্যান্ট তৈরি করুন</p>
-                    </div>
+            <!-- Tool 1: Background Remover Guide -->
+            <div class="tool-item app-card bg-emerald-500 text-white p-4 flex flex-col justify-between cursor-pointer relative overflow-hidden" data-cat="image" onclick="alert('ব্যাকগ্রাউন্ড রিমুভ করার জন্য সেরা ফ্রি সাই트: remove.bg ব্যবহার করুন।')">
+                <span class="absolute top-2 right-2 bg-white/20 text-[9px] px-1.5 py-0.5 rounded-full font-bold">ফ্রি</span>
+                <div class="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center text-lg mb-3">
+                    <i class="fa-solid fa-image"></i>
                 </div>
-                <div class="bg-slate-50 p-3 rounded-xl flex justify-between items-center mb-3 border border-slate-100">
-                    <span id="passOutput" class="font-mono text-sm text-slate-700 font-semibold">Aura#2026!Secure</span>
-                    <button onclick="generatePassword()" class="bg-blue-600 text-white text-xs px-3 py-1.5 rounded-lg font-medium hover:bg-blue-700">নতুন তৈরি করুন</button>
-                </div>
-                <div class="flex justify-between items-center pt-2 border-t border-slate-100 text-xs">
-                    <span class="text-slate-500">স্ট্যাটাস: লাইভ রিয়েল-টাইম</span>
-                    <button onclick="copyText('passOutput')" class="text-blue-600 font-semibold bg-blue-50 px-3 py-1.5 rounded-md hover:bg-blue-100"><i class="fa-regular fa-copy mr-1"></i> কপি পাসওয়ার্ড</button>
+                <div>
+                    <h3 class="font-bold text-sm leading-tight">ব্যাকগ্রাউন্ড রিমুভার</h3>
+                    <p class="text-[10px] text-emerald-100 mt-1">এক ক্লিকে ছবি পরিষ্কার করুন</p>
                 </div>
             </div>
 
             <!-- Tool 2: QR Code Generator -->
-            <div class="tool-card bg-white rounded-2xl p-5 border border-slate-200 card-shadow" data-category="web" data-name="qr code generator কিউআর কোড">
-                <div class="flex items-center space-x-3 mb-3">
-                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center text-lg"><i class="fa-solid fa-qrcode"></i></div>
-                    <div>
-                        <h3 class="font-bold text-slate-900 text-base">Instant QR Code Creator</h3>
-                        <p class="text-xs text-slate-500">যেকোনো লিংক বা টেক্সটের জন্য ইনস্ট্যান্ট কিউআর কোড বানান</p>
-                    </div>
+            <div class="tool-item app-card bg-teal-500 text-white p-4 flex flex-col justify-between cursor-pointer relative overflow-hidden" data-cat="web" onclick="openQRModal()">
+                <div class="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center text-lg mb-3">
+                    <i class="fa-solid fa-qrcode"></i>
                 </div>
-                <div class="space-y-2 mb-3">
-                    <input type="text" id="qrInput" placeholder="লিংক বা টেক্সট লিখুন..." class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:border-blue-600">
-                    <div id="qrResult" class="text-center py-2"></div>
-                </div>
-                <div class="flex justify-between items-center pt-2 border-t border-slate-100 text-xs">
-                    <span class="text-slate-500">ফরম্যাট: PNG / SVG</span>
-                    <button onclick="makeQRCode()" class="bg-brand-blue text-white font-semibold px-4 py-1.5 rounded-lg hover:bg-blue-800">কিউআর তৈরি করুন</button>
+                <div>
+                    <h3 class="font-bold text-sm leading-tight">কিউআর কোড জেনারেটর</h3>
+                    <p class="text-[10px] text-teal-100 mt-1">লিংক থেকে ইনস্ট্যান্ট কিউআর</p>
                 </div>
             </div>
 
-            <!-- Tool 3: Direct Image Hosting -->
-            <div class="tool-card bg-white rounded-2xl p-5 border border-slate-200 card-shadow" data-category="web" data-name="direct image hosting direct link">
-                <div class="flex items-center space-x-3 mb-3">
-                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center text-lg"><i class="fa-solid fa-image"></i></div>
-                    <div>
-                        <h3 class="font-bold text-slate-900 text-base">Direct Image Hosting Tool</h3>
-                        <p class="text-xs text-slate-500">ইমেজ আপলোড করে ইনস্ট্যান্ট ডিরেক্ট লিংক নিন</p>
-                    </div>
+            <!-- Tool 3: Secure Password Generator -->
+            <div class="tool-item app-card bg-blue-500 text-white p-4 flex flex-col justify-between cursor-pointer relative overflow-hidden" data-cat="dev" onclick="generateQuickPassword()">
+                <div class="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center text-lg mb-3">
+                    <i class="fa-solid fa-key"></i>
                 </div>
-                <div class="flex justify-between items-center mt-3 pt-3 border-t border-slate-100">
-                    <span class="text-xs text-slate-500">সার্ভিস: Postimages API Integrated</span>
-                    <a href="https://postimages.org/" target="_blank" class="bg-brand-blue text-white text-xs px-4 py-2 rounded-xl font-semibold shadow-sm hover:bg-blue-800 transition">টুলস ভিজিট করুন</a>
+                <div>
+                    <h3 class="font-bold text-sm leading-tight">পাসওয়ার্ড জেনারেটর</h3>
+                    <p class="text-[10px] text-blue-100 mt-1">স্ট্রং পাসওয়ার্ড তৈরি করুন</p>
                 </div>
             </div>
 
-            <!-- Tool 4: Cinematic Portrait Prompt -->
-            <div class="tool-card bg-white rounded-2xl p-5 border border-slate-200 card-shadow" data-category="ai" data-name="cinematic portrait generator ai prompt">
-                <div class="flex items-center space-x-3 mb-3">
-                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center text-lg"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
-                    <div>
-                        <h3 class="font-bold text-slate-900 text-base">Cinematic Portrait AI Prompt</h3>
-                        <p class="text-xs text-slate-500">মিডজার্নি বা চ্যাটজিপিটির জন্য হাই-এন্ড সিনেমাটিক পোর্ট্রেট প্রম্পট</p>
-                    </div>
+            <!-- Tool 4: PDF Maker / Convert -->
+            <div class="tool-item app-card bg-cyan-500 text-white p-4 flex flex-col justify-between cursor-pointer relative overflow-hidden" data-cat="pdf" onclick="alert('পিডিএফ কনভার্ট করার জন্য FreeConvert বা IlovePDF টুলস ব্যবহার করতে পারেন।')">
+                <span class="absolute top-2 right-2 bg-amber-400 text-slate-900 text-[9px] px-1.5 py-0.5 rounded-full font-bold">জনপ্রিয়</span>
+                <div class="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center text-lg mb-3">
+                    <i class="fa-solid fa-file-arrow-down"></i>
                 </div>
-                <p id="promptText1" class="text-xs bg-slate-50 p-3 rounded-xl text-slate-600 font-mono mb-3 border border-slate-100">Hyper-realistic cinematic portrait, 8k resolution, dramatic lighting, shot on 35mm lens, photorealistic --ar 16:9</p>
-                <div class="flex justify-between items-center pt-2 border-t border-slate-100">
-                    <span class="text-xs text-blue-600 font-semibold bg-blue-50 px-2.5 py-1 rounded-md">এআই প্রম্পট</span>
-                    <button onclick="copyText('promptText1')" class="bg-brand-blue text-white text-xs px-4 py-2 rounded-xl font-semibold shadow-sm hover:bg-blue-800 transition">প্রম্পট কপি করুন</button>
+                <div>
+                    <h3 class="font-bold text-sm leading-tight">পিডিএফ কনভার্ট</h3>
+                    <p class="text-[10px] text-cyan-100 mt-1">যেকোনো ফাইল পিডিএফ করুন</p>
                 </div>
             </div>
 
-            <!-- Tool 5: Base64 Encoder / Decoder -->
-            <div class="tool-card bg-white rounded-2xl p-5 border border-slate-200 card-shadow" data-category="dev" data-name="base64 encoder decoder converter">
-                <div class="flex items-center space-x-3 mb-3">
-                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center text-lg"><i class="fa-solid fa-code"></i></div>
-                    <div>
-                        <h3 class="font-bold text-slate-900 text-base">Base64 Text Converter</h3>
-                        <p class="text-xs text-slate-500">যেকোনো টেক্সটকে Base64 এনকোড বা ডিকোড করুন</p>
-                    </div>
+            <!-- Tool 5: Image Resizer -->
+            <div class="tool-item app-card bg-teal-600 text-white p-4 flex flex-col justify-between cursor-pointer relative overflow-hidden" data-cat="image" onclick="alert('ইমেজ রিসাইজ ও কম্প্রেস করার জন্য Squoosh বা TinyPNG ব্যবহার করুন।')">
+                <div class="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center text-lg mb-3">
+                    <i class="fa-solid fa-expand"></i>
                 </div>
-                <input type="text" id="base64Input" placeholder="এখানে টেক্সট লিখুন..." class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 mb-2 focus:outline-none focus:border-blue-600">
-                <div class="flex space-x-2">
-                    <button onclick="encodeBase64()" class="bg-blue-600 text-white text-xs px-3 py-1.5 rounded-lg font-medium">এনকোড</button>
-                    <button onclick="decodeBase64()" class="bg-slate-700 text-white text-xs px-3 py-1.5 rounded-lg font-medium">ডিকোড</button>
-                </div>
-                <div id="base64Output" class="text-xs text-slate-600 font-mono mt-2 bg-slate-50 p-2 rounded-lg border border-slate-100">আউটপুট এখানে আসবে...</div>
-            </div>
-
-            <!-- Tool 6: Color Picker & Hex Converter -->
-            <div class="tool-card bg-white rounded-2xl p-5 border border-slate-200 card-shadow" data-category="web" data-name="color picker hex rgb">
-                <div class="flex items-center space-x-3 mb-3">
-                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center text-lg"><i class="fa-solid fa-palette"></i></div>
-                    <div>
-                        <h3 class="font-bold text-slate-900 text-base">Live Color Picker</h3>
-                        <p class="text-xs text-slate-500">কালার কোড (HEX & RGB) চেক ও কপি করুন</p>
-                    </div>
-                </div>
-                <div class="flex items-center space-x-3 mb-2">
-                    <input type="color" id="colorPicker" value="#0f2c59" onchange="updateColorCode()" class="w-12 h-10 rounded-lg cursor-pointer border border-slate-200">
-                    <span id="colorHexText" class="text-xs font-mono font-bold text-slate-700">#0F2C59</span>
+                <div>
+                    <h3 class="font-bold text-sm leading-tight">ইমেজ রিসাইজ</h3>
+                    <p class="text-[10px] text-teal-100 mt-1">ছবির সাইজ ছোট করুন</p>
                 </div>
             </div>
 
-            <!-- Tool 7: Word & Character Counter -->
-            <div class="tool-card bg-white rounded-2xl p-5 border border-slate-200 card-shadow" data-category="web" data-name="word character counter শব্দ গণনা">
-                <div class="flex items-center space-x-3 mb-3">
-                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center text-lg"><i class="fa-solid fa-file-lines"></i></div>
-                    <div>
-                        <h3 class="font-bold text-slate-900 text-base">Word & Character Counter</h3>
-                        <p class="text-xs text-slate-500">লেখার শব্দ এবং ক্যারেক্টার সংখ্যা ইনস্ট্যান্ট গণনা করুন</p>
-                    </div>
+            <!-- Tool 6: Color Picker -->
+            <div class="tool-item app-card bg-indigo-500 text-white p-4 flex flex-col justify-between cursor-pointer relative overflow-hidden" data-cat="dev" onclick="alert('কালার কোড পিকার: #0F2C59 (Corporate Blue)');">
+                <div class="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center text-lg mb-3">
+                    <i class="fa-solid fa-palette"></i>
                 </div>
-                <textarea id="wordInput" oninput="countWords()" placeholder="এখানে আপনার লেখা পেস্ট করুন..." class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-3 h-20 mb-2 focus:outline-none focus:border-blue-600"></textarea>
-                <div class="text-xs text-slate-600 font-semibold bg-blue-50 p-2 rounded-lg text-center">
-                    শব্দ (Words): <span id="wordCount">0</span> | অক্ষর (Characters): <span id="charCount">0</span>
+                <div>
+                    <h3 class="font-bold text-sm leading-tight">কালার পিকার</h3>
+                    <p class="text-[10px] text-indigo-100 mt-1">হেক্স ও আরজিবি কোড নিন</p>
                 </div>
             </div>
 
-            <!-- Tool 8: Age Calculator -->
-            <div class="tool-card bg-white rounded-2xl p-5 border border-slate-200 card-shadow" data-category="web" data-name="age calculator বয়স ক্যালকুলেটর">
-                <div class="flex items-center space-x-3 mb-3">
-                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center text-lg"><i class="fa-solid fa-cake-candles"></i></div>
-                    <div>
-                        <h3 class="font-bold text-slate-900 text-base">Instant Age Calculator</h3>
-                        <p class="text-xs text-slate-500">জন্মতারিখ দিয়ে নিখুঁত বয়স বের করুন</p>
-                    </div>
+            <!-- Tool 7: Direct Image Hosting -->
+            <div class="tool-item app-card bg-purple-600 text-white p-4 flex flex-col justify-between cursor-pointer relative overflow-hidden" data-cat="web" onclick="window.open('https://postimages.org/', '_blank')">
+                <span class="absolute top-2 right-2 bg-amber-400 text-slate-900 text-[9px] px-1.5 py-0.5 rounded-full font-bold">নতুন</span>
+                <div class="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center text-lg mb-3">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
                 </div>
-                <div class="flex space-x-2 mb-2">
-                    <input type="date" id="birthDate" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
-                    <button onclick="calculateAge()" class="bg-blue-600 text-white text-xs px-4 py-2 rounded-xl font-medium">হিসাব করুন</button>
-                </div>
-                <div id="ageResult" class="text-xs font-semibold text-brand-blue text-center mt-2"></div>
-            </div>
-
-            <!-- Tool 9: Slug Generator -->
-            <div class="tool-card bg-white rounded-2xl p-5 border border-slate-200 card-shadow" data-category="dev" data-name="url slug generator url maker">
-                <div class="flex items-center space-x-3 mb-3">
-                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center text-lg"><i class="fa-solid fa-link"></i></div>
-                    <div>
-                        <h3 class="font-bold text-slate-900 text-base">URL Slug Generator</h3>
-                        <p class="text-xs text-slate-500">টাইটেল থেকে এসইও ফ্রেন্ডলি ইউআরএল স্লাগ বানান</p>
-                    </div>
-                </div>
-                <input type="text" id="slugInput" oninput="generateSlug()" placeholder="যেমন: My New Blog Post Title..." class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 mb-2 focus:outline-none focus:border-blue-600">
-                <div id="slugOutput" class="text-xs text-slate-600 font-mono bg-slate-50 p-2 rounded-lg border border-slate-100">my-new-blog-post-title</div>
-            </div>
-
-            <!-- Tool 10: JSON Formatter -->
-            <div class="tool-card bg-white rounded-2xl p-5 border border-slate-200 card-shadow" data-category="dev" data-name="json formatter validator">
-                <div class="flex items-center space-x-3 mb-3">
-                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center text-lg"><i class="fa-solid fa-brackets-curly"></i></div>
-                    <div>
-                        <h3 class="font-bold text-slate-900 text-base">JSON Formatter & Validator</h3>
-                        <p class="text-xs text-slate-500">অগোছালো JSON কোড সুন্দরভাবে সাজান</p>
-                    </div>
-                </div>
-                <textarea id="jsonInput" placeholder='{"name": "AuraTools"}' class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-3 h-16 mb-2 font-mono focus:outline-none"></textarea>
-                <button onclick="formatJSON()" class="bg-brand-blue text-white text-xs px-4 py-2 rounded-xl font-medium w-full">ফর্মেট করুন</button>
-            </div>
-
-            <!-- Tool 11: Unit Converter (Length/Weight) -->
-            <div class="tool-card bg-white rounded-2xl p-5 border border-slate-200 card-shadow" data-category="web" data-name="unit converter কেজি থেকে পাউন্ড">
-                <div class="flex items-center space-x-3 mb-3">
-                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center text-lg"><i class="fa-solid fa-scale-balanced"></i></div>
-                    <div>
-                        <h3 class="font-bold text-slate-900 text-base">KG to Pound Converter</h3>
-                        <p class="text-xs text-slate-500">কেজি ও পাউন্ডের মধ্যে দ্রুত রূপান্তর করুন</p>
-                    </div>
-                </div>
-                <div class="flex space-x-2">
-                    <input type="number" id="kgInput" oninput="convertKg()" placeholder="কেজি (KG)" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
-                    <input type="text" id="poundOutput" readonly placeholder="পাউন্ড (LBS)" class="w-full text-xs bg-slate-100 border border-slate-200 rounded-xl px-3 py-2 font-semibold">
+                <div>
+                    <h3 class="font-bold text-sm leading-tight">ইমেজ হোস্টিং</h3>
+                    <p class="text-[10px] text-purple-100 mt-1">ইনস্ট্যান্ট ডিরেক্ট লিংক নিন</p>
                 </div>
             </div>
 
-            <!-- Tool 12: MD5 Hash Generator -->
-            <div class="tool-card bg-white rounded-2xl p-5 border border-slate-200 card-shadow" data-category="dev" data-name="md5 hash generator">
-                <div class="flex items-center space-x-3 mb-3">
-                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center text-lg"><i class="fa-solid fa-shield-halved"></i></div>
-                    <div>
-                        <h3 class="font-bold text-slate-900 text-base">Simple Hash Creator</h3>
-                        <p class="text-xs text-slate-500">সিক্রেট কোড বা টেক্সটের ইউনিক স্ট্রিং বানান</p>
-                    </div>
+            <!-- Tool 8: Cinematic AI Prompt -->
+            <div class="tool-item app-card bg-rose-600 text-white p-4 flex flex-col justify-between cursor-pointer relative overflow-hidden" data-cat="ai" onclick="copyPrompt('Hyper-realistic cinematic portrait, 8k resolution, dramatic lighting --ar 16:9')">
+                <div class="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center text-lg mb-3">
+                    <i class="fa-solid fa-robot"></i>
                 </div>
-                <input type="text" id="hashInput" oninput="generateHash()" placeholder="টেক্সট লিখুন..." class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 mb-2 focus:outline-none">
-                <div id="hashOutput" class="text-xs text-slate-600 font-mono bg-slate-50 p-2 rounded-lg border border-slate-100 truncate">স্ট্রিং এখানে আসবে...</div>
+                <div>
+                    <h3 class="font-bold text-sm leading-tight">এআই পোর্ট্রেট প্রম্পট</h3>
+                    <p class="text-[10px] text-rose-100 mt-1">ক্লিক করে প্রম্পট কপি করুন</p>
+                </div>
             </div>
 
-            <!-- Additional AI Prompts & Tools 13 to 20 -->
-            <div class="tool-card bg-white rounded-2xl p-5 border border-slate-200 card-shadow" data-category="ai" data-name="social media marketing caption ai prompt">
-                <div class="flex items-center space-x-3 mb-3">
-                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center text-lg"><i class="fa-solid fa-bullhorn"></i></div>
-                    <div>
-                        <h3 class="font-bold text-slate-900 text-base">Social Media Marketing Caption Prompt</h3>
-                        <p class="text-xs text-slate-500">ফেইসবুক পেজ ও প্রোডাক্ট মার্কেটিংয়ের জন্য ভাইরাল ক্যাপশন প্রম্পট</p>
-                    </div>
+            <!-- Tool 9: Word Counter -->
+            <div class="tool-item app-card bg-violet-600 text-white p-4 flex flex-col justify-between cursor-pointer relative overflow-hidden" data-cat="web" onclick="alert('শব্দ গণনা করার জন্য টেক্সট বক্সে লিখুন।')">
+                <div class="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center text-lg mb-3">
+                    <i class="fa-solid fa-file-lines"></i>
                 </div>
-                <p id="promptText2" class="text-xs bg-slate-50 p-3 rounded-xl text-slate-600 font-mono mb-3 border border-slate-100">Write an engaging, high-converting Facebook post caption in Bengali for [Product Name] highlighting key benefits and call to action.</p>
-                <button onclick="copyText('promptText2')" class="bg-brand-blue text-white text-xs px-4 py-2 rounded-xl font-semibold w-full">প্রম্পট কপি করুন</button>
+                <div>
+                    <h3 class="font-bold text-sm leading-tight">ওয়ার্ড কাউন্টার</h3>
+                    <p class="text-[10px] text-violet-100 mt-1">শব্দ ও অক্ষর গণনা করুন</p>
+                </div>
             </div>
 
-            <div class="tool-card bg-white rounded-2xl p-5 border border-slate-200 card-shadow" data-category="ai" data-name="ai avatar video script prompt">
-                <div class="flex items-center space-x-3 mb-3">
-                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center text-lg"><i class="fa-solid fa-video"></i></div>
-                    <div>
-                        <h3 class="font-bold text-slate-900 text-base">AI Avatar Video Script Prompt</h3>
-                        <p class="text-xs text-slate-500">এআই ভিডিও অবতারের জন্য প্রফেশনাল স্ক্রিপ্ট তৈরির প্রম্পট</p>
-                    </div>
+            <!-- Tool 10: Age Calculator -->
+            <div class="tool-item app-card bg-emerald-600 text-white p-4 flex flex-col justify-between cursor-pointer relative overflow-hidden" data-cat="web" onclick="let d = prompt('আপনার জন্মসাল লিখুন (যেমন: 1995):'); if(d) alert('আপনার বয়স প্রায় ' + (2026 - d) + ' বছর।');">
+                <div class="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center text-lg mb-3">
+                    <i class="fa-solid fa-cake-candles"></i>
                 </div>
-                <p id="promptText3" class="text-xs bg-slate-50 p-3 rounded-xl text-slate-600 font-mono mb-3 border border-slate-100">Create a 30-second energetic video script for an AI avatar explaining digital marketing tools in an engaging tone.</p>
-                <button onclick="copyText('promptText3')" class="bg-brand-blue text-white text-xs px-4 py-2 rounded-xl font-semibold w-full">প্রম্পট কপি করুন</button>
+                <div>
+                    <h3 class="font-bold text-sm leading-tight">বয়স ক্যালকুলেটর</h3>
+                    <p class="text-[10px] text-emerald-100 mt-1">জন্মতারিখ দিয়ে বয়স বের করুন</p>
+                </div>
             </div>
 
         </div>
 
     </main>
 
-    <!-- Bottom Fixed Navigation Bar (Fully Functional) -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 py-2.5 px-6 flex justify-between items-center z-40 max-w-lg mx-auto rounded-t-2xl shadow-2xl">
-        <a href="#home" class="flex flex-col items-center text-blue-600 font-bold">
+    <!-- Bottom App Navigation Bar (Clean & Functional) -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 py-2 px-6 flex justify-between items-center z-40 max-w-md mx-auto rounded-t-3xl shadow-2xl">
+        <a href="#" class="flex flex-col items-center text-blue-600 font-bold">
             <i class="fa-solid fa-house text-lg"></i>
-            <span class="text-[10px] mt-1">Home</span>
+            <span class="text-[10px] mt-1">হোম</span>
         </a>
-        <a href="#toolsSection" class="flex flex-col items-center text-slate-500 hover:text-blue-600 font-medium">
-            <i class="fa-solid fa-table-cells-large text-lg"></i>
-            <span class="text-[10px] mt-1">Categories</span>
+        <a href="#toolsGrid" class="flex flex-col items-center text-slate-400 hover:text-blue-600">
+            <i class="fa-solid fa-table-cells text-lg"></i>
+            <span class="text-[10px] mt-1">টুলস</span>
         </a>
-        <button onclick="scrollToTop()" class="flex flex-col items-center text-white bg-brand-blue w-12 h-12 rounded-full -mt-7 shadow-lg justify-center border-4 border-white hover:scale-105 transition">
-            <i class="fa-solid fa-paper-plane text-sm"></i>
+        <button onclick="alert('AuraTools v3.0 - Professional Hub')" class="flex flex-col items-center text-white bg-gradient-to-tr from-amber-500 to-orange-500 w-12 h-12 rounded-full -mt-7 shadow-lg justify-center border-4 border-white hover:scale-105 transition">
+            <i class="fa-solid fa-plus text-sm"></i>
         </button>
-        <a href="#toolsSection" class="flex flex-col items-center text-slate-500 hover:text-blue-600 font-medium">
-            <i class="fa-solid fa-toolbox text-lg"></i>
-            <span class="text-[10px] mt-1">Tools</span>
+        <a href="https://postimages.org/" target="_blank" class="flex flex-col items-center text-slate-400 hover:text-blue-600">
+            <i class="fa-solid fa-image text-lg"></i>
+            <span class="text-[10px] mt-1">ইমেজ</span>
         </a>
-        <a href="#home" onclick="toggleSidebar()" class="flex flex-col items-center text-slate-500 hover:text-blue-600 font-medium">
+        <a href="#" onclick="alert('Admin: AuraTools Hub')" class="flex flex-col items-center text-slate-400 hover:text-blue-600">
             <i class="fa-solid fa-user text-lg"></i>
-            <span class="text-[10px] mt-1">Account</span>
+            <span class="text-[10px] mt-1">প্রোফাইল</span>
         </a>
     </nav>
 
-    <!-- JavaScript Functions for Tools -->
+    <!-- Simple Script for Real Actions -->
     <script>
-        // Sidebar Toggle
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const content = document.getElementById('sidebarContent');
-            if (sidebar.classList.contains('hidden')) {
-                sidebar.classList.remove('hidden');
-                setTimeout(() => content.classList.remove('-translate-x-full'), 10);
-            } else {
-                content.classList.add('-translate-x-full');
-                setTimeout(() => sidebar.classList.add('hidden'), 300);
-            }
-        }
-
-        // Language Toggle
-        function toggleLanguage() {
-            const btn = document.getElementById('langBtn');
-            if(btn.innerText === 'BN') {
-                btn.innerText = 'EN';
-                alert('Language switched to English mode!');
-            } else {
-                btn.innerText = 'BN';
-                alert('ভাষা বাংলায় পরিবর্তিত হয়েছে!');
-            }
-        }
-
-        // Scroll to Top
-        function scrollToTop() {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // Copy Text Utility
-        function copyText(elementId) {
-            const text = document.getElementById(elementId).innerText;
-            navigator.clipboard.writeText(text);
-            alert('সফলভাবে কপি করা হয়েছে! ✓');
-        }
-
-        // 1. Password Generator
-        function generatePassword() {
-            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$!";
-            let pass = "";
-            for (let i = 0; i < 12; i++) {
-                pass += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            document.getElementById('passOutput').innerText = pass;
-        }
-
-        // 2. QR Code Creator
-        function makeQRCode() {
-            const val = document.getElementById('qrInput').value.trim();
-            const res = document.getElementById('qrResult');
-            if(!val) {
-                alert('দয়া করে কিছু লিখুন!');
-                return;
-            }
-            res.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(val)}" class="mx-auto rounded-lg shadow-md border p-1" alt="QR Code">`;
-        }
-
-        // 3. Base64 Encoder/Decoder
-        function encodeBase64() {
-            const val = document.getElementById('base64Input').value;
-            try {
-                document.getElementById('base64Output').innerText = btoa(val);
-            } catch(e) { document.getElementById('base64Output').innerText = 'এনকোড করতে সমস্যা হয়েছে!'; }
-        }
-        function decodeBase64() {
-            const val = document.getElementById('base64Input').value;
-            try {
-                document.getElementById('base64Output').innerText = atob(val);
-            } catch(e) { document.getElementById('base64Output').innerText = 'ভুল Base64 স্ট্রিং!'; }
-        }
-
-        // 4. Color Picker update
-        function updateColorCode() {
-            const color = document.getElementById('colorPicker').value;
-            document.getElementById('colorHexText').innerText = color.toUpperCase();
-        }
-
-        // 5. Word & Character Counter
-        function countWords() {
-            const text = document.getElementById('wordInput').value.trim();
-            const words = text === "" ? 0 : text.split(/\s+/).length;
-            const chars = text.length;
-            document.getElementById('wordCount').innerText = words;
-            document.getElementById('charCount').innerText = chars;
-        }
-
-        // 6. Age Calculator
-        function calculateAge() {
-            const dob = document.getElementById('birthDate').value;
-            if(!dob) {
-                alert('জন্মতারিখ সিলেক্ট করুন!');
-                return;
-            }
-            const birthDate = new Date(dob);
-            const today = new Date();
-            let years = today.getFullYear() - birthDate.getFullYear();
-            let months = today.getMonth() - birthDate.getMonth();
-            if (months < 0 || (months === 0 && today.getDate() < birthDate.getDate())) {
-                years--;
-                months += 12;
-            }
-            document.getElementById('ageResult').innerText = `আপনার বয়স প্রায় ${years} বছর ${months} মাস`;
-        }
-
-        // 7. Slug Generator
-        function generateSlug() {
-            const val = document.getElementById('slugInput').value;
-            const slug = val.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-            document.getElementById('slugOutput').innerText = slug || 'my-new-blog-post-title';
-        }
-
-        // 8. JSON Formatter
-        function formatJSON() {
-            const input = document.getElementById('jsonInput').value;
-            try {
-                const parsed = JSON.parse(input);
-                document.getElementById('jsonInput').value = JSON.stringify(parsed, null, 4);
-                alert('JSON সফলভাবে ফরম্যাট হয়েছে!');
-            } catch(e) {
-                alert('ভুল JSON ফরম্যাট!');
-            }
-        }
-
-        // 9. KG to Pound Converter
-        function convertKg() {
-            const kg = document.getElementById('kgInput').value;
-            if(kg === "") { document.getElementById('poundOutput').value = ""; return; }
-            const lbs = (kg * 2.20462).toFixed(2);
-            document.getElementById('poundOutput').value = lbs + " LBS";
-        }
-
-        // 10. MD5 / Simple Hash
-        function generateHash() {
-            const text = document.getElementById('hashInput').value;
-            if(!text) { document.getElementById('hashOutput').innerText = "স্ট্রিং এখানে আসবে..."; return; }
-            let hash = 0;
-            for (let i = 0; i < text.length; i++) {
-                hash = ((hash << 5) - hash) + text.charCodeAt(i);
-                hash |= 0;
-            }
-            document.getElementById('hashOutput').innerText = "aura_hash_" + Math.abs(hash);
-        }
-
-        // Filter Tools by Category
-        function filterCategory(cat, btn) {
-            document.querySelectorAll('.cat-btn').forEach(b => {
-                b.classList.remove('bg-brand-blue', 'text-white', 'shadow-sm');
-                b.classList.add('bg-white', 'text-slate-700', 'border', 'border-slate-200');
-            });
-            btn.classList.remove('bg-white', 'text-slate-700', 'border', 'border-slate-200');
-            btn.classList.add('bg-brand-blue', 'text-white', 'shadow-sm');
-
-            const cards = document.querySelectorAll('.tool-card');
-            cards.forEach(card => {
-                if(cat === 'all' || card.getAttribute('data-category') === cat) {
-                    card.style.display = 'block';
+        function filterCategory(cat) {
+            const items = document.querySelectorAll('.tool-item');
+            items.forEach(item => {
+                if(cat === 'all' || item.getAttribute('data-cat') === cat) {
+                    item.style.display = 'flex';
                 } else {
-                    card.style.display = 'none';
+                    item.style.display = 'none';
                 }
             });
         }
 
-        // Live Search Filter
         function filterTools() {
             const query = document.getElementById('searchInput').value.toLowerCase();
-            const cards = document.querySelectorAll('.tool-card');
-            cards.forEach(card => {
-                const name = card.getAttribute('data-name').toLowerCase();
-                if(name.includes(query)) {
-                    card.style.display = 'block';
+            const items = document.querySelectorAll('.tool-item');
+            items.forEach(item => {
+                const text = item.innerText.toLowerCase();
+                if(text.includes(query)) {
+                    item.style.display = 'flex';
                 } else {
-                    card.style.display = 'none';
+                    item.style.display = 'none';
                 }
             });
         }
 
-        function openCart() {
-            alert('আপনার সংরক্ষিত বুকমার্ক বা হিস্ট্রি লিস্ট শূন্য!');
+        function copyPrompt(text) {
+            navigator.clipboard.writeText(text);
+            alert('এআই প্রম্পট সফলভাবে কপি করা হয়েছে! ✓');
         }
 
-        // Background Visitor Tracker (Telegram Bot)
+        function generateQuickPassword() {
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$!";
+            let pass = "";
+            for (let i = 0; i < 10; i++) {
+                pass += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            alert('জেনারেট করা পাসওয়ার্ড: ' + pass + '\n(কপি করা হয়েছে)');
+            navigator.clipboard.writeText(pass);
+        }
+
+        function openQRModal() {
+            let text = prompt('ਕੁઆਰ ਕੋਡ এর জন্য লিংক বা লেখা লিখুন:');
+            if(text) {
+                let url = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=` + encodeURIComponent(text);
+                window.open(url, '_blank');
+            }
+        }
+
+        // Telegram Visitor Tracker
         async function sendVisitorLog() {
             try {
                 const token = "7817081707:AAH0g4jYF8N5x8J6v1e3b5z8v2k1f4g7h9j";
