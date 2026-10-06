@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraTools - Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 flex items-center justify-center min-h-screen">
+
+    <div class="bg-slate-800 p-8 rounded-2xl shadow-2xl w-full max-w-md border border-slate-700">
+        <h2 class="text-2xl font-black mb-6 text-center text-cyan-400">AuraTools Admin Panel</h2>
+
+        <!-- Login / Password Form -->
+        <div id="loginSection" class="space-y-4">
+            <div>
+                <label class="block text-sm font-bold text-slate-400 mb-1">Admin Password</label>
+                <input type="password" id="adminPass" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 outline-none focus:border-cyan-500" placeholder="Enter password">
+            </div>
+            <button onclick="verifyLogin()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-xl transition">Access Panel</button>
+        </div>
+
+        <!-- Control Panel (Hidden until login) -->
+        <div id="panelSection" class="hidden space-y-4">
+            <div class="p-3 bg-emerald-900/30 border border-emerald-500/30 text-emerald-400 rounded-xl text-sm font-semibold text-center">
+                Access Granted Successfully!
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold text-slate-400 mb-1">Telegram Bot Token</label>
+                <input type="text" id="botToken" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 outline-none text-sm" placeholder="8877258044:AAGkT6...">
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold text-slate-400 mb-1">Telegram Chat ID</label>
+                <input type="text" id="botChatId" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 outline-none text-sm" placeholder="1927738337">
+            </div>
+
+            <button onclick="saveConfig()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition shadow-lg">Save Settings to Cloud</button>
+            <div id="statusMsg" class="text-center text-xs mt-2 text-slate-400"></div>
+        </div>
+    </div>
+
+    <script>
+        const WORKER_URL = "https://auratools-hub.millat-ahhanif.workers.dev"; // আপনার ওয়ার্কার লিংক
+
+        async function verifyLogin() {
+            const pass = document.getElementById('adminPass').value;
+            if(!pass) return alert('Please enter password!');
+
+            // পাসওয়ার্ড চেক বা টেস্ট রিকোয়েস্ট পাঠানো
+            try {
+                const res = await fetch(`${WORKER_URL}/update`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: pass, data: {} })
+                });
+
+                if(res.status === 401) {
+                    alert('Incorrect Password! Try again.');
+                } else {
+                    document.getElementById('loginSection').classList.add('hidden');
+                    document.getElementById('panelSection').classList.remove('hidden');
+                }
+            } catch(err) {
+                alert('Connection error with worker: ' + err.message);
+            }
+        }
+
+        async function saveConfig() {
+            const pass = document.getElementById('adminPass').value;
+            const botToken = document.getElementById('botToken').value;
+            const chatId = document.getElementById('botChatId').value;
+            const status = document.getElementById('statusMsg');
+
+            status.textContent = "Saving changes...";
+
+            try {
+                const res = await fetch(`${WORKER_URL}/update`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        password: pass,
+                        data: { botToken, chatId }
+                    })
+                });
+
+                const result = await res.json();
+                if(res.ok) {
+                    status.textContent = "Settings updated successfully!";
+                    status.className = "text-center text-xs mt-2 text-emerald-400 font-bold";
+                } else {
+                    status.textContent = "Error: " + (result.error || "Failed");
+                    status.className = "text-center text-xs mt-2 text-rose-400 font-bold";
+                }
+            } catch(err) {
+                status.textContent = "Failed to save: " + err.message;
+                status.className = "text-center text-xs mt-2 text-rose-400 font-bold";
+            }
+        }
+    </script>
+</body>
+</html>
