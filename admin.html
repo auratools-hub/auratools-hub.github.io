@@ -3,124 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraTools - Advanced Admin Panel</title>
+    <title>AuraTools - Pro Admin Command Center</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
-<body class="bg-slate-900 text-slate-100 flex items-center justify-center min-h-screen p-4">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center p-4 font-sans">
 
-    <div class="bg-slate-800 p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-lg border border-slate-700">
-        <div class="text-center mb-6">
-            <h2 class="text-2xl font-black text-cyan-400">AuraTools Admin Panel</h2>
-            <p class="text-xs text-slate-400 mt-1">Manage all your secure tokens & configurations</p>
+    <div class="bg-slate-900 border border-slate-800 p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-2xl">
+        <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-800">
+            <div>
+                <h2 class="text-2xl font-black text-cyan-400"><i class="fa-solid fa-shield-halved mr-2"></i>AuraTools Command Center</h2>
+                <p class="text-xs text-slate-400 mt-1">High-Professional Control & Management Hub</p>
+            </div>
+            <div id="authBadge" class="hidden px-3 py-1 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-full text-xs font-bold">
+                <i class="fa-solid fa-circle text-[8px] mr-1 animate-pulse"></i> LIVE
+            </div>
         </div>
 
         <!-- Login Section -->
         <div id="loginSection" class="space-y-4">
             <div>
-                <label class="block text-sm font-bold text-slate-400 mb-1">Admin Password</label>
-                <input type="password" id="adminPass" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 outline-none focus:border-cyan-500" placeholder="Enter password (default: hanif1234)">
+                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Admin Security Password</label>
+                <input type="password" id="adminPass" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 outline-none focus:border-cyan-500 text-sm tracking-widest" placeholder="••••••••">
             </div>
-            <button onclick="verifyLogin()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-xl transition shadow-lg">Access Panel</button>
+            <button onclick="verifyLogin()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-extrabold py-3 rounded-xl transition shadow-lg shadow-cyan-900/20">Authorize Access</button>
         </div>
 
-        <!-- Full Control Panel Section -->
-        <div id="panelSection" class="hidden space-y-4">
-            <div class="p-3 bg-emerald-900/30 border border-emerald-500/30 text-emerald-400 rounded-xl text-sm font-semibold text-center">
-                <i class="fa-solid fa-shield-check mr-1"></i> Securely Logged In
+        <!-- Master Control Panel -->
+        <div id="panelSection" class="hidden space-y-6">
+            
+            <!-- Global Notice Bar Control -->
+            <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3">
+                <h3 class="text-sm font-bold text-cyan-400 flex items-center"><i class="fa-solid fa-bullhorn mr-2"></i>Global Marquee Notice</h3>
+                <div class="flex items-center justify-between">
+                    <label class="text-xs text-slate-400">Enable Scrolling Notice</label>
+                    <input type="checkbox" id="noticeActive" class="w-4 h-4 accent-cyan-500">
+                </div>
+                <input type="text" id="noticeText" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-sm outline-none focus:border-cyan-500" placeholder="e.g. 🔥 Welcome to AuraTools Hub! New tools added daily.">
             </div>
 
-            <div>
-                <label class="block text-sm font-bold text-slate-400 mb-1">Telegram Bot Token</label>
-                <input type="text" id="botToken" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 outline-none text-sm border-slate-700 focus:border-cyan-500" placeholder="8877258044:AAGkT6...">
+            <!-- API Tokens Control -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
+                    <label class="text-xs font-bold text-slate-400 uppercase">Telegram Bot Token</label>
+                    <input type="text" id="botToken" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs outline-none focus:border-cyan-500" placeholder="Bot Token">
+                </div>
+                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
+                    <label class="text-xs font-bold text-slate-400 uppercase">Telegram Chat ID</label>
+                    <input type="text" id="botChatId" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs outline-none focus:border-cyan-500" placeholder="Chat ID">
+                </div>
             </div>
 
-            <div>
-                <label class="block text-sm font-bold text-slate-400 mb-1">Telegram Chat ID</label>
-                <input type="text" id="botChatId" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 outline-none text-sm border-slate-700 focus:border-cyan-500" placeholder="1927738337">
+            <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
+                <label class="text-xs font-bold text-slate-400 uppercase">Gemini API Key (AI Assistant)</label>
+                <input type="text" id="geminiKey" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs outline-none focus:border-cyan-500" placeholder="AIzaSy...">
             </div>
 
-            <div>
-                <label class="block text-sm font-bold text-slate-400 mb-1">Gemini API Key (AI Assistant)</label>
-                <input type="text" id="geminiKey" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 outline-none text-sm border-slate-700 focus:border-cyan-500" placeholder="AIzaSy...">
+            <!-- Add Custom Tool Section -->
+            <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3">
+                <h3 class="text-sm font-bold text-cyan-400 flex items-center"><i class="fa-solid fa-plus-circle mr-2"></i>Add Custom Dynamic Tool</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <input type="text" id="newToolName" class="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs outline-none" placeholder="Tool Name">
+                    <input type="text" id="newToolCategory" class="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs outline-none" placeholder="Category (e.g. Developer)">
+                    <input type="text" id="newToolIcon" class="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs outline-none" placeholder="Icon Class (fa-code)">
+                    <input type="text" id="newToolDesc" class="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs outline-none" placeholder="Short Description">
+                </div>
+                <textarea id="newToolHtml" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs outline-none h-20" placeholder="HTML Body Content for Modal..."></textarea>
+                <button onclick="addCustomTool()" class="bg-slate-800 hover:bg-slate-700 text-cyan-400 font-bold px-4 py-2 rounded-xl text-xs transition border border-slate-700">Add Tool to Hub</button>
             </div>
 
-            <button onclick="saveConfig()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition shadow-lg">Save All Settings to Cloud</button>
-            <div id="statusMsg" class="text-center text-xs mt-2 font-bold"></div>
+            <button onclick="saveConfig()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold py-3 rounded-xl transition shadow-lg shadow-blue-900/20">Save All Changes to Cloud</button>
+            <div id="statusMsg" class="text-center text-xs font-bold"></div>
         </div>
     </div>
 
     <script>
         const WORKER_URL = "https://auratools-hub.millat-ahhanif.workers.dev";
+        const ADMIN_PASS = "216570";
+        let fullConfig = {};
 
         async function verifyLogin() {
             const pass = document.getElementById('adminPass').value;
-            if(!pass) return alert('Please enter password!');
+            if(pass !== ADMIN_PASS) {
+                alert('Incorrect Admin Password!');
+                return;
+            }
 
             try {
-                const res = await fetch(`${WORKER_URL}/update`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ password: pass, data: {} })
-                });
+                const res = await fetch(`${WORKER_URL}/config`);
+                fullConfig = await res.json() || {};
+                
+                document.getElementById('loginSection').classList.add('hidden');
+                document.getElementById('panelSection').classList.remove('hidden');
+                document.getElementById('authBadge').classList.remove('hidden');
 
-                if(res.status === 401) {
-                    alert('Incorrect Password! Try again.');
-                } else if(res.ok) {
-                    document.getElementById('loginSection').classList.add('hidden');
-                    document.getElementById('panelSection').classList.remove('hidden');
-                    loadExistingConfig(pass);
-                } else {
-                    alert('Server error occurred.');
-                }
+                if(fullConfig.botToken) document.getElementById('botToken').value = fullConfig.botToken;
+                if(fullConfig.chatId) document.getElementById('botChatId').value = fullConfig.chatId;
+                if(fullConfig.geminiKey) document.getElementById('geminiKey').value = fullConfig.geminiKey;
+                if(fullConfig.noticeText) document.getElementById('noticeText').value = fullConfig.noticeText;
+                document.getElementById('noticeActive').checked = !!fullConfig.noticeActive;
             } catch(err) {
-                alert('Connection error: ' + err.message);
+                alert('Cloud connection error: ' + err.message);
             }
         }
 
-        async function loadExistingConfig(pass) {
-            try {
-                const res = await fetch(`${WORKER_URL}/config`);
-                const data = await res.json();
-                if(data) {
-                    if(data.botToken) document.getElementById('botToken').value = data.botToken;
-                    if(data.chatId) document.getElementById('botChatId').value = data.chatId;
-                    if(data.geminiKey) document.getElementById('geminiKey').value = data.geminiKey;
-                }
-            } catch(e) {}
+        function addCustomTool() {
+            const name = document.getElementById('newToolName').value.trim();
+            const category = document.getElementById('newToolCategory').value.trim() || "Custom";
+            const icon = document.getElementById('newToolIcon').value.trim() || "fa-toolbox";
+            const description = document.getElementById('newToolDesc').value.trim();
+            const html = document.getElementById('newToolHtml').value.trim();
+
+            if(!name || !html) return alert('Tool Name and HTML content are required!');
+
+            if(!fullConfig.customTools) fullConfig.customTools = [];
+            fullConfig.customTools.push({
+                id: "custom-" + Date.now(),
+                name, category, icon, description, html
+            });
+
+            alert('Tool added locally! Click "Save All Changes to Cloud" to publish.');
+            document.getElementById('newToolName').value = '';
+            document.getElementById('newToolDesc').value = '';
+            document.getElementById('newToolHtml').value = '';
         }
 
         async function saveConfig() {
-            const pass = document.getElementById('adminPass').value;
-            const botToken = document.getElementById('botToken').value;
-            const chatId = document.getElementById('botChatId').value;
-            const geminiKey = document.getElementById('geminiKey').value;
-            const status = document.getElementById('statusMsg');
+            fullConfig.botToken = document.getElementById('botToken').value;
+            fullConfig.chatId = document.getElementById('botChatId').value;
+            fullConfig.geminiKey = document.getElementById('geminiKey').value;
+            fullConfig.noticeText = document.getElementById('noticeText').value;
+            fullConfig.noticeActive = document.getElementById('noticeActive').checked;
 
-            status.textContent = "Saving changes to cloud...";
-            status.className = "text-center text-xs mt-2 text-cyan-400 font-bold";
+            const status = document.getElementById('statusMsg');
+            status.textContent = "Syncing with Cloudflare...";
+            status.className = "text-center text-xs text-cyan-400 font-bold";
 
             try {
                 const res = await fetch(`${WORKER_URL}/update`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        password: pass,
-                        data: { botToken, chatId, geminiKey }
+                        password: ADMIN_PASS,
+                        data: fullConfig
                     })
                 });
 
-                const result = await res.json();
                 if(res.ok) {
-                    status.textContent = "All settings updated successfully!";
-                    status.className = "text-center text-xs mt-2 text-emerald-400 font-bold";
+                    status.textContent = "All changes successfully deployed!";
+                    status.className = "text-center text-xs text-emerald-400 font-bold";
                 } else {
-                    status.textContent = "Error: " + (result.error || "Failed");
-                    status.className = "text-center text-xs mt-2 text-rose-400 font-bold";
+                    status.textContent = "Failed to update cloud storage.";
+                    status.className = "text-center text-xs text-rose-400 font-bold";
                 }
             } catch(err) {
-                status.textContent = "Failed to save: " + err.message;
-                status.className = "text-center text-xs mt-2 text-rose-400 font-bold";
+                status.textContent = "Error: " + err.message;
+                status.className = "text-center text-xs text-rose-400 font-bold";
             }
         }
     </script>
