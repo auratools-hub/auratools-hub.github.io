@@ -135,6 +135,9 @@
             fullConfig.noticeText = document.getElementById('noticeText').value;
             fullConfig.noticeActive = document.getElementById('noticeActive').checked;
 
+            // লোকালস্টোরেজেও সাথে সাথে সেভ করে রাখা যাতে ইনস্ট্যান্ট কাজ করে
+            localStorage.setItem("auratools:localConfig", JSON.stringify(fullConfig));
+
             const status = document.getElementById('statusMsg');
             status.textContent = "Syncing with Cloudflare...";
             status.className = "text-center text-xs text-cyan-400 font-bold";
