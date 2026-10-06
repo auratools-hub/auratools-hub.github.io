@@ -345,7 +345,7 @@ let cloudConfig = {};
 
 async function loadCloudConfigAndRender() {
   try {
-    const res = await fetch('https://auratools-hub.millat-ahhanif.workers.dev/config');
+    const res = await fetch('https://auratools-hub.millat-ahhanif.workers.dev/config?' + Date.now());
     const data = await res.json();
     if(data) {
       cloudConfig = data;
