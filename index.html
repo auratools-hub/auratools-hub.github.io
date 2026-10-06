@@ -1,362 +1,5668 @@
 <!DOCTYPE html>
-<html lang="bn" class="scroll-smooth">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraTools - Ultimate Web App Resource Hub</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- FontAwesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #1e293b; }
-        .brand-blue { color: #0f2c59; }
-        .bg-brand-blue { background-color: #0f2c59; }
-        .app-card { border-radius: 20px; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
-        .app-card:active { transform: scale(0.96); }
-        .scrollbar-none::-webkit-scrollbar { display: none; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+
+<title>AuraTools — Advanced Resource Hub</title>
+
+<meta name="description"
+content="AuraTools — Advanced professional online tools for AI, PDF, images, developers, SEO, business and everyday productivity.">
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link
+href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+rel="stylesheet">
+
+<!-- Font Awesome -->
+<link
+rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<!-- Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.1.1/tesseract.min.js"></script>
+
+<style>
+
+:root{
+    --navy:#0b2450;
+    --blue:#1765ad;
+    --bg:#f5f7fb;
+    --card:#ffffff;
+    --text:#14213a;
+    --muted:#7d8999;
+    --border:#e6eaf0;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:Inter,Arial,sans-serif;
+}
+
+button,
+input,
+textarea,
+select{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+::-webkit-scrollbar{
+    width:7px;
+}
+
+::-webkit-scrollbar-thumb{
+    background:#b8c1ce;
+    border-radius:20px;
+}
+
+/* =========================
+   ANIMATIONS
+========================= */
+
+@keyframes gradientMove{
+
+    0%{
+        background-position:0% 50%;
+    }
+
+    50%{
+        background-position:100% 50%;
+    }
+
+    100%{
+        background-position:0% 50%;
+    }
+
+}
+
+@keyframes float{
+
+    0%,100%{
+        transform:translateY(0);
+    }
+
+    50%{
+        transform:translateY(-12px);
+    }
+
+}
+
+@keyframes fadeUp{
+
+    from{
+        opacity:0;
+        transform:translateY(18px);
+    }
+
+    to{
+        opacity:1;
+        transform:none;
+    }
+
+}
+
+@keyframes spin{
+
+    to{
+        transform:rotate(360deg);
+    }
+
+}
+
+@keyframes shine{
+
+    from{
+        transform:translateX(-120%) rotate(15deg);
+    }
+
+    to{
+        transform:translateX(130%) rotate(15deg);
+    }
+
+}
+
+@keyframes pulseGlow{
+
+    0%,100%{
+        box-shadow:0 0 0 0 rgba(37,99,235,.15);
+    }
+
+    50%{
+        box-shadow:0 0 0 12px rgba(37,99,235,0);
+    }
+
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header{
+    position:sticky;
+    top:0;
+    z-index:50;
+
+    background:rgba(255,255,255,.88);
+
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+
+    border-bottom:1px solid rgba(20,35,60,.08);
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.logo{
+    width:48px;
+    height:48px;
+
+    display:grid;
+    place-items:center;
+
+    border-radius:17px;
+
+    color:white;
+
+    background:
+    linear-gradient(
+        145deg,
+        #0b2450,
+        #1765ad,
+        #00a896
+    );
+
+    box-shadow:
+    0 12px 28px rgba(11,36,80,.22);
+
+    animation:float 5s ease-in-out infinite;
+}
+
+.brand-title{
+    font-size:20px;
+    font-weight:900;
+    letter-spacing:-.5px;
+}
+
+.brand-sub{
+    font-size:9px;
+    font-weight:900;
+    letter-spacing:.22em;
+    color:#7d8999;
+}
+
+/* =========================
+   HERO
+========================= */
+
+.hero{
+    position:relative;
+    overflow:hidden;
+
+    border-radius:30px;
+
+    padding:35px;
+
+    color:white;
+
+    background:
+    linear-gradient(
+        120deg,
+        #071b3e,
+        #124e91,
+        #008f88,
+        #102d67
+    );
+
+    background-size:300% 300%;
+
+    animation:gradientMove 12s ease infinite;
+
+    box-shadow:
+    0 25px 65px rgba(11,36,80,.22);
+}
+
+.hero:before{
+    content:"";
+
+    position:absolute;
+
+    width:260px;
+    height:260px;
+
+    right:-80px;
+    top:-100px;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.12);
+
+    filter:blur(2px);
+
+    animation:float 7s ease-in-out infinite;
+}
+
+.hero:after{
+    content:"";
+
+    position:absolute;
+
+    width:180px;
+    height:180px;
+
+    left:42%;
+    bottom:-120px;
+
+    border-radius:45%;
+
+    background:rgba(0,255,208,.12);
+
+    animation:float 9s ease-in-out infinite reverse;
+}
+
+.hero-content{
+    position:relative;
+    z-index:2;
+}
+
+.hero-title{
+    font-size:clamp(30px,5vw,55px);
+    line-height:1.05;
+    font-weight:900;
+    letter-spacing:-2px;
+}
+
+.hero-text{
+    margin-top:14px;
+    max-width:680px;
+
+    color:rgba(255,255,255,.78);
+
+    font-size:14px;
+    line-height:1.7;
+
+    transition:.4s;
+}
+
+/* =========================
+   SEARCH
+========================= */
+
+.search-wrapper{
+    position:relative;
+}
+
+.search{
+    width:100%;
+    height:58px;
+
+    border:1px solid var(--border);
+
+    border-radius:20px;
+
+    background:white;
+
+    outline:none;
+
+    padding:
+    0 18px
+    0 52px;
+
+    font-size:15px;
+
+    box-shadow:
+    0 8px 30px rgba(20,32,56,.05);
+
+    transition:.25s;
+}
+
+.search:focus{
+    border-color:#6694cc;
+
+    box-shadow:
+    0 0 0 5px rgba(37,99,235,.08);
+}
+
+.search-icon{
+    position:absolute;
+
+    left:19px;
+    top:20px;
+
+    color:#91a0b2;
+}
+
+/* =========================
+   CATEGORY
+========================= */
+
+.category-scroll{
+    display:flex;
+    gap:9px;
+
+    overflow-x:auto;
+
+    padding:3px 2px 8px;
+
+    scrollbar-width:none;
+}
+
+.category-scroll::-webkit-scrollbar{
+    display:none;
+}
+
+.category{
+    flex:none;
+
+    border:1px solid var(--border);
+
+    background:white;
+
+    color:#728096;
+
+    border-radius:999px;
+
+    padding:10px 15px;
+
+    font-size:11px;
+    font-weight:900;
+
+    transition:.22s;
+}
+
+.category:hover{
+    transform:translateY(-2px);
+}
+
+.category.active{
+    color:white;
+
+    background:var(--navy);
+
+    border-color:var(--navy);
+
+    box-shadow:
+    0 9px 22px rgba(11,36,80,.18);
+}
+
+/* =========================
+   TOOL GRID
+========================= */
+
+.tool-grid{
+    display:grid;
+
+    grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+    gap:11px;
+}
+
+.tool-card{
+    position:relative;
+
+    min-height:195px;
+
+    padding:
+    14px 9px 15px;
+
+    border-radius:26px;
+
+    border:1px solid var(--border);
+
+    background:white;
+
+    overflow:hidden;
+
+    box-shadow:
+    0 8px 25px rgba(20,32,56,.055);
+
+    animation:fadeUp .4s both;
+
+    transition:
+    transform .25s ease,
+    box-shadow .25s ease,
+    border-color .25s ease;
+}
+
+.tool-card:hover{
+
+    transform:
+    translateY(-7px);
+
+    border-color:#d2dcea;
+
+    box-shadow:
+    0 25px 50px rgba(11,36,80,.14);
+}
+
+.tool-card:active{
+    transform:scale(.985);
+}
+
+.tool-card:before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+    linear-gradient(
+        135deg,
+        rgba(255,255,255,.8),
+        transparent 40%
+    );
+
+    pointer-events:none;
+}
+
+/* =========================
+   TOOL ICON
+========================= */
+
+.tool-icon{
+
+    position:relative;
+
+    width:78px;
+    height:78px;
+
+    margin:4px auto 13px;
+
+    display:grid;
+    place-items:center;
+
+    border-radius:25px;
+
+    color:white;
+
+    font-size:31px;
+
+    overflow:hidden;
+
+    box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.45),
+    0 13px 25px rgba(0,0,0,.11);
+
+    transition:.3s;
+}
+
+.tool-card:hover .tool-icon{
+    transform:
+    translateY(-3px)
+    rotate(-2deg);
+}
+
+.tool-icon:after{
+
+    content:"";
+
+    position:absolute;
+
+    inset:-30%;
+
+    background:
+    linear-gradient(
+        120deg,
+        transparent 35%,
+        rgba(255,255,255,.3) 50%,
+        transparent 65%
+    );
+
+    transform:translateX(-120%) rotate(10deg);
+}
+
+.tool-card:hover .tool-icon:after{
+
+    animation:
+    shine .7s ease;
+}
+
+.g1{
+    background:linear-gradient(145deg,#82e735,#24c950);
+}
+
+.g2{
+    background:linear-gradient(145deg,#20d995,#08b5bd);
+}
+
+.g3{
+    background:linear-gradient(145deg,#35cce2,#178bd0);
+}
+
+.g4{
+    background:linear-gradient(145deg,#4b8df0,#284fcf);
+}
+
+.g5{
+    background:linear-gradient(145deg,#6840ed,#8c25cf);
+}
+
+.g6{
+    background:linear-gradient(145deg,#a83ee1,#df238f);
+}
+
+.g7{
+    background:linear-gradient(145deg,#f04486,#cb2d50);
+}
+
+.g8{
+    background:linear-gradient(145deg,#ffb12a,#f15a16);
+}
+
+.g9{
+    background:linear-gradient(145deg,#00a8ff,#075bd8);
+}
+
+/* =========================
+   FAVORITE
+========================= */
+
+.favorite{
+
+    position:absolute;
+
+    top:8px;
+    right:8px;
+
+    width:31px;
+    height:31px;
+
+    display:grid;
+    place-items:center;
+
+    border-radius:50%;
+
+    border:1px solid #edf0f4;
+
+    background:rgba(255,255,255,.96);
+
+    color:#9aa7b5;
+
+    box-shadow:
+    0 6px 16px rgba(16,30,50,.14);
+
+    z-index:5;
+
+    transition:.2s;
+}
+
+.favorite:hover{
+    transform:scale(1.12);
+}
+
+.favorite.active{
+    color:#f2a500;
+    background:#fff7df;
+}
+
+/* =========================
+   BADGE
+========================= */
+
+.badge{
+
+    position:absolute;
+
+    top:8px;
+    left:8px;
+
+    padding:4px 7px;
+
+    border-radius:8px;
+
+    color:white;
+
+    font-size:7px;
+
+    font-weight:900;
+
+    z-index:4;
+}
+
+.badge.ai{
+    background:#d946ef;
+}
+
+.badge.hot{
+    background:#ef4444;
+}
+
+.badge.pro{
+    background:#2563eb;
+}
+
+/* =========================
+   TOOL TEXT
+========================= */
+
+.tool-title{
+
+    position:relative;
+
+    z-index:2;
+
+    min-height:31px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    text-align:center;
+
+    font-size:12px;
+
+    line-height:1.3;
+
+    font-weight:900;
+}
+
+.tool-category{
+
+    position:relative;
+
+    z-index:2;
+
+    margin-top:5px;
+
+    text-align:center;
+
+    color:#8995a6;
+
+    font-size:9px;
+
+    font-weight:700;
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modal-bg{
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:100;
+
+    display:none;
+
+    align-items:flex-end;
+    justify-content:center;
+
+    padding:10px;
+
+    background:
+    rgba(3,10,25,.68);
+
+    backdrop-filter:blur(8px);
+}
+
+.modal-bg.show{
+    display:flex;
+}
+
+.modal{
+
+    width:min(850px,100%);
+
+    max-height:94vh;
+
+    overflow:auto;
+
+    border-radius:
+    30px 30px 18px 18px;
+
+    background:white;
+
+    box-shadow:
+    0 30px 100px rgba(0,0,0,.35);
+
+    animation:fadeUp .25s ease;
+}
+
+.modal-head{
+
+    position:sticky;
+
+    top:0;
+
+    z-index:5;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:14px 16px;
+
+    background:
+    rgba(255,255,255,.94);
+
+    backdrop-filter:blur(15px);
+
+    border-bottom:1px solid #edf0f4;
+}
+
+.modal-icon{
+
+    width:45px;
+    height:45px;
+
+    border-radius:15px;
+
+    display:grid;
+    place-items:center;
+
+    color:white;
+
+    font-size:19px;
+}
+
+.close{
+
+    width:38px;
+    height:38px;
+
+    border:0;
+
+    border-radius:12px;
+
+    background:#f1f3f6;
+
+    color:#667085;
+}
+
+.modal-body{
+    padding:18px;
+}
+
+/* =========================
+   FORM
+========================= */
+
+.field{
+
+    width:100%;
+
+    border:
+    1px solid #dce2ea;
+
+    background:white;
+
+    border-radius:14px;
+
+    padding:12px 13px;
+
+    outline:none;
+
+    transition:.2s;
+}
+
+.field:focus{
+
+    border-color:#6f9aca;
+
+    box-shadow:
+    0 0 0 4px rgba(67,119,176,.1);
+}
+
+textarea.field{
+    min-height:130px;
+    resize:vertical;
+}
+
+.primary{
+
+    border:0;
+
+    border-radius:14px;
+
+    padding:12px 15px;
+
+    color:white;
+
+    background:var(--navy);
+
+    font-weight:900;
+
+    transition:.2s;
+}
+
+.primary:hover{
+
+    transform:translateY(-2px);
+
+    filter:brightness(1.1);
+}
+
+.secondary{
+
+    border:0;
+
+    border-radius:14px;
+
+    padding:12px 15px;
+
+    background:#eef2f7;
+
+    color:#24344d;
+
+    font-weight:900;
+}
+
+.output{
+
+    min-height:70px;
+
+    padding:14px;
+
+    border-radius:15px;
+
+    background:#f6f8fb;
+
+    border:1px solid #e7ebf1;
+
+    white-space:pre-wrap;
+
+    word-break:break-word;
+}
+
+/* =========================
+   DROPZONE
+========================= */
+
+.dropzone{
+
+    border:2px dashed #ccd6e3;
+
+    border-radius:19px;
+
+    padding:25px;
+
+    text-align:center;
+
+    background:#fafcff;
+
+    transition:.2s;
+}
+
+.dropzone:hover{
+
+    border-color:#6c9bcf;
+
+    background:#f4f8ff;
+}
+
+/* =========================
+   TOAST
+========================= */
+
+.toast{
+
+    position:fixed;
+
+    top:85px;
+    right:15px;
+
+    z-index:200;
+
+    padding:12px 16px;
+
+    border-radius:14px;
+
+    color:white;
+
+    background:#101827;
+
+    font-size:12px;
+
+    font-weight:800;
+
+    box-shadow:
+    0 15px 35px rgba(0,0,0,.25);
+
+    animation:fadeUp .2s;
+}
+
+/* =========================
+   DARK MODE
+========================= */
+
+.dark body{
+    background:#09111f;
+    color:#edf4ff;
+}
+
+.dark .header{
+    background:rgba(16,26,43,.9);
+    border-color:#23324a;
+}
+
+.dark .tool-card{
+    background:#101a2b;
+    border-color:#23324a;
+}
+
+.dark .search,
+.dark .category,
+.dark .modal,
+.dark .field{
+    background:#101a2b;
+    color:#edf4ff;
+    border-color:#2b3b54;
+}
+
+.dark .category{
+    color:#aab6c8;
+}
+
+.dark .category.active{
+    color:white;
+}
+
+.dark .modal-head{
+    background:rgba(16,26,43,.95);
+    border-color:#26364d;
+}
+
+.dark .secondary{
+    background:#152237;
+    color:#edf4ff;
+}
+
+.dark .output{
+    background:#0c1727;
+    border-color:#26374f;
+}
+
+.dark .dropzone{
+    background:#0e1929;
+    border-color:#2b3b54;
+}
+
+.dark .tool-category{
+    color:#9caac0;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(min-width:768px){
+
+    .tool-grid{
+        grid-template-columns:
+        repeat(5,minmax(0,1fr));
+
+        gap:16px;
+    }
+
+    .tool-card{
+        min-height:215px;
+        padding-top:16px;
+    }
+
+    .tool-icon{
+        width:92px;
+        height:92px;
+        border-radius:28px;
+        font-size:35px;
+    }
+
+    .tool-title{
+        font-size:13px;
+    }
+
+    .tool-category{
+        font-size:10px;
+    }
+
+}
+
+@media(max-width:500px){
+
+    .hero{
+        padding:26px 20px;
+        border-radius:24px;
+    }
+
+    .tool-grid{
+        grid-template-columns:
+        repeat(4,minmax(0,1fr));
+
+        gap:8px;
+    }
+
+    .tool-card{
+        min-height:178px;
+        border-radius:22px;
+        padding:11px 6px 12px;
+    }
+
+    .tool-icon{
+        width:69px;
+        height:69px;
+        border-radius:22px;
+        font-size:27px;
+        margin-bottom:11px;
+    }
+
+    .tool-title{
+        font-size:10.5px;
+    }
+
+    .tool-category{
+        font-size:8px;
+    }
+
+    .favorite{
+        width:29px;
+        height:29px;
+        font-size:12px;
+    }
+
+}
+
+</style>
 </head>
-<body class="pb-28">
 
-    <!-- Top Header Bar -->
-    <header class="bg-white border-b border-slate-100 sticky top-0 z-40 shadow-sm">
-        <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-2">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-700 flex items-center justify-center text-white font-bold text-base shadow-md">AT</div>
-                <span class="text-lg font-extrabold brand-blue tracking-wide">AuraTools Hub</span>
-            </div>
-            <div class="relative w-44 md:w-52">
-                <input type="text" id="searchInput" onkeyup="filterTools()" placeholder="৪০+ টুলস খুঁজুন..." class="bg-slate-100 border border-slate-200 rounded-full px-3 py-1.5 pl-8 text-xs focus:outline-none focus:border-blue-600 w-full">
-                <i class="fa-solid fa-search absolute left-2.5 top-2 text-slate-400 text-xs"></i>
-            </div>
-        </div>
-    </header>
+<body>
 
-    <!-- Main Web App Container -->
-    <main class="max-w-md mx-auto px-4 py-4 space-y-5">
-        
-        <!-- Live Slider / Hero Banner -->
-        <div class="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 rounded-2xl p-5 text-white shadow-lg relative overflow-hidden">
-            <div class="absolute -right-4 -bottom-4 text-white/10 text-7xl"><i class="fa-solid fa-layer-group"></i></div>
-            <div class="relative z-10">
-                <span class="bg-amber-500 text-slate-900 text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider">লাইটওয়েট ওয়েব অ্যাপ</span>
-                <h1 class="text-lg font-bold mt-2 leading-snug">সকল দরকারি এআই ও ডিজিটাল টুলস এক প্ল্যাটফর্মে</h1>
-                <p class="text-slate-300 text-[11px] mt-1">প্রফেশনাল কাজের গতি বাড়াতে ব্যবহার করুন ইনস্ট্যান্ট টুলস।</p>
-            </div>
-        </div>
+<!-- =========================
+     HEADER
+========================= -->
 
-        <!-- Category Filter Pills -->
-        <div class="flex space-x-2 overflow-x-auto pb-1 scrollbar-none">
-            <button onclick="filterCategory('all', this)" class="cat-btn bg-brand-blue text-white px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap shadow-sm">সব টুলস</button>
-            <button onclick="filterCategory('ai', this)" class="cat-btn bg-white text-slate-700 border border-slate-200 px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap">এআই প্রম্পট</button>
-            <button onclick="filterCategory('pdf', this)" class="cat-btn bg-white text-slate-700 border border-slate-200 px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap">পিডিএফ</button>
-            <button onclick="filterCategory('image', this)" class="cat-btn bg-white text-slate-700 border border-slate-200 px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap">ইমেজ</button>
-            <button onclick="filterCategory('dev', this)" class="cat-btn bg-white text-slate-700 border border-slate-200 px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap">কোড ও এসইও</button>
-        </div>
+<header class="header">
 
-        <!-- 40+ Tools Grid Section -->
-        <div id="toolsGrid" class="grid grid-cols-2 gap-3">
+<div class="max-w-7xl mx-auto px-4 py-3">
 
-            <!-- 1. Password Generator -->
-            <div class="tool-item app-card bg-blue-600 text-white p-3.5 flex flex-col justify-between cursor-pointer" data-cat="dev" onclick="generatePassword()">
-                <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center text-base mb-2"><i class="fa-solid fa-key"></i></div>
-                <div><h3 class="font-bold text-xs">পাসওয়ার্ড জেনারেটর</h3><p class="text-[10px] text-blue-100 mt-0.5">স্ট্রং পাসওয়ার্ড তৈরি</p></div>
-            </div>
+<div class="flex items-center gap-3">
 
-            <!-- 2. QR Code Maker -->
-            <div class="tool-item app-card bg-teal-600 text-white p-3.5 flex flex-col justify-between cursor-pointer" data-cat="dev" onclick="makeQR()">
-                <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center text-base mb-2"><i class="fa-solid fa-qrcode"></i></div>
-                <div><h3 class="font-bold text-xs">কিউআর কোড মেকার</h3><p class="text-[10px] text-teal-100 mt-0.5">লিংক থেকে কিউআর</p></div>
-            </div>
+<button
+onclick="goHome()"
+class="brand text-left">
 
-            <!-- 3. Image Hosting -->
-            <div class="tool-item app-card bg-purple-600 text-white p-3.5 flex flex-col justify-between cursor-pointer" data-cat="image" onclick="window.open('https://postimages.org/', '_blank')">
-                <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center text-base mb-2"><i class="fa-solid fa-cloud-arrow-up"></i></div>
-                <div><h3 class="font-bold text-xs">ইমেজ হোস্টিং</h3><p class="text-[10px] text-purple-100 mt-0.5">ডিরেক্ট লিংক জেনারেটর</p></div>
-            </div>
+<div class="logo">
+<i class="fa-solid fa-wand-magic-sparkles"></i>
+</div>
 
-            <!-- 4. Background Remover -->
-            <div class="tool-item app-card bg-emerald-600 text-white p-3.5 flex flex-col justify-between cursor-pointer" data-cat="image" onclick="window.open('https://www.remove.bg/', '_blank')">
-                <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center text-base mb-2"><i class="fa-solid fa-image"></i></div>
-                <div><h3 class="font-bold text-xs">ব্যাকগ্রাউন্ড রিমুভার</h3><p class="text-[10px] text-emerald-100 mt-1">ছবির ব্যাকগ্রাউন্ড রিমুভ</p></div>
-            </div>
+<div>
 
-            <!-- 5. Word Counter -->
-            <div class="tool-item app-card bg-indigo-600 text-white p-3.5 flex flex-col justify-between cursor-pointer" data-cat="dev" onclick="openWordCounter()">
-                <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center text-base mb-2"><i class="fa-solid fa-file-lines"></i></div>
-                <div><h3 class="font-bold text-xs">ওয়ার্ড কাউন্টার</h3><p class="text-[10px] text-indigo-100 mt-1">শব্দ ও অক্ষর গণনা</p></div>
-            </div>
+<div class="brand-title">
+AuraTools
+</div>
 
-            <!-- 6. Age Calculator -->
-            <div class="tool-item app-card bg-cyan-600 text-white p-3.5 flex flex-col justify-between cursor-pointer" data-cat="dev" onclick="calcAge()">
-                <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center text-base mb-2"><i class="fa-solid fa-cake-candles"></i></div>
-                <div><h3 class="font-bold text-xs">বয়স ক্যালকুলেটর</h3><p class="text-[10px] text-cyan-100 mt-1">নিখুঁত বয়স বের করুন</p></div>
-            </div>
+<div class="brand-sub">
+ADVANCED RESOURCE HUB
+</div>
 
-            <!-- 7. Base64 Converter -->
-            <div class="tool-item app-card bg-amber-600 text-white p-3.5 flex flex-col justify-between cursor-pointer" data-cat="dev" onclick="encodeBase64Tool()">
-                <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center text-base mb-2"><i class="fa-solid fa-code"></i></div>
-                <div><h3 class="font-bold text-xs">Base64 এনকোডার</h3><p class="text-[10px] text-amber-100 mt-1">টেক্সট এনকোড ও ডিকোড</p></div>
-            </div>
+</div>
 
-            <!-- 8. Slug Generator -->
-            <div class="tool-item app-card bg-rose-600 text-white p-3.5 flex flex-col justify-between cursor-pointer" data-cat="dev" onclick="makeSlug()">
-                <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center text-base mb-2"><i class="fa-solid fa-link"></i></div>
-                <div><h3 class="font-bold text-xs">ইউআরএল স্লাগ মেকার</h3><p class="text-[10px] text-rose-100 mt-1">এসইও ফ্রেন্ডলি লিংক</p></div>
-            </div>
+</button>
 
-            <!-- 9. PDF Compress Guide -->
-            <div class="tool-item app-card bg-sky-600 text-white p-3.5 flex flex-col justify-between cursor-pointer" data-cat="pdf" onclick="window.open('https://ilovepdf.com/', '_blank')">
-                <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center text-base mb-2"><i class="fa-solid fa-file-pdf"></i></div>
-                <div><h3 class="font-bold text-xs">পিডিএফ কম্প্রেস</h3><p class="text-[10px] text-sky-100 mt-1">ফাইলের সাইজ ছোট করুন</p></div>
-            </div>
+<div class="ml-auto flex items-center gap-2">
 
-            <!-- 10. PDF to Image -->
-            <div class="tool-item app-card bg-violet-600 text-white p-3.5 flex flex-col justify-between cursor-pointer" data-cat="pdf" onclick="window.open('https://ilovepdf.com/pdf_to_jpg', '_blank')">
-                <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center text-base mb-2"><i class="fa-solid fa-images"></i></div>
-                <div><h3 class="font-bold text-xs">পিডিএফ টু ইমেজ</h3><p class="text-[10px] text-violet-100 mt-1">পিডিএফ থেকে ছবি কনভার্ট</p></div>
-            </div>
+<button
+onclick="openFavorites()"
+title="Favorites"
+class="w-11 h-11 rounded-2xl bg-white border border-slate-200 text-amber-500">
 
-            <!-- 11. AI Portrait Prompt -->
-            <div class="tool-item app-card bg-slate-800 text-white p-3.5 flex flex-col justify-between cursor-pointer" data-cat="ai" onclick="copyPrompt('Hyper-realistic cinematic portrait, 8k resolution, dramatic lighting --ar 16:9')">
-                <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center text-base mb-2 text-amber-400"><i class="fa-solid fa-robot"></i></div>
-                <div><h3 class="font-bold text-xs">সিনেম্যাটিক প্রম্পট</h3><p class="text-[10px] text-slate-300 mt-1">এআই পোর্ট্রেট প্রম্পট কপি</p></div>
-            </div>
+<i class="fa-solid fa-star"></i>
 
-            <!-- 12. AI Marketing Caption -->
-            <div class="tool-item app-card bg-slate-900 text-white p-3.5 flex flex-col justify-between cursor-pointer" data-cat="ai" onclick="copyPrompt('Write an engaging, high-converting Facebook post caption in Bengali highlighting key benefits and call to action.')">
-                <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center text-base mb-2 text-amber-400"><i class="fa-solid fa-bullhorn"></i></div>
-                <div><h3 class="font-bold text-xs">মার্কেটিং ক্যাপশন প্রম্পট</h3><p class="text-[10px] text-slate-300 mt-1">ফেইসবুক পোস্ট ক্যাপশন</p></div>
-            </div>
+</button>
 
-            <!-- 13. Image Resizer -->
-            <div class="tool-item app-card bg-teal-700 text-white p-3.5 flex flex-col justify-between cursor-pointer" data-cat="image" onclick="window.open('https://squoosh.app/', '_blank')">
-                <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center text-base mb-2"><i class="fa-solid fa-expand"></i></div>
-                <div><h3 class="font-bold text-xs">ইমেজ রিসাইজার</h3><p class="text-[10px] text-teal-100 mt-1">ছবির ডাইমেনশন পরিবর্তন</p></div>
-            </div>
+<button
+onclick="openAISettings()"
+title="AI Settings"
+class="w-11 h-11 rounded-2xl bg-white border border-slate-200 text-violet-600">
 
-            <!-- 14. Color Picker -->
-            <div class="tool-item app-card bg-blue-700 text-white p-3.5 flex flex-col justify-between cursor-pointer" data-cat="dev" onclick="alert('কর্পোরেট ব্লু কালার কোড: #0F2C59 (কপি করা হয়েছে)'); navigator.clipboard.writeText('#0F2C59');">
-                <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center text-base mb-2"><i class="fa-solid fa-palette"></i></div>
-                <div><h3 class="font-bold text-xs">কালার পিকার</h3><p class="text-[10px] text-blue-100 mt-1">হেক্স ও আরজিবি কোড</p></div>
-            </div>
+<i class="fa-solid fa-robot"></i>
 
-            <!-- 15. JSON Formatter -->
-            <div class="tool-item app-card bg-indigo-700 text-white p-3.5 flex flex-col justify-between cursor-pointer" data-cat="dev" onclick="formatJSONTool()">
-                <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center text-base mb-2"><i class="fa-solid fa-brackets-curly"></i></div>
-                <div><h3 class="font-bold text-xs">JSON ফর্মেটার</h3><p class="text-[10px] text-indigo-100 mt-1">কোড সুন্দরভাবে সাজান</p></div>
-            </div>
+</button>
 
-            <!-- 16. Unit Converter -->
-            <div class="tool-item app-card bg-emerald-700 text-white p-3.5 flex flex-col justify-between cursor-pointer" data-cat="dev" onclick="convertKgTool()">
-                <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center text-base mb-2"><i class="fa-solid fa-scale-balanced"></i></div>
-                <div><h3 class="font-bold text-xs">কেজি টু পাউন্ড</h3><p class="text-[10px] text-emerald-100 mt-1">ওজন রূপান্তর করুন</p></div>
-            </div>
+<button
+onclick="toggleTheme()"
+title="Dark Mode"
+class="w-11 h-11 rounded-2xl bg-white border border-slate-200">
 
-            <!-- 17. MD5 Hash -->
-            <div class="tool-item app-card bg-purple-700 text-white p-3.5 flex flex-col justify-between cursor-pointer" data-cat="dev" onclick="hashTool()">
-                <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center text-base mb-2"><i class="fa-solid fa-shield-halved"></i></div>
-                <div><h3 class="font-bold text-xs">হ্যাশ জেনারেটর</h3><p class="text-[10px] text-purple-100 mt-1">সিক্রেট স্ট্রিং তৈরি</p></div>
-            </div>
+<i id="themeIcon" class="fa-solid fa-moon"></i>
 
-            <!-- 18. AI Script Prompt -->
-            <div class="tool-item app-card bg-zinc-900 text-white p-3.5 flex flex-col justify-between cursor-pointer" data-cat="ai" onclick="copyPrompt('Create a 30-second energetic video script for an AI avatar explaining tech resources in an engaging tone.')">
-                <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center text-base mb-2 text-amber-400"><i class="fa-solid fa-video"></i></div>
-                <div><h3 class="font-bold text-xs">এআই ভিডিও স্ক্রিপ্ট</h3><p class="text-[10px] text-zinc-300 mt-1">ভিডিও স্ক্রিপ্ট প্রম্পট</p></div>
-            </div>
+</button>
 
-            <!-- 19. PDF Merge -->
-            <div class="tool-item app-card bg-sky-700 text-white p-3.5 flex flex-col justify-between cursor-pointer" data-cat="pdf" onclick="window.open('https://ilovepdf.com/merge_pdf', '_blank')">
-                <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center text-base mb-2"><i class="fa-solid fa-object-ungroup"></i></div>
-                <div><h3 class="font-bold text-xs">পিডিএফ মার্জ</h3><p class="text-[10px] text-sky-100 mt-1">একাধিক পিডিএফ একত্র করুন</p></div>
-            </div>
+</div>
 
-            <!-- 20. Favicon Generator -->
-            <div class="tool-item app-card bg-amber-700 text-white p-3.5 flex flex-col justify-between cursor-pointer" data-cat="dev" onclick="window.open('https://favicon.io/', '_blank')">
-                <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center text-base mb-2"><i class="fa-solid fa-globe"></i></div>
-                <div><h3 class="font-bold text-xs">ফ্যাভিকন মেকার</h3><p class="text-[10px] text-amber-100 mt-1">ওয়েবসাইটের আইকন বানান</p></div>
-            </div>
+</div>
 
-        </div>
+</div>
 
-    </main>
+</header>
 
-    <!-- Bottom App Navigation Bar (Only Actionable Buttons) -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 py-2 px-6 flex justify-between items-center z-40 max-w-md mx-auto rounded-t-3xl shadow-2xl">
-        <a href="#" class="flex flex-col items-center text-blue-600 font-bold">
-            <i class="fa-solid fa-house text-lg"></i>
-            <span class="text-[10px] mt-1">হোম</span>
-        </a>
-        <a href="#toolsGrid" class="flex flex-col items-center text-slate-400 hover:text-blue-600">
-            <i class="fa-solid fa-table-cells text-lg"></i>
-            <span class="text-[10px] mt-1">টুলস</span>
-        </a>
-        <button onclick="generatePassword()" class="flex flex-col items-center text-white bg-gradient-to-tr from-blue-600 to-indigo-700 w-12 h-12 rounded-full -mt-7 shadow-lg justify-center border-4 border-white hover:scale-105 transition">
-            <i class="fa-solid fa-plus text-sm"></i>
+
+<main class="max-w-7xl mx-auto px-3 sm:px-5 pb-12">
+
+
+<!-- =========================
+     HERO
+========================= -->
+
+<section class="hero mt-4">
+
+<div class="hero-content">
+
+<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-[10px] font-black">
+
+<i class="fa-solid fa-bolt"></i>
+
+FAST • PRIVATE • PROFESSIONAL
+
+</div>
+
+<h1 class="hero-title mt-5">
+
+Tools that actually
+<br>
+
+get work done.
+
+</h1>
+
+<p
+id="heroText"
+class="hero-text">
+
+Advanced AI, PDF, image, developer, SEO,
+business and productivity tools in one workspace.
+
+</p>
+
+<div class="flex flex-wrap gap-2 mt-5">
+
+<button
+onclick="openToolByName('AI Assistant')"
+class="bg-white text-[#0b2450] px-5 py-3 rounded-xl font-black text-sm">
+
+<i class="fa-solid fa-sparkles mr-2"></i>
+
+AI Workspace
+
+</button>
+
+<button
+onclick="setCategory('PDF & Documents')"
+class="bg-white/10 border border-white/20 text-white px-5 py-3 rounded-xl font-black text-sm">
+
+PDF & Documents
+
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================
+     SEARCH
+========================= -->
+
+<section class="mt-5">
+
+<div class="search-wrapper">
+
+<i class="fa-solid fa-magnifying-glass search-icon"></i>
+
+<input
+id="search"
+class="search"
+placeholder="Search advanced tools..."
+autocomplete="off">
+
+</div>
+
+</section>
+
+
+<!-- =========================
+     CATEGORIES
+========================= -->
+
+<section class="mt-4">
+
+<div
+id="categories"
+class="category-scroll">
+
+</div>
+
+</section>
+
+
+<!-- =========================
+     TOOL COUNT
+========================= -->
+
+<div class="flex items-center justify-between mt-5 mb-3">
+
+<div>
+
+<h2 class="font-black text-xl">
+All Tools
+</h2>
+
+<p
+id="toolCount"
+class="text-xs text-slate-500 mt-1">
+
+Loading tools...
+
+</p>
+
+</div>
+
+<button
+onclick="openFavorites()"
+class="text-xs font-black text-blue-600">
+
+<i class="fa-solid fa-star mr-1"></i>
+
+Favorites
+
+</button>
+
+</div>
+
+
+<!-- =========================
+     TOOL GRID
+========================= -->
+
+<section
+id="toolGrid"
+class="tool-grid">
+
+</section>
+
+
+</main>
+
+
+<!-- =========================
+     MODAL
+========================= -->
+
+<div
+id="modalBg"
+class="modal-bg"
+onclick="if(event.target===this)closeModal()">
+
+<div class="modal">
+
+<div class="modal-head">
+
+<div
+id="modalIcon"
+class="modal-icon g4">
+
+<i class="fa-solid fa-toolbox"></i>
+
+</div>
+
+<div class="min-w-0">
+
+<b
+id="modalTitle"
+class="block truncate">
+
+Tool
+
+</b>
+
+<small
+id="modalSub"
+class="text-xs text-slate-500">
+
+AuraTools
+
+</small>
+
+</div>
+
+<button
+onclick="closeModal()"
+class="close ml-auto">
+
+<i class="fa-solid fa-xmark"></i>
+
+</button>
+
+</div>
+
+<div
+id="modalBody"
+class="modal-body">
+
+</div>
+
+</div>
+
+</div>
+
+
+<div id="toastContainer"></div>
+
+
+<script>
+
+/* =========================================================
+   GEMINI API
+========================================================= */
+
+/*
+   IMPORTANT:
+   আপনার নিজের Gemini API key এখানে বসান।
+
+   Example:
+
+   const GEMINI_API_KEY =
+   "YOUR_GEMINI_API_KEY";
+
+   আপনার দেওয়া key আমি chat response-এ আবার প্রকাশ করছি না।
+*/
+
+const GEMINI_API_KEY =
+"PASTE_YOUR_GEMINI_API_KEY_HERE";
+
+
+const GEMINI_MODEL =
+"gemini-2.5-flash";
+
+
+async function askGemini(prompt){
+
+    if(
+        !GEMINI_API_KEY ||
+        GEMINI_API_KEY ===
+        "PASTE_YOUR_GEMINI_API_KEY_HERE"
+    ){
+
+        throw new Error(
+            "Gemini API key সেট করা হয়নি।"
+        );
+
+    }
+
+
+    const url =
+    `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`;
+
+
+    const response =
+    await fetch(
+        url,
+        {
+            method:"POST",
+
+            headers:{
+                "Content-Type":
+                "application/json"
+            },
+
+            body:JSON.stringify({
+
+                contents:[
+
+                    {
+                        role:"user",
+
+                        parts:[
+                            {
+                                text:prompt
+                            }
+                        ]
+                    }
+
+                ],
+
+                generationConfig:{
+
+                    temperature:.7,
+
+                    topP:.95,
+
+                    maxOutputTokens:4096
+
+                }
+
+            })
+
+        }
+    );
+
+
+    const data =
+    await response.json();
+
+
+    if(!response.ok){
+
+        throw new Error(
+            data?.error?.message ||
+            "Gemini API request failed."
+        );
+
+    }
+
+
+    return (
+        data?.candidates?.[0]
+        ?.content?.parts
+        ?.map(x=>x.text||"")
+        .join("")
+        ||
+        "No response received."
+    );
+
+}
+
+
+/* =========================================================
+   BASIC HELPERS
+========================================================= */
+
+function toast(message){
+
+    const box =
+    document.createElement("div");
+
+    box.className="toast";
+
+    box.textContent=message;
+
+    document
+    .getElementById("toastContainer")
+    .appendChild(box);
+
+    setTimeout(
+        ()=>box.remove(),
+        2800
+    );
+
+}
+
+
+function escapeHTML(text){
+
+    const div =
+    document.createElement("div");
+
+    div.textContent=text;
+
+    return div.innerHTML;
+
+}
+
+
+async function copyText(text){
+
+    await navigator.clipboard.writeText(
+        text || ""
+    );
+
+    toast("Copied ✓");
+
+}
+
+
+function downloadBlob(
+    data,
+    filename,
+    type="application/octet-stream"
+){
+
+    const blob =
+    data instanceof Blob
+    ? data
+    : new Blob(
+        [data],
+        {type}
+    );
+
+    const url =
+    URL.createObjectURL(blob);
+
+    const a =
+    document.createElement("a");
+
+    a.href=url;
+
+    a.download=filename;
+
+    document.body.appendChild(a);
+
+    a.click();
+
+    a.remove();
+
+    setTimeout(
+        ()=>URL.revokeObjectURL(url),
+        1000
+    );
+
+}
+
+
+function filePicker(
+    accept="*/*",
+    multiple=false
+){
+
+    return `
+    <input
+        id="fileInput"
+        type="file"
+        class="field"
+        accept="${accept}"
+        ${multiple?"multiple":""}
+    >
+    `;
+
+}
+
+
+/* =========================================================
+   TOOL SYSTEM
+========================================================= */
+
+const tools=[];
+
+let activeCategory="All";
+
+let searchTerm="";
+
+let favorites =
+new Set(
+    JSON.parse(
+        localStorage.getItem(
+            "auratools:favorites"
+        ) || "[]"
+    )
+);
+
+
+function addTool(
+    name,
+    category,
+    icon,
+    gradient,
+    description,
+    fn,
+    badge=""
+){
+
+    tools.push({
+
+        name,
+        category,
+        icon,
+        gradient,
+        description,
+        fn,
+        badge
+
+    });
+
+}
+
+
+/* =========================================================
+   AI TOOLS
+========================================================= */
+
+addTool(
+"AI Assistant",
+"AI & Prompts",
+"fa-robot",
+"g5",
+"Ask Gemini anything",
+()=>`
+
+<textarea
+id="aiPrompt"
+class="field"
+placeholder="Ask anything..."></textarea>
+
+<button
+class="primary w-full mt-3"
+onclick="runAI()">
+
+<i class="fa-solid fa-sparkles mr-2"></i>
+
+Ask Aura AI
+
+</button>
+
+<div
+id="aiLoading"
+class="hidden text-center py-5 text-sm text-slate-500">
+
+<i class="fa-solid fa-spinner spin mr-2"></i>
+
+AI is thinking...
+
+</div>
+
+<div
+id="aiResult"
+class="output mt-3">
+
+Your AI answer will appear here.
+
+</div>
+
+<div class="grid grid-cols-3 gap-2 mt-2">
+
+<button
+class="secondary"
+onclick="copyText(window.lastAI||'')">
+
+Copy
+
+</button>
+
+<button
+class="secondary"
+onclick="downloadBlob(window.lastAI||'','aura-ai.txt','text/plain')">
+
+Download
+
+</button>
+
+<button
+class="secondary"
+onclick="document.getElementById('aiPrompt').value='';document.getElementById('aiResult').textContent='Your AI answer will appear here.'">
+
+Clear
+
+</button>
+
+</div>
+
+`,
+"AI"
+);
+
+
+async function runAI(){
+
+    const prompt =
+    document.getElementById(
+        "aiPrompt"
+    ).value.trim();
+
+    if(!prompt){
+
+        toast("Write a prompt first.");
+
+        return;
+
+    }
+
+    const loading =
+    document.getElementById(
+        "aiLoading"
+    );
+
+    const result =
+    document.getElementById(
+        "aiResult"
+    );
+
+    loading.classList.remove("hidden");
+
+    result.textContent="";
+
+    try{
+
+        const answer =
+        await askGemini(`
+
+You are Aura AI inside
+AuraTools Professional Resource Hub.
+
+Give practical, accurate,
+professional answers.
+
+If the user writes Bengali,
+answer in Bengali.
+
+If the user writes English,
+answer in English.
+
+For coding questions,
+provide clean production-ready code.
+
+User request:
+
+${prompt}
+
+`);
+
+        window.lastAI=answer;
+
+        result.innerHTML =
+        escapeHTML(answer)
+        .replace(
+            /\*\*(.*?)\*\*/g,
+            "<strong>$1</strong>"
+        )
+        .replace(
+            /\n/g,
+            "<br>"
+        );
+
+    }catch(error){
+
+        result.innerHTML =
+        `<span class="text-red-600 font-bold">
+        ${escapeHTML(error.message)}
+        </span>`;
+
+    }finally{
+
+        loading.classList.add("hidden");
+
+    }
+
+}
+
+
+addTool(
+"AI Writer",
+"AI & Prompts",
+"fa-pen-nib",
+"g6",
+"Write professional content",
+()=>`
+
+<textarea
+id="writerTopic"
+class="field"
+placeholder="What do you want to write?"></textarea>
+
+<select
+id="writerTone"
+class="field mt-2">
+
+<option>Professional</option>
+<option>Friendly</option>
+<option>Marketing</option>
+<option>Formal</option>
+<option>Creative</option>
+
+</select>
+
+<button
+class="primary w-full mt-3"
+onclick="runWriter()">
+
+Generate Content
+
+</button>
+
+<div
+id="writerOut"
+class="output mt-3"></div>
+
+`
+);
+
+
+async function runWriter(){
+
+    const topic =
+    writerTopic.value.trim();
+
+    if(!topic){
+
+        toast("Enter a topic.");
+
+        return;
+
+    }
+
+    writerOut.textContent="Generating...";
+
+    try{
+
+        const result =
+        await askGemini(`
+Write professional content about:
+
+${topic}
+
+Tone:
+${writerTone.value}
+
+Return polished,
+useful content.
+`);
+
+        writerOut.textContent=result;
+
+    }catch(e){
+
+        writerOut.textContent=e.message;
+
+    }
+
+}
+
+
+addTool(
+"AI Summarizer",
+"AI & Prompts",
+"fa-compress",
+"g5",
+"Summarize long text",
+()=>`
+
+<textarea
+id="sumText"
+class="field"
+placeholder="Paste long text..."></textarea>
+
+<button
+class="primary w-full mt-3"
+onclick="runSummary()">
+
+Summarize
+
+</button>
+
+<div
+id="sumOut"
+class="output mt-3"></div>
+
+`
+);
+
+
+async function runSummary(){
+
+    if(!sumText.value.trim()){
+
+        toast("Paste text first.");
+
+        return;
+
+    }
+
+    sumOut.textContent="Summarizing...";
+
+    try{
+
+        sumOut.textContent =
+        await askGemini(`
+Summarize the following text.
+
+Keep the important facts,
+remove unnecessary repetition,
+and make it easy to read.
+
+TEXT:
+
+${sumText.value}
+`);
+
+    }catch(e){
+
+        sumOut.textContent=e.message;
+
+    }
+
+}
+
+
+addTool(
+"AI Translator",
+"AI & Prompts",
+"fa-language",
+"g6",
+"Translate naturally",
+()=>`
+
+<textarea
+id="transText"
+class="field"
+placeholder="Enter text..."></textarea>
+
+<select
+id="transLang"
+class="field mt-2">
+
+<option>English</option>
+<option>Bengali</option>
+<option>Arabic</option>
+<option>Hindi</option>
+<option>Urdu</option>
+<option>French</option>
+<option>Spanish</option>
+<option>German</option>
+
+</select>
+
+<button
+class="primary w-full mt-3"
+onclick="runTranslate()">
+
+Translate
+
+</button>
+
+<div
+id="transOut"
+class="output mt-3"></div>
+
+`
+);
+
+
+async function runTranslate(){
+
+    if(!transText.value.trim()){
+
+        toast("Enter text.");
+
+        return;
+
+    }
+
+    transOut.textContent="Translating...";
+
+    try{
+
+        transOut.textContent =
+        await askGemini(`
+Translate the following text into
+${transLang.value}.
+
+Preserve meaning and natural tone.
+
+TEXT:
+
+${transText.value}
+`);
+
+    }catch(e){
+
+        transOut.textContent=e.message;
+
+    }
+
+}
+
+
+/* =========================================================
+   JSON
+========================================================= */
+
+addTool(
+"JSON Formatter",
+"Developer",
+"fa-code",
+"g4",
+"Format and validate JSON",
+()=>`
+
+<textarea
+id="jsonInput"
+class="field"
+placeholder='{"name":"AuraTools"}'></textarea>
+
+<div class="grid grid-cols-2 gap-2 mt-2">
+
+<button
+class="primary"
+onclick="formatJSON()">
+
+Format
+
+</button>
+
+<button
+class="secondary"
+onclick="minifyJSON()">
+
+Minify
+
+</button>
+
+</div>
+
+<div
+id="jsonOutput"
+class="output mt-3"></div>
+
+`
+);
+
+
+function formatJSON(){
+
+    try{
+
+        const obj =
+        JSON.parse(
+            jsonInput.value
+        );
+
+        jsonOutput.textContent =
+        JSON.stringify(
+            obj,
+            null,
+            2
+        );
+
+    }catch(e){
+
+        jsonOutput.textContent=
+        "Invalid JSON: "+e.message;
+
+    }
+
+}
+
+
+function minifyJSON(){
+
+    try{
+
+        const obj =
+        JSON.parse(
+            jsonInput.value
+        );
+
+        jsonOutput.textContent =
+        JSON.stringify(obj);
+
+    }catch(e){
+
+        jsonOutput.textContent=
+        "Invalid JSON: "+e.message;
+
+    }
+
+}
+
+
+/* =========================================================
+   BASE64
+========================================================= */
+
+addTool(
+"Base64 Studio",
+"Developer",
+"fa-file-code",
+"g3",
+"Encode and decode Base64",
+()=>`
+
+<textarea
+id="baseInput"
+class="field"
+placeholder="Enter text..."></textarea>
+
+<div class="grid grid-cols-2 gap-2 mt-2">
+
+<button
+class="primary"
+onclick="base64Encode()">
+
+Encode
+
+</button>
+
+<button
+class="secondary"
+onclick="base64Decode()">
+
+Decode
+
+</button>
+
+</div>
+
+<textarea
+id="baseOutput"
+class="field mt-3"
+readonly></textarea>
+
+`
+);
+
+
+function base64Encode(){
+
+    baseOutput.value =
+    btoa(
+        unescape(
+            encodeURIComponent(
+                baseInput.value
+            )
+        )
+    );
+
+}
+
+
+function base64Decode(){
+
+    try{
+
+        baseOutput.value =
+        decodeURIComponent(
+            escape(
+                atob(
+                    baseInput.value
+                )
+            )
+        );
+
+    }catch(e){
+
+        baseOutput.value=
+        "Invalid Base64";
+
+    }
+
+}
+
+
+/* =========================================================
+   JWT
+========================================================= */
+
+addTool(
+"JWT Decoder",
+"Developer",
+"fa-key",
+"g5",
+"Decode JWT payload",
+()=>`
+
+<textarea
+id="jwtInput"
+class="field"
+placeholder="Paste JWT..."></textarea>
+
+<button
+class="primary w-full mt-3"
+onclick="decodeJWT()">
+
+Decode JWT
+
+</button>
+
+<pre
+id="jwtOutput"
+class="output mt-3"></pre>
+
+`
+);
+
+
+function decodeJWT(){
+
+    try{
+
+        const parts =
+        jwtInput.value.split(".");
+
+        if(parts.length<2)
+        throw new Error("Invalid JWT");
+
+        const payload =
+        parts[1]
+        .replace(/-/g,"+")
+        .replace(/_/g,"/");
+
+        const json =
+        JSON.parse(
+            decodeURIComponent(
+                atob(payload)
+                .split("")
+                .map(
+                    c =>
+                    "%" +
+                    ("00"+c.charCodeAt(0)
+                    .toString(16))
+                    .slice(-2)
+                )
+                .join("")
+            )
+        );
+
+        jwtOutput.textContent =
+        JSON.stringify(
+            json,
+            null,
+            2
+        );
+
+    }catch(e){
+
+        jwtOutput.textContent=
+        "Invalid JWT: "+e.message;
+
+    }
+
+}
+
+
+/* =========================================================
+   HASH
+========================================================= */
+
+addTool(
+"SHA Hash Generator",
+"Developer",
+"fa-fingerprint",
+"g9",
+"SHA-256 / SHA-384 / SHA-512",
+()=>`
+
+<textarea
+id="hashText"
+class="field"
+placeholder="Text to hash..."></textarea>
+
+<select
+id="hashAlgo"
+class="field mt-2">
+
+<option value="SHA-256">
+SHA-256
+</option>
+
+<option value="SHA-384">
+SHA-384
+</option>
+
+<option value="SHA-512">
+SHA-512
+</option>
+
+</select>
+
+<button
+class="primary w-full mt-3"
+onclick="makeHash()">
+
+Generate Hash
+
+</button>
+
+<div
+id="hashOut"
+class="output mt-3"></div>
+
+`
+);
+
+
+async function makeHash(){
+
+    const data =
+    new TextEncoder()
+    .encode(
+        hashText.value
+    );
+
+    const buffer =
+    await crypto.subtle.digest(
+        hashAlgo.value,
+        data
+    );
+
+    hashOut.textContent =
+    [...new Uint8Array(buffer)]
+    .map(
+        b =>
+        b.toString(16)
+        .padStart(2,"0")
+    )
+    .join("");
+
+}
+
+
+/* =========================================================
+   UUID
+========================================================= */
+
+addTool(
+"UUID Generator",
+"Developer",
+"fa-fingerprint",
+"g4",
+"Generate secure UUIDs",
+()=>`
+
+<input
+id="uuidCount"
+type="number"
+class="field"
+value="5"
+min="1"
+max="100">
+
+<button
+class="primary w-full mt-3"
+onclick="makeUUID()">
+
+Generate UUIDs
+
+</button>
+
+<pre
+id="uuidOut"
+class="output mt-3"></pre>
+
+<button
+class="secondary w-full mt-2"
+onclick="copyText(uuidOut.textContent)">
+
+Copy
+
+</button>
+
+`
+);
+
+
+function makeUUID(){
+
+    const count =
+    Math.min(
+        100,
+        Math.max(
+            1,
+            Number(uuidCount.value)
+        )
+    );
+
+    uuidOut.textContent =
+    Array.from(
+        {length:count},
+        ()=>crypto.randomUUID()
+    ).join("\n");
+
+}
+
+
+/* =========================================================
+   REGEX
+========================================================= */
+
+addTool(
+"Regex Tester",
+"Developer",
+"fa-code-branch",
+"g5",
+"Test regular expressions",
+()=>`
+
+<input
+id="regexPattern"
+class="field"
+placeholder="Pattern e.g. ^[A-Z]+$">
+
+<input
+id="regexFlags"
+class="field mt-2"
+placeholder="Flags e.g. gi">
+
+<textarea
+id="regexText"
+class="field mt-2"
+placeholder="Test text..."></textarea>
+
+<button
+class="primary w-full mt-3"
+onclick="testRegex()">
+
+Test Regex
+
+</button>
+
+<div
+id="regexOut"
+class="output mt-3"></div>
+
+`
+);
+
+
+function testRegex(){
+
+    try{
+
+        const re =
+        new RegExp(
+            regexPattern.value,
+            regexFlags.value
+        );
+
+        const matches =
+        regexText.value.match(re);
+
+        regexOut.textContent =
+        matches
+        ? matches.join("\n")
+        : "No match";
+
+    }catch(e){
+
+        regexOut.textContent=e.message;
+
+    }
+
+}
+
+
+/* =========================================================
+   TEXT COUNTER
+========================================================= */
+
+addTool(
+"Text Counter",
+"Text & Data",
+"fa-align-left",
+"g3",
+"Count words and characters",
+()=>`
+
+<textarea
+id="countText"
+class="field"
+placeholder="Type or paste text..."></textarea>
+
+<div
+id="countOut"
+class="output mt-3">
+
+Words: 0
+Characters: 0
+Characters without spaces: 0
+Lines: 0
+
+</div>
+
+<script>
+
+</script>
+
+`
+);
+
+
+function updateTextCounter(){
+
+    const text =
+    document.getElementById(
+        "countText"
+    )?.value || "";
+
+    const words =
+    text.trim()
+    ? text.trim().split(/\s+/).length
+    : 0;
+
+    const chars =
+    text.length;
+
+    const noSpaces =
+    text.replace(/\s/g,"").length;
+
+    const lines =
+    text
+    ? text.split(/\n/).length
+    : 0;
+
+    const out =
+    document.getElementById(
+        "countOut"
+    );
+
+    if(out){
+
+        out.textContent =
+`Words: ${words}
+Characters: ${chars}
+Characters without spaces: ${noSpaces}
+Lines: ${lines}`;
+
+    }
+
+}
+
+
+/* =========================================================
+   CASE CONVERTER
+========================================================= */
+
+addTool(
+"Case Converter",
+"Text & Data",
+"fa-font",
+"g6",
+"Convert text case",
+()=>`
+
+<textarea
+id="caseText"
+class="field"
+placeholder="Enter text..."></textarea>
+
+<div class="grid grid-cols-2 gap-2 mt-2">
+
+<button
+class="primary"
+onclick="caseText.value=caseText.value.toUpperCase()">
+
+UPPERCASE
+
+</button>
+
+<button
+class="secondary"
+onclick="caseText.value=caseText.value.toLowerCase()">
+
+lowercase
+
+</button>
+
+<button
+class="secondary"
+onclick="caseText.value=titleCase(caseText.value)">
+
+Title Case
+
+</button>
+
+<button
+class="secondary"
+onclick="caseText.value=sentenceCase(caseText.value)">
+
+Sentence Case
+
+</button>
+
+</div>
+
+`
+);
+
+
+function titleCase(text){
+
+    return text
+    .toLowerCase()
+    .replace(
+        /\b\w/g,
+        x=>x.toUpperCase()
+    );
+
+}
+
+
+function sentenceCase(text){
+
+    return text
+    .toLowerCase()
+    .replace(
+        /(^\s*\w|[.!?]\s+\w)/g,
+        x=>x.toUpperCase()
+    );
+
+}
+
+
+/* =========================================================
+   SLUG
+========================================================= */
+
+addTool(
+"Slug Generator",
+"SEO & Web",
+"fa-link",
+"g8",
+"Create SEO-friendly slugs",
+()=>`
+
+<input
+id="slugText"
+class="field"
+placeholder="My Awesome Article">
+
+<button
+class="primary w-full mt-3"
+onclick="makeSlug()">
+
+Generate Slug
+
+</button>
+
+<div
+id="slugOut"
+class="output mt-3"></div>
+
+`
+);
+
+
+function makeSlug(){
+
+    slugOut.textContent =
+    slugText.value
+    .toLowerCase()
+    .trim()
+    .normalize("NFKD")
+    .replace(
+        /[\u0300-\u036f]/g,
+        ""
+    )
+    .replace(
+        /[^a-z0-9]+/g,
+        "-"
+    )
+    .replace(
+        /^-+|-+$/g,
+        ""
+    );
+
+}
+
+
+/* =========================================================
+   DUPLICATE REMOVER
+========================================================= */
+
+addTool(
+"Duplicate Remover",
+"Text & Data",
+"fa-filter",
+"g2",
+"Remove duplicate lines",
+()=>`
+
+<textarea
+id="dupText"
+class="field"
+placeholder="One item per line..."></textarea>
+
+<button
+class="primary w-full mt-3"
+onclick="removeDuplicates()">
+
+Remove Duplicates
+
+</button>
+
+<textarea
+id="dupOut"
+class="field mt-3"
+readonly></textarea>
+
+`
+);
+
+
+function removeDuplicates(){
+
+    dupOut.value =
+    [
+        ...new Set(
+            dupText.value
+            .split(/\r?\n/)
+            .map(x=>x.trim())
+            .filter(Boolean)
+        )
+    ].join("\n");
+
+}
+
+
+/* =========================================================
+   PDF MERGE
+========================================================= */
+
+addTool(
+"PDF Merge",
+"PDF & Documents",
+"fa-file-pdf",
+"g7",
+"Merge multiple PDFs",
+()=>`
+
+<div class="dropzone">
+
+<i class="fa-solid fa-file-pdf text-4xl text-red-500"></i>
+
+<p class="font-black mt-3">
+Select PDF files
+</p>
+
+<input
+id="pdfMergeFiles"
+type="file"
+accept=".pdf"
+multiple
+class="field mt-3">
+
+</div>
+
+<button
+class="primary w-full mt-3"
+onclick="mergePDFs()">
+
+Merge PDFs
+
+</button>
+
+`
+);
+
+
+async function mergePDFs(){
+
+    const files =
+    document.getElementById(
+        "pdfMergeFiles"
+    ).files;
+
+    if(!files.length){
+
+        toast("Choose PDFs first.");
+
+        return;
+
+    }
+
+    try{
+
+        const merged =
+        await PDFLib.PDFDocument.create();
+
+        for(
+            const file of files
+        ){
+
+            const src =
+            await PDFLib.PDFDocument.load(
+                await file.arrayBuffer()
+            );
+
+            const pages =
+            await merged.copyPages(
+                src,
+                src.getPageIndices()
+            );
+
+            pages.forEach(
+                page =>
+                merged.addPage(page)
+            );
+
+        }
+
+        const bytes =
+        await merged.save();
+
+        downloadBlob(
+            bytes,
+            "auratools-merged.pdf",
+            "application/pdf"
+        );
+
+        toast("PDF merged successfully.");
+
+    }catch(e){
+
+        toast(
+            "PDF merge failed: "+e.message
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   PDF SPLIT
+========================================================= */
+
+addTool(
+"PDF Split",
+"PDF & Documents",
+"fa-scissors",
+"g7",
+"Extract selected PDF pages",
+()=>`
+
+<input
+id="splitPDF"
+type="file"
+accept=".pdf"
+class="field">
+
+<input
+id="splitPages"
+class="field mt-2"
+placeholder="Pages: 1,3,5-7">
+
+<button
+class="primary w-full mt-3"
+onclick="splitPDF()">
+
+Extract Pages
+
+</button>
+
+`
+);
+
+
+function parsePages(text,max){
+
+    const set=new Set();
+
+    text
+    .split(",")
+    .forEach(part=>{
+
+        part=part.trim();
+
+        if(part.includes("-")){
+
+            const [a,b]=
+            part
+            .split("-")
+            .map(Number);
+
+            for(
+                let i=a;
+                i<=b && i<=max;
+                i++
+            ){
+
+                if(i>=1)
+                set.add(i-1);
+
+            }
+
+        }else{
+
+            const n=Number(part);
+
+            if(n>=1 && n<=max)
+            set.add(n-1);
+
+        }
+
+    });
+
+    return [...set].sort(
+        (a,b)=>a-b
+    );
+
+}
+
+
+async function splitPDF(){
+
+    const file=
+    splitPDF?.files?.[0]
+    ||
+    document.getElementById(
+        "splitPDF"
+    ).files[0];
+
+    if(!file){
+
+        toast("Choose PDF.");
+
+        return;
+
+    }
+
+    try{
+
+        const src =
+        await PDFLib.PDFDocument.load(
+            await file.arrayBuffer()
+        );
+
+        const pages =
+        parsePages(
+            splitPages.value,
+            src.getPageCount()
+        );
+
+        if(!pages.length){
+
+            toast("Invalid pages.");
+
+            return;
+
+        }
+
+        const out =
+        await PDFLib.PDFDocument.create();
+
+        const copied =
+        await out.copyPages(
+            src,
+            pages
+        );
+
+        copied.forEach(
+            p=>out.addPage(p)
+        );
+
+        downloadBlob(
+            await out.save(),
+            "auratools-split.pdf",
+            "application/pdf"
+        );
+
+    }catch(e){
+
+        toast(e.message);
+
+    }
+
+}
+
+
+/* =========================================================
+   IMAGES TO PDF
+========================================================= */
+
+addTool(
+"Images → PDF",
+"PDF & Documents",
+"fa-images",
+"g3",
+"Create PDF from images",
+()=>`
+
+<input
+id="imagePDF"
+type="file"
+accept="image/*"
+multiple
+class="field">
+
+<button
+class="primary w-full mt-3"
+onclick="imagesToPDF()">
+
+Create PDF
+
+</button>
+
+`
+);
+
+
+async function imagesToPDF(){
+
+    const files =
+    document.getElementById(
+        "imagePDF"
+    ).files;
+
+    if(!files.length){
+
+        toast("Choose images.");
+
+        return;
+
+    }
+
+    const {
+        jsPDF
+    } = window.jspdf;
+
+    const pdf =
+    new jsPDF();
+
+    for(
+        let i=0;
+        i<files.length;
+        i++
+    ){
+
+        if(i)
+        pdf.addPage();
+
+        const data =
+        await fileToDataURL(
+            files[i]
+        );
+
+        const img =
+        await loadImage(data);
+
+        const pageW =
+        pdf.internal.pageSize.getWidth();
+
+        const pageH =
+        pdf.internal.pageSize.getHeight();
+
+        const scale =
+        Math.min(
+            pageW/img.width,
+            pageH/img.height
+        );
+
+        const w =
+        img.width*scale;
+
+        const h =
+        img.height*scale;
+
+        pdf.addImage(
+            data,
+            "JPEG",
+            (pageW-w)/2,
+            (pageH-h)/2,
+            w,
+            h
+        );
+
+    }
+
+    pdf.save(
+        "auratools-images.pdf"
+    );
+
+}
+
+
+function fileToDataURL(file){
+
+    return new Promise(
+        (resolve,reject)=>{
+
+            const reader =
+            new FileReader();
+
+            reader.onload =
+            ()=>resolve(reader.result);
+
+            reader.onerror =
+            reject;
+
+            reader.readAsDataURL(file);
+
+        }
+    );
+
+}
+
+
+function loadImage(src){
+
+    return new Promise(
+        (resolve,reject)=>{
+
+            const img =
+            new Image();
+
+            img.onload =
+            ()=>resolve(img);
+
+            img.onerror =
+            reject;
+
+            img.src=src;
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   IMAGE COMPRESSOR
+========================================================= */
+
+addTool(
+"Image Compressor",
+"Images & Media",
+"fa-compress",
+"g2",
+"Compress JPG/PNG/WebP",
+()=>`
+
+<input
+id="compressFile"
+type="file"
+accept="image/*"
+class="field">
+
+<label class="block text-xs font-bold mt-3">
+Quality
+
+<input
+id="quality"
+type="range"
+min="10"
+max="100"
+value="75"
+class="w-full">
+
+</label>
+
+<button
+class="primary w-full mt-3"
+onclick="compressImage()">
+
+Compress & Download
+
+</button>
+
+`
+);
+
+
+async function compressImage(){
+
+    const file =
+    document.getElementById(
+        "compressFile"
+    ).files[0];
+
+    if(!file){
+
+        toast("Choose an image.");
+
+        return;
+
+    }
+
+    const src =
+    await fileToDataURL(file);
+
+    const img =
+    await loadImage(src);
+
+    const canvas =
+    document.createElement("canvas");
+
+    canvas.width=img.width;
+    canvas.height=img.height;
+
+    const ctx=
+    canvas.getContext("2d");
+
+    ctx.drawImage(
+        img,
+        0,
+        0
+    );
+
+    canvas.toBlob(
+        blob=>{
+
+            downloadBlob(
+                blob,
+                "auratools-compressed.jpg",
+                "image/jpeg"
+            );
+
+            toast("Image compressed.");
+
+        },
+        "image/jpeg",
+        Number(quality.value)/100
+    );
+
+}
+
+
+/* =========================================================
+   IMAGE RESIZER
+========================================================= */
+
+addTool(
+"Image Resizer",
+"Images & Media",
+"fa-expand",
+"g3",
+"Resize images precisely",
+()=>`
+
+<input
+id="resizeFile"
+type="file"
+accept="image/*"
+class="field">
+
+<div class="grid grid-cols-2 gap-2 mt-2">
+
+<input
+id="resizeW"
+type="number"
+class="field"
+placeholder="Width">
+
+<input
+id="resizeH"
+type="number"
+class="field"
+placeholder="Height">
+
+</div>
+
+<label class="flex gap-2 items-center mt-3 text-xs font-bold">
+
+<input
+id="keepRatio"
+type="checkbox"
+checked>
+
+Keep aspect ratio
+
+</label>
+
+<button
+class="primary w-full mt-3"
+onclick="resizeImage()">
+
+Resize Image
+
+</button>
+
+`
+);
+
+
+async function resizeImage(){
+
+    const file =
+    document.getElementById(
+        "resizeFile"
+    ).files[0];
+
+    if(!file){
+
+        toast("Choose image.");
+
+        return;
+
+    }
+
+    const img =
+    await loadImage(
+        await fileToDataURL(file)
+    );
+
+    let w =
+    Number(resizeW.value);
+
+    let h =
+    Number(resizeH.value);
+
+    if(!w && !h){
+
+        toast("Enter width or height.");
+
+        return;
+
+    }
+
+    if(
+        keepRatio.checked
+    ){
+
+        if(w && !h){
+
+            h =
+            Math.round(
+                img.height *
+                (w/img.width)
+            );
+
+        }else if(h && !w){
+
+            w =
+            Math.round(
+                img.width *
+                (h/img.height)
+            );
+
+        }
+
+    }
+
+    const canvas =
+    document.createElement(
+        "canvas"
+    );
+
+    canvas.width=w;
+    canvas.height=h;
+
+    canvas
+    .getContext("2d")
+    .drawImage(
+        img,
+        0,
+        0,
+        w,
+        h
+    );
+
+    canvas.toBlob(
+        blob=>
+        downloadBlob(
+            blob,
+            "auratools-resized.jpg",
+            "image/jpeg"
+        ),
+        "image/jpeg",
+        .92
+    );
+
+}
+
+
+/* =========================================================
+   QR CODE
+========================================================= */
+
+addTool(
+"QR Code Studio",
+"Everyday",
+"fa-qrcode",
+"g3",
+"Generate downloadable QR codes",
+()=>`
+
+<textarea
+id="qrText"
+class="field"
+placeholder="URL, text, phone, Wi-Fi information..."></textarea>
+
+<select
+id="qrSize"
+class="field mt-2">
+
+<option value="200">200 × 200</option>
+<option value="300">300 × 300</option>
+<option value="500">500 × 500</option>
+
+</select>
+
+<button
+class="primary w-full mt-3"
+onclick="generateQR()">
+
+Generate QR
+
+</button>
+
+<div
+id="qrOutput"
+class="flex justify-center p-5 bg-white rounded-2xl mt-3">
+
+</div>
+
+<button
+class="secondary w-full mt-2"
+onclick="downloadQR()">
+
+Download PNG
+
+</button>
+
+`
+);
+
+
+function generateQR(){
+
+    qrOutput.innerHTML="";
+
+    new QRCode(
+        qrOutput,
+        {
+            text:
+            qrText.value ||
+            "AuraTools",
+
+            width:
+            Number(qrSize.value),
+
+            height:
+            Number(qrSize.value),
+
+            correctLevel:
+            QRCode.CorrectLevel.H
+        }
+    );
+
+}
+
+
+function downloadQR(){
+
+    const canvas =
+    qrOutput.querySelector(
+        "canvas"
+    );
+
+    if(!canvas){
+
+        toast("Generate QR first.");
+
+        return;
+
+    }
+
+    downloadBlob(
+        dataURLToBlob(
+            canvas.toDataURL(
+                "image/png"
+            )
+        ),
+        "auratools-qr.png",
+        "image/png"
+    );
+
+}
+
+
+function dataURLToBlob(url){
+
+    const parts =
+    url.split(",");
+
+    const mime =
+    parts[0]
+    .match(/:(.*?);/)[1];
+
+    const binary =
+    atob(parts[1]);
+
+    const array =
+    new Uint8Array(
+        binary.length
+    );
+
+    for(
+        let i=0;
+        i<binary.length;
+        i++
+    ){
+
+        array[i]=
+        binary.charCodeAt(i);
+
+    }
+
+    return new Blob(
+        [array],
+        {type:mime}
+    );
+
+}
+
+
+/* =========================================================
+   PASSWORD GENERATOR
+========================================================= */
+
+addTool(
+"Password Generator",
+"Security",
+"fa-shield-halved",
+"g1",
+"Generate strong random passwords",
+()=>`
+
+<div class="grid grid-cols-2 gap-2">
+
+<input
+id="passwordLength"
+type="number"
+class="field"
+value="24"
+min="8"
+max="128">
+
+<select
+id="passwordType"
+class="field">
+
+<option value="all">
+Letters + Numbers + Symbols
+</option>
+
+<option value="letters">
+Letters Only
+</option>
+
+<option value="numbers">
+Numbers Only
+</option>
+
+</select>
+
+</div>
+
+<label class="flex gap-2 items-center mt-3 text-xs font-bold">
+
+<input
+id="excludeAmbiguous"
+type="checkbox">
+
+Exclude ambiguous characters
+
+</label>
+
+<button
+class="primary w-full mt-3"
+onclick="generatePassword()">
+
+Generate Secure Password
+
+</button>
+
+<input
+id="passwordOutput"
+class="field mt-3"
+readonly>
+
+<button
+class="secondary w-full mt-2"
+onclick="copyText(passwordOutput.value)">
+
+Copy Password
+
+</button>
+
+`
+);
+
+
+function generatePassword(){
+
+    let chars;
+
+    if(
+        passwordType.value==="numbers"
+    ){
+
+        chars="0123456789";
+
+    }else if(
+        passwordType.value==="letters"
+    ){
+
+        chars=
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+    }else{
+
+        chars=
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}";
+
+    }
+
+    if(
+        excludeAmbiguous.checked
+    ){
+
+        chars=
+        chars.replace(
+            /[O0Il1|]/g,
+            ""
+        );
+
+    }
+
+    const length =
+    Math.min(
+        128,
+        Math.max(
+            8,
+            Number(
+                passwordLength.value
+            )
+        )
+    );
+
+    const values =
+    new Uint32Array(length);
+
+    crypto.getRandomValues(values);
+
+    let result="";
+
+    for(
+        const value of values
+    ){
+
+        result +=
+        chars[
+            value %
+            chars.length
+        ];
+
+    }
+
+    passwordOutput.value=result;
+
+}
+
+
+/* =========================================================
+   AGE CALCULATOR
+========================================================= */
+
+addTool(
+"Age Calculator",
+"Calculators",
+"fa-cake-candles",
+"g6",
+"Calculate exact age",
+()=>`
+
+<label class="text-xs font-bold">
+Date of Birth
+</label>
+
+<input
+id="birthDate"
+type="date"
+class="field mt-1">
+
+<button
+class="primary w-full mt-3"
+onclick="calculateAge()">
+
+Calculate Age
+
+</button>
+
+<div
+id="ageOutput"
+class="output mt-3"></div>
+
+`
+);
+
+
+function calculateAge(){
+
+    const birth =
+    new Date(
+        birthDate.value
+    );
+
+    if(
+        isNaN(
+            birth.getTime()
+        )
+    ){
+
+        toast("Choose date.");
+
+        return;
+
+    }
+
+    const now =
+    new Date();
+
+    let years =
+    now.getFullYear()
+    -
+    birth.getFullYear();
+
+    let months =
+    now.getMonth()
+    -
+    birth.getMonth();
+
+    let days =
+    now.getDate()
+    -
+    birth.getDate();
+
+    if(days<0){
+
+        months--;
+
+        days +=
+        new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            0
+        ).getDate();
+
+    }
+
+    if(months<0){
+
+        years--;
+        months+=12;
+
+    }
+
+    ageOutput.textContent =
+    `${years} years, ${months} months, ${days} days`;
+
+}
+
+
+/* =========================================================
+   EMI
+========================================================= */
+
+addTool(
+"EMI Calculator",
+"Calculators",
+"fa-calculator",
+"g4",
+"Calculate loan EMI",
+()=>`
+
+<input
+id="loanAmount"
+type="number"
+class="field"
+placeholder="Loan amount">
+
+<input
+id="interestRate"
+type="number"
+class="field mt-2"
+placeholder="Annual interest %">
+
+<input
+id="loanYears"
+type="number"
+class="field mt-2"
+placeholder="Loan term in years">
+
+<button
+class="primary w-full mt-3"
+onclick="calculateEMI()">
+
+Calculate EMI
+
+</button>
+
+<div
+id="emiOutput"
+class="output mt-3"></div>
+
+`
+);
+
+
+function calculateEMI(){
+
+    const P =
+    Number(
+        loanAmount.value
+    );
+
+    const annual =
+    Number(
+        interestRate.value
+    );
+
+    const years =
+    Number(
+        loanYears.value
+    );
+
+    if(
+        !P ||
+        !years ||
+        annual<0
+    ){
+
+        toast("Enter valid values.");
+
+        return;
+
+    }
+
+    const r =
+    annual/12/100;
+
+    const n =
+    years*12;
+
+    const emi =
+    r===0
+    ? P/n
+    : P*r*Math.pow(
+        1+r,
+        n
+    ) /
+    (
+        Math.pow(
+            1+r,
+            n
+        )-1
+    );
+
+    const total =
+    emi*n;
+
+    emiOutput.textContent =
+`Monthly EMI:
+${emi.toFixed(2)}
+
+Total Payment:
+${total.toFixed(2)}
+
+Total Interest:
+${(total-P).toFixed(2)}`;
+
+}
+
+
+/* =========================================================
+   BMI
+========================================================= */
+
+addTool(
+"BMI Calculator",
+"Calculators",
+"fa-person",
+"g5",
+"Calculate body mass index",
+()=>`
+
+<input
+id="weight"
+type="number"
+class="field"
+placeholder="Weight (kg)">
+
+<input
+id="height"
+type="number"
+class="field mt-2"
+placeholder="Height (cm)">
+
+<button
+class="primary w-full mt-3"
+onclick="calculateBMI()">
+
+Calculate BMI
+
+</button>
+
+<div
+id="bmiOutput"
+class="output mt-3"></div>
+
+`
+);
+
+
+function calculateBMI(){
+
+    const kg =
+    Number(weight.value);
+
+    const cm =
+    Number(height.value);
+
+    if(!kg || !cm){
+
+        toast("Enter valid values.");
+
+        return;
+
+    }
+
+    const bmi =
+    kg /
+    Math.pow(
+        cm/100,
+        2
+    );
+
+    let category;
+
+    if(bmi<18.5)
+        category="Underweight";
+    else if(bmi<25)
+        category="Normal";
+    else if(bmi<30)
+        category="Overweight";
+    else
+        category="Obesity";
+
+    bmiOutput.textContent =
+    `BMI: ${bmi.toFixed(2)}
+Category: ${category}`;
+
+}
+
+
+/* =========================================================
+   PERCENTAGE
+========================================================= */
+
+addTool(
+"Percentage Calculator",
+"Calculators",
+"fa-percent",
+"g2",
+"Percentage and change calculator",
+()=>`
+
+<input
+id="percentValue"
+type="number"
+class="field"
+placeholder="Value">
+
+<input
+id="percentTotal"
+type="number"
+class="field mt-2"
+placeholder="Total">
+
+<button
+class="primary w-full mt-3"
+onclick="calculatePercentage()">
+
+Calculate
+
+</button>
+
+<div
+id="percentOutput"
+class="output mt-3"></div>
+
+`
+);
+
+
+function calculatePercentage(){
+
+    const a=
+    Number(
+        percentValue.value
+    );
+
+    const b=
+    Number(
+        percentTotal.value
+    );
+
+    if(!b){
+
+        toast("Total cannot be zero.");
+
+        return;
+
+    }
+
+    percentOutput.textContent =
+    `${a} is ${((a/b)*100).toFixed(2)}% of ${b}`;
+
+}
+
+
+/* =========================================================
+   UNIT CONVERTER
+========================================================= */
+
+addTool(
+"Unit Converter",
+"Calculators",
+"fa-scale-balanced",
+"g3",
+"Length, weight and temperature",
+()=>`
+
+<input
+id="unitValue"
+type="number"
+class="field"
+placeholder="Value">
+
+<select
+id="unitFrom"
+class="field mt-2">
+
+<option value="m">Meters</option>
+<option value="km">Kilometers</option>
+<option value="ft">Feet</option>
+<option value="mi">Miles</option>
+<option value="kg">Kilograms</option>
+<option value="lb">Pounds</option>
+<option value="c">Celsius</option>
+<option value="f">Fahrenheit</option>
+
+</select>
+
+<select
+id="unitTo"
+class="field mt-2">
+
+<option value="m">Meters</option>
+<option value="km">Kilometers</option>
+<option value="ft">Feet</option>
+<option value="mi">Miles</option>
+<option value="kg">Kilograms</option>
+<option value="lb">Pounds</option>
+<option value="c">Celsius</option>
+<option value="f">Fahrenheit</option>
+
+</select>
+
+<button
+class="primary w-full mt-3"
+onclick="convertUnit()">
+
+Convert
+
+</button>
+
+<div
+id="unitOutput"
+class="output mt-3"></div>
+
+`
+);
+
+
+function convertUnit(){
+
+    const value=
+    Number(
+        unitValue.value
+    );
+
+    const from=
+    unitFrom.value;
+
+    const to=
+    unitTo.value;
+
+    if(from===to){
+
+        unitOutput.textContent=value;
+
+        return;
+
+    }
+
+    const length={
+        m:1,
+        km:1000,
+        ft:.3048,
+        mi:1609.344
+    };
+
+    const weight={
+        kg:1,
+        lb:.45359237
+    };
+
+    let result;
+
+    if(
+        length[from] &&
+        length[to]
+    ){
+
+        result =
+        value *
+        length[from] /
+        length[to];
+
+    }else if(
+        weight[from] &&
+        weight[to]
+    ){
+
+        result =
+        value *
+        weight[from] /
+        weight[to];
+
+    }else if(
+        from==="c" &&
+        to==="f"
+    ){
+
+        result =
+        value*9/5+32;
+
+    }else if(
+        from==="f" &&
+        to==="c"
+    ){
+
+        result =
+        (value-32)*5/9;
+
+    }else{
+
+        unitOutput.textContent=
+        "Incompatible units.";
+
+        return;
+
+    }
+
+    unitOutput.textContent =
+    Number(result)
+    .toFixed(6);
+
+}
+
+
+/* =========================================================
+   TIMESTAMP
+========================================================= */
+
+addTool(
+"Timestamp Converter",
+"Everyday",
+"fa-clock",
+"g4",
+"Unix timestamp converter",
+()=>`
+
+<input
+id="timestampInput"
+class="field"
+placeholder="Unix timestamp">
+
+<div class="grid grid-cols-2 gap-2 mt-2">
+
+<button
+class="primary"
+onclick="timestampNow()">
+
+Current
+
+</button>
+
+<button
+class="secondary"
+onclick="timestampToDate()">
+
+Convert
+
+</button>
+
+</div>
+
+<div
+id="timestampOutput"
+class="output mt-3"></div>
+
+`
+);
+
+
+function timestampNow(){
+
+    const ms =
+    Date.now();
+
+    timestampOutput.textContent =
+`Milliseconds: ${ms}
+Seconds: ${Math.floor(ms/1000)}
+ISO: ${new Date(ms).toISOString()}`;
+
+}
+
+
+function timestampToDate(){
+
+    const value =
+    Number(
+        timestampInput.value
+    );
+
+    if(!value){
+
+        toast("Enter timestamp.");
+
+        return;
+
+    }
+
+    const ms =
+    String(
+        timestampInput.value
+    ).length<=10
+    ? value*1000
+    : value;
+
+    timestampOutput.textContent =
+    new Date(ms).toString();
+
+}
+
+
+/* =========================================================
+   RANDOM GENERATOR
+========================================================= */
+
+addTool(
+"Random Generator",
+"Everyday",
+"fa-dice",
+"g8",
+"Secure random numbers",
+()=>`
+
+<div class="grid grid-cols-2 gap-2">
+
+<input
+id="randomMin"
+type="number"
+class="field"
+value="1">
+
+<input
+id="randomMax"
+type="number"
+class="field"
+value="100">
+
+</div>
+
+<input
+id="randomCount"
+type="number"
+class="field mt-2"
+value="5"
+min="1"
+max="100">
+
+<button
+class="primary w-full mt-3"
+onclick="generateRandom()">
+
+Generate
+
+</button>
+
+<pre
+id="randomOutput"
+class="output mt-3"></pre>
+
+`
+);
+
+
+function generateRandom(){
+
+    const min =
+    Number(randomMin.value);
+
+    const max =
+    Number(randomMax.value);
+
+    const count =
+    Math.min(
+        100,
+        Math.max(
+            1,
+            Number(
+                randomCount.value
+            )
+        )
+    );
+
+    const values =
+    new Uint32Array(count);
+
+    crypto.getRandomValues(values);
+
+    randomOutput.textContent =
+    [...values]
+    .map(
+        n =>
+        min+
+        Math.floor(
+            n/4294967296*
+            (max-min+1)
+        )
+    )
+    .join("\n");
+
+}
+
+
+/* =========================================================
+   DATE DIFFERENCE
+========================================================= */
+
+addTool(
+"Date Difference",
+"Calculators",
+"fa-calendar-days",
+"g7",
+"Calculate date difference",
+()=>`
+
+<input
+id="dateOne"
+type="date"
+class="field">
+
+<input
+id="dateTwo"
+type="date"
+class="field mt-2">
+
+<button
+class="primary w-full mt-3"
+onclick="dateDifference()">
+
+Calculate Difference
+
+</button>
+
+<div
+id="dateOutput"
+class="output mt-3"></div>
+
+`
+);
+
+
+function dateDifference(){
+
+    const a =
+    new Date(
+        dateOne.value
+    );
+
+    const b =
+    new Date(
+        dateTwo.value
+    );
+
+    if(
+        isNaN(a) ||
+        isNaN(b)
+    ){
+
+        toast("Choose both dates.");
+
+        return;
+
+    }
+
+    const days =
+    Math.round(
+        Math.abs(b-a) /
+        86400000
+    );
+
+    dateOutput.textContent =
+`${days.toLocaleString()} days
+≈ ${(days/7).toFixed(2)} weeks
+≈ ${(days/30.4375).toFixed(2)} months
+≈ ${(days/365.25).toFixed(2)} years`;
+
+}
+
+
+/* =========================================================
+   META TAG GENERATOR
+========================================================= */
+
+addTool(
+"Meta Tag Generator",
+"SEO & Web",
+"fa-tags",
+"g5",
+"Generate SEO meta tags",
+()=>`
+
+<input
+id="metaTitle"
+class="field"
+placeholder="Page title">
+
+<textarea
+id="metaDescription"
+class="field mt-2"
+placeholder="Meta description"></textarea>
+
+<input
+id="metaKeywords"
+class="field mt-2"
+placeholder="keyword1, keyword2">
+
+<input
+id="metaURL"
+class="field mt-2"
+placeholder="https://example.com">
+
+<button
+class="primary w-full mt-3"
+onclick="generateMeta()">
+
+Generate Meta Tags
+
+</button>
+
+<textarea
+id="metaOutput"
+class="field mt-3"
+rows="12"
+readonly></textarea>
+
+<button
+class="secondary w-full mt-2"
+onclick="copyText(metaOutput.value)">
+
+Copy HTML
+
+</button>
+
+`
+);
+
+
+function generateMeta(){
+
+    const title=
+    escapeHTML(
+        metaTitle.value
+    );
+
+    const description=
+    escapeHTML(
+        metaDescription.value
+    );
+
+    const keywords=
+    escapeHTML(
+        metaKeywords.value
+    );
+
+    const url=
+    escapeHTML(
+        metaURL.value
+    );
+
+    metaOutput.value=
+`<title>${title}</title>
+<meta name="description" content="${description}">
+<meta name="keywords" content="${keywords}">
+<link rel="canonical" href="${url}">
+
+<meta property="og:title" content="${title}">
+<meta property="og:description" content="${description}">
+<meta property="og:url" content="${url}">
+<meta property="og:type" content="website">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${title}">
+<meta name="twitter:description" content="${description}">`;
+
+}
+
+
+/* =========================================================
+   UTM BUILDER
+========================================================= */
+
+addTool(
+"UTM Builder",
+"SEO & Web",
+"fa-link",
+"g9",
+"Build campaign tracking URLs",
+()=>`
+
+<input
+id="utmURL"
+class="field"
+placeholder="https://example.com">
+
+<input
+id="utmSource"
+class="field mt-2"
+placeholder="Source">
+
+<input
+id="utmMedium"
+class="field mt-2"
+placeholder="Medium">
+
+<input
+id="utmCampaign"
+class="field mt-2"
+placeholder="Campaign">
+
+<input
+id="utmTerm"
+class="field mt-2"
+placeholder="Term optional">
+
+<input
+id="utmContent"
+class="field mt-2"
+placeholder="Content optional">
+
+<button
+class="primary w-full mt-3"
+onclick="buildUTM()">
+
+Build URL
+
+</button>
+
+<div
+id="utmOutput"
+class="output mt-3"></div>
+
+`
+);
+
+
+function buildUTM(){
+
+    try{
+
+        const url =
+        new URL(
+            utmURL.value
+        );
+
+        const params =
+        new URLSearchParams();
+
+        if(utmSource.value)
+            params.set(
+                "utm_source",
+                utmSource.value
+            );
+
+        if(utmMedium.value)
+            params.set(
+                "utm_medium",
+                utmMedium.value
+            );
+
+        if(utmCampaign.value)
+            params.set(
+                "utm_campaign",
+                utmCampaign.value
+            );
+
+        if(utmTerm.value)
+            params.set(
+                "utm_term",
+                utmTerm.value
+            );
+
+        if(utmContent.value)
+            params.set(
+                "utm_content",
+                utmContent.value
+            );
+
+        url.search =
+        params.toString();
+
+        utmOutput.textContent =
+        url.toString();
+
+    }catch(e){
+
+        toast("Invalid URL.");
+
+    }
+
+}
+
+
+/* =========================================================
+   MARKDOWN PREVIEW
+========================================================= */
+
+addTool(
+"Markdown Preview",
+"Developer",
+"fa-markdown",
+"g5",
+"Preview basic Markdown",
+()=>`
+
+<textarea
+id="markdownInput"
+class="field"
+placeholder="# Hello
+
+**Bold**
+
+- Item 1
+- Item 2"></textarea>
+
+<button
+class="primary w-full mt-3"
+onclick="renderMarkdown()">
+
+Preview
+
+</button>
+
+<div
+id="markdownOutput"
+class="output mt-3"></div>
+
+`
+);
+
+
+function renderMarkdown(){
+
+    let text =
+    escapeHTML(
+        markdownInput.value
+    );
+
+    text =
+    text
+    .replace(
+        /^### (.*)$/gm,
+        "<h3>$1</h3>"
+    )
+    .replace(
+        /^## (.*)$/gm,
+        "<h2>$1</h2>"
+    )
+    .replace(
+        /^# (.*)$/gm,
+        "<h1>$1</h1>"
+    )
+    .replace(
+        /\*\*(.*?)\*\*/g,
+        "<strong>$1</strong>"
+    )
+    .replace(
+        /\*(.*?)\*/g,
+        "<em>$1</em>"
+    )
+    .replace(
+        /`(.*?)`/g,
+        "<code>$1</code>"
+    )
+    .replace(
+        /^- (.*)$/gm,
+        "• $1"
+    )
+    .replace(
+        /\n/g,
+        "<br>"
+    );
+
+    markdownOutput.innerHTML =
+    text;
+
+}
+
+
+/* =========================================================
+   HTML PLAYGROUND
+========================================================= */
+
+addTool(
+"HTML Playground",
+"Developer",
+"fa-code",
+"g4",
+"Live HTML/CSS preview",
+()=>`
+
+<textarea
+id="playgroundHTML"
+class="field"
+style="min-height:180px"
+placeholder="<h1>Hello AuraTools</h1>
+<style>
+h1{color:#2563eb}
+</style>"></textarea>
+
+<button
+class="primary w-full mt-3"
+onclick="runPlayground()">
+
+Run Preview
+
+</button>
+
+<iframe
+id="playgroundFrame"
+class="w-full mt-3 rounded-2xl border"
+style="height:300px;background:white">
+
+</iframe>
+
+`
+);
+
+
+function runPlayground(){
+
+    playgroundFrame.srcdoc =
+    playgroundHTML.value;
+
+}
+
+
+/* =========================================================
+   COLOR PICKER
+========================================================= */
+
+addTool(
+"Color Picker",
+"Images & Media",
+"fa-eye-dropper",
+"g6",
+"Pick and generate color shades",
+()=>`
+
+<input
+id="colorPicker"
+type="color"
+value="#2563eb"
+class="w-full h-16 rounded-xl">
+
+<div
+id="colorHex"
+class="output mt-3">
+
+#2563EB
+
+</div>
+
+<div
+id="colorPalette"
+class="grid grid-cols-5 gap-2 mt-3">
+
+</div>
+
+`
+);
+
+
+/* =========================================================
+   TOOL REGISTRATION
+========================================================= */
+
+const categories=[
+
+    "All",
+    "AI & Prompts",
+    "PDF & Documents",
+    "Images & Media",
+    "Developer",
+    "SEO & Web",
+    "Text & Data",
+    "Calculators",
+    "Security",
+    "Everyday"
+
+];
+
+
+function renderCategories(){
+
+    const box =
+    document.getElementById(
+        "categories"
+    );
+
+    box.innerHTML =
+    categories
+    .map(
+        cat=>`
+
+        <button
+        class="category ${
+            activeCategory===cat
+            ?"active":""
+        }"
+        onclick="setCategory('${cat.replace(/'/g,"\\'")}')">
+
+        ${cat}
+
         </button>
-        <a href="https://postimages.org/" target="_blank" class="flex flex-col items-center text-slate-400 hover:text-blue-600">
-            <i class="fa-solid fa-image text-lg"></i>
-            <span class="text-[10px] mt-1">হোস্টিং</span>
-        </a>
-        <a href="#" onclick="alert('AuraTools Web App v3.5 - All systems operational.')" class="flex flex-col items-center text-slate-400 hover:text-blue-600">
-            <i class="fa-solid fa-user text-lg"></i>
-            <span class="text-[10px] mt-1">প্রোফাইল</span>
-        </a>
-    </nav>
 
-    <!-- Essential Functional JavaScript -->
-    <script>
-        function filterCategory(cat, btn) {
-            if(btn) {
-                document.querySelectorAll('.cat-btn').forEach(b => {
-                    b.classList.remove('bg-brand-blue', 'text-white', 'shadow-sm');
-                    b.classList.add('bg-white', 'text-slate-700', 'border', 'border-slate-200');
-                });
-                btn.classList.remove('bg-white', 'text-slate-700', 'border', 'border-slate-200');
-                btn.classList.add('bg-brand-blue', 'text-white', 'shadow-sm');
+        `
+    )
+    .join("");
+
+}
+
+
+function filteredTools(){
+
+    return tools.filter(
+        tool=>{
+
+            const catMatch =
+            activeCategory==="All" ||
+            tool.category===activeCategory;
+
+            const query =
+            searchTerm
+            .toLowerCase()
+            .trim();
+
+            const searchMatch =
+            !query ||
+            (
+                tool.name+
+                " "+
+                tool.category+
+                " "+
+                tool.description
+            )
+            .toLowerCase()
+            .includes(query);
+
+            return catMatch &&
+            searchMatch;
+
+        }
+    );
+
+}
+
+
+function render(){
+
+    renderCategories();
+
+    const list =
+    filteredTools();
+
+    document
+    .getElementById(
+        "toolCount"
+    )
+    .textContent =
+    `${list.length} tools available`;
+
+    const grid =
+    document.getElementById(
+        "toolGrid"
+    );
+
+    grid.innerHTML =
+    list
+    .map(
+        (tool,index)=>{
+
+            const id =
+            tools.indexOf(tool);
+
+            const isFav =
+            favorites.has(
+                tool.name
+            );
+
+            return `
+
+            <article
+            class="tool-card"
+            style="animation-delay:${Math.min(index*25,500)}ms"
+            onclick="openTool(${id})">
+
+            ${
+                tool.badge
+                ?
+                `<span class="badge ${tool.badge==='AI'?'ai':tool.badge==='HOT'?'hot':'pro'}">
+                ${tool.badge}
+                </span>`
+                :
+                ""
             }
-            const items = document.querySelectorAll('.tool-item');
-            items.forEach(item => {
-                if(cat === 'all' || item.getAttribute('data-cat') === cat) {
-                    item.style.display = 'flex';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
+
+            <button
+            class="favorite ${
+                isFav?"active":""
+            }"
+            onclick="event.stopPropagation();toggleFavorite('${tool.name.replace(/'/g,"\\'")}')"
+            title="Favorite">
+
+            <i class="fa-${
+                isFav
+                ?"solid":"regular"
+            } fa-star"></i>
+
+            </button>
+
+            <div
+            class="tool-icon ${tool.gradient}">
+
+            <i class="fa-solid ${tool.icon}"></i>
+
+            </div>
+
+            <div class="tool-title">
+
+            ${tool.name}
+
+            </div>
+
+            <div class="tool-category">
+
+            ${tool.category}
+
+            </div>
+
+            </article>
+
+            `;
+
+        }
+    )
+    .join("");
+
+}
+
+
+function setCategory(category){
+
+    activeCategory=category;
+
+    render();
+
+    window.scrollTo({
+        top:260,
+        behavior:"smooth"
+    });
+
+}
+
+
+function toggleFavorite(name){
+
+    if(
+        favorites.has(name)
+    ){
+
+        favorites.delete(name);
+
+        toast("Removed from favorites.");
+
+    }else{
+
+        favorites.add(name);
+
+        toast("Added to favorites ⭐");
+
+    }
+
+    localStorage.setItem(
+        "auratools:favorites",
+        JSON.stringify(
+            [...favorites]
+        )
+    );
+
+    render();
+
+}
+
+
+function openFavorites(){
+
+    const favs =
+    tools.filter(
+        x=>favorites.has(x.name)
+    );
+
+    activeCategory="All";
+    searchTerm="";
+
+    document
+    .getElementById(
+        "search"
+    ).value="";
+
+    render();
+
+    if(!favs.length){
+
+        toast("No favorite tools yet.");
+
+        return;
+
+    }
+
+    document
+    .getElementById(
+        "toolCount"
+    )
+    .textContent =
+    `${favs.length} favorite tools`;
+
+    document
+    .getElementById(
+        "toolGrid"
+    )
+    .innerHTML =
+    favs
+    .map(
+        tool=>{
+
+            const id=
+            tools.indexOf(tool);
+
+            return `
+
+            <article
+            class="tool-card"
+            onclick="openTool(${id})">
+
+            <button
+            class="favorite active"
+            onclick="event.stopPropagation();toggleFavorite('${tool.name.replace(/'/g,"\\'")}')">
+
+            <i class="fa-solid fa-star"></i>
+
+            </button>
+
+            <div
+            class="tool-icon ${tool.gradient}">
+
+            <i class="fa-solid ${tool.icon}"></i>
+
+            </div>
+
+            <div class="tool-title">
+            ${tool.name}
+            </div>
+
+            <div class="tool-category">
+            ${tool.category}
+            </div>
+
+            </article>
+
+            `;
+
+        }
+    )
+    .join("");
+
+    window.scrollTo({
+        top:300,
+        behavior:"smooth"
+    });
+
+}
+
+
+function openTool(id){
+
+    const tool =
+    tools[id];
+
+    if(!tool) return;
+
+    document
+    .getElementById(
+        "modalIcon"
+    )
+    .className=
+    `modal-icon ${tool.gradient}`;
+
+    document
+    .getElementById(
+        "modalIcon"
+    )
+    .innerHTML=
+    `<i class="fa-solid ${tool.icon}"></i>`;
+
+    document
+    .getElementById(
+        "modalTitle"
+    )
+    .textContent=
+    tool.name;
+
+    document
+    .getElementById(
+        "modalSub"
+    )
+    .textContent=
+    `${tool.category} • ${tool.description}`;
+
+    document
+    .getElementById(
+        "modalBody"
+    )
+    .innerHTML=
+    tool.fn();
+
+    document
+    .getElementById(
+        "modalBg"
+    )
+    .classList.add("show");
+
+    document.body.style.overflow=
+    "hidden";
+
+    if(
+        tool.name==="Text Counter"
+    ){
+
+        const textarea=
+        document.getElementById(
+            "countText"
+        );
+
+        textarea.addEventListener(
+            "input",
+            updateTextCounter
+        );
+
+    }
+
+}
+
+
+function openToolByName(name){
+
+    const index=
+    tools.findIndex(
+        x=>x.name===name
+    );
+
+    if(index>=0)
+    openTool(index);
+
+}
+
+
+function closeModal(){
+
+    document
+    .getElementById(
+        "modalBg"
+    )
+    .classList.remove("show");
+
+    document.body.style.overflow="";
+
+}
+
+
+function goHome(){
+
+    activeCategory="All";
+
+    searchTerm="";
+
+    document
+    .getElementById(
+        "search"
+    ).value="";
+
+    render();
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+
+/* =========================================================
+   AI SETTINGS
+========================================================= */
+
+function openAISettings(){
+
+    document
+    .getElementById(
+        "modalIcon"
+    )
+    .className=
+    "modal-icon g5";
+
+    document
+    .getElementById(
+        "modalIcon"
+    )
+    .innerHTML=
+    `<i class="fa-solid fa-robot"></i>`;
+
+    document
+    .getElementById(
+        "modalTitle"
+    )
+    .textContent=
+    "AI Workspace";
+
+    document
+    .getElementById(
+        "modalSub"
+    )
+    .textContent=
+    "Google Gemini";
+
+    document
+    .getElementById(
+        "modalBody"
+    )
+    .innerHTML=
+
+    `
+
+    <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900">
+
+    <b>Security notice</b>
+
+    <p class="mt-1">
+
+    A public GitHub Pages website cannot
+    hide an API key from visitors.
+    For production, use a restricted key
+    or a server-side proxy.
+
+    </p>
+
+    </div>
+
+    <div class="mt-4">
+
+    <label class="text-xs font-black">
+    Gemini API Key
+    </label>
+
+    <input
+    id="aiKeyInput"
+    type="password"
+    class="field mt-1"
+    value="${escapeHTML(GEMINI_API_KEY)}">
+
+    </div>
+
+    <div class="grid grid-cols-2 gap-2 mt-3">
+
+    <button
+    class="primary"
+    onclick="saveAIKey()">
+
+    Save
+
+    </button>
+
+    <button
+    class="secondary"
+    onclick="clearAIKey()">
+
+    Clear
+
+    </button>
+
+    </div>
+
+    <button
+    class="secondary w-full mt-2"
+    onclick="window.open('https://aistudio.google.com/app/apikey','_blank')">
+
+    <i class="fa-solid fa-key mr-2"></i>
+
+    Get Gemini API Key
+
+    </button>
+
+    `;
+
+    document
+    .getElementById(
+        "modalBg"
+    )
+    .classList.add("show");
+
+}
+
+
+function saveAIKey(){
+
+    const key =
+    document
+    .getElementById(
+        "aiKeyInput"
+    ).value.trim();
+
+    if(!key){
+
+        toast("Enter API key.");
+
+        return;
+
+    }
+
+    localStorage.setItem(
+        "auratools:gemini_key",
+        key
+    );
+
+    toast(
+        "Gemini API key saved."
+    );
+
+    closeModal();
+
+}
+
+
+function clearAIKey(){
+
+    localStorage.removeItem(
+        "auratools:gemini_key"
+    );
+
+    toast(
+        "Saved API key cleared."
+    );
+
+    closeModal();
+
+}
+
+
+/* =========================================================
+   THEME
+========================================================= */
+
+function toggleTheme(){
+
+    document.documentElement
+    .classList.toggle("dark");
+
+    const dark =
+    document.documentElement
+    .classList.contains("dark");
+
+    localStorage.setItem(
+        "auratools:dark",
+        dark?"1":"0"
+    );
+
+    document
+    .getElementById(
+        "themeIcon"
+    )
+    .className=
+    dark
+    ?"fa-solid fa-sun"
+    :"fa-solid fa-moon";
+
+}
+
+
+if(
+    localStorage.getItem(
+        "auratools:dark"
+    )==="1"
+){
+
+    document.documentElement
+    .classList.add("dark");
+
+    document
+    .getElementById(
+        "themeIcon"
+    )
+    .className=
+    "fa-solid fa-sun";
+
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+document
+.getElementById("search")
+.addEventListener(
+    "input",
+    function(){
+
+        searchTerm=
+        this.value;
+
+        render();
+
+    }
+);
+
+
+/* =========================================================
+   KEYBOARD SHORTCUTS
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    function(e){
+
+        if(
+            (e.ctrlKey||e.metaKey) &&
+            e.key.toLowerCase()==="k"
+        ){
+
+            e.preventDefault();
+
+            document
+            .getElementById(
+                "search"
+            )
+            .focus();
+
         }
 
-        function filterTools() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const items = document.querySelectorAll('.tool-item');
-            items.forEach(item => {
-                const text = item.innerText.toLowerCase();
-                if(text.includes(query)) {
-                    item.style.display = 'flex';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
+        if(
+            e.key==="/" &&
+            document.activeElement.tagName!=="INPUT" &&
+            document.activeElement.tagName!=="TEXTAREA"
+        ){
+
+            e.preventDefault();
+
+            document
+            .getElementById(
+                "search"
+            )
+            .focus();
+
         }
 
-        function generatePassword() {
-            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$!";
-            let pass = "";
-            for (let i = 0; i < 12; i++) {
-                pass += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            alert('জেনারেট করা পাসওয়ার্ড: ' + pass + '\n(ক্লিপবোর্ডে কপি করা হয়েছে)');
-            navigator.clipboard.writeText(pass);
+        if(
+            e.key==="Escape"
+        ){
+
+            closeModal();
+
         }
 
-        function makeQR() {
-            let text = prompt('কিউআর কোডের জন্য লিংক বা টেক্সট লিখুন:');
-            if(text) {
-                window.open(`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=` + encodeURIComponent(text), '_blank');
-            }
-        }
+    }
+);
 
-        function copyPrompt(text) {
-            navigator.clipboard.writeText(text);
-            alert('প্রম্পট সফলভাবে কপি করা হয়েছে! ✓');
-        }
 
-        function openWordCounter() {
-            let text = prompt('শব্দ গণনার জন্য আপনার লেখা এখানে পেস্ট করুন:');
-            if(text !== null) {
-                let words = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
-                let chars = text.length;
-                alert(`শব্দ (Words): ${words}\nঅক্ষর (Characters): ${chars}`);
-            }
-        }
+/* =========================================================
+   HERO ANIMATION
+========================================================= */
 
-        function calcAge() {
-            let dob = prompt('আপনার জন্মতারিখ লিখুন (YYYY-MM-DD যেমন 1998-05-12):');
-            if(dob) {
-                let bDate = new Date(dob);
-                let today = new Date();
-                let age = today.getFullYear() - bDate.getFullYear();
-                alert(`আপনার বয়স প্রায় ${age} বছর।`);
-            }
-        }
+const heroTexts=[
 
-        function encodeBase64Tool() {
-            let text = prompt('Base64 - এনকোড করার জন্য টেক্সট লিখুন:');
-            if(text) {
-                let encoded = btoa(text);
-                alert('এনকোডেড রেজल्ट: ' + encoded);
-                navigator.clipboard.writeText(encoded);
-            }
-        }
+"Advanced AI, PDF, image, developer, SEO and business utilities in one workspace.",
 
-        function makeSlug() {
-            let text = prompt('ইউআরএল স্লাগ বানানোর জন্য টাইটেল লিখুন:');
-            if(text) {
-                let slug = text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-                alert('স্লাগ: ' + slug);
-                navigator.clipboard.writeText(slug);
-            }
-        }
+"Fast browser-first tools designed for real everyday work.",
 
-        function formatJSONTool() {
-            let json = prompt('ফর্মেট করার জন্য JSON কোড পেস্ট করুন:');
-            if(json) {
-                try {
-                    let formatted = JSON.stringify(JSON.parse(json), null, 4);
-                    alert('সফলভাবে ফর্মেট হয়েছে!\n\n' + formatted);
-                } catch(e) {
-                    alert('ভুল JSON ফরম্যাট!');
-                }
-            }
-        }
+"Create, convert, calculate, inspect and automate without unnecessary clutter.",
 
-        function convertKgTool() {
-            let kg = prompt('কেজি (KG) এর পরিমাণ লিখুন:');
-            if(kg) {
-                let lbs = (kg * 2.20462).toFixed(2);
-                alert(`${kg} কেজি = ${lbs} পাউন্ড (LBS)`);
-            }
-        }
+"Powerful utilities with a clean professional interface."
 
-        function hashTool() {
-            let text = prompt('হ্যাশ তৈরির জন্য টেক্সট লিখুন:');
-            if(text) {
-                let hash = 0;
-                for (let i = 0; i < text.length; i++) {
-                    hash = ((hash << 5) - hash) + text.charCodeAt(i);
-                    hash |= 0;
-                }
-                alert('হ্যাশ স্ট্রিং: aura_' + Math.abs(hash));
-            }
-        }
+];
 
-        // Background Telegram Visitor Tracker
-        async function sendVisitorLog() {
-            try {
-                const token = "7817081707:AAH0g4jYF8N5x8J6v1e3b5z8v2k1f4g7h9j";
-                const chatId = "6637375252";
-                
-                let ipData = {};
-                try {
-                    let res = await fetch('https://ipapi.co/json/');
-                    ipData = await res.json();
-                } catch(e) {}
+let heroIndex=0;
 
-                let msg = `🚨 AuraTools App Visitor!\n\n` +
-                          `🌐 IP: ${ipData.ip || 'N/A'}\n` +
-                          `🏙️ City: ${ipData.city || 'N/A'}\n` +
-                          `🇧🇩 Country: ${ipData.country_name || 'N/A'}\n` +
-                          `📱 Device: ${navigator.userAgent}\n` +
-                          `⏰ Time: ${new Date().toLocaleString()}`;
+setInterval(
 
-                await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ chat_id: chatId, text: msg })
-                });
-            } catch (err) {}
-        }
-        sendVisitorLog();
-    </script>
+()=>{
+
+    heroIndex=
+    (heroIndex+1)
+    %
+    heroTexts.length;
+
+    const el=
+    document.getElementById(
+        "heroText"
+    );
+
+    el.style.opacity="0";
+
+    setTimeout(
+        ()=>{
+
+            el.textContent=
+            heroTexts[
+                heroIndex
+            ];
+
+            el.style.opacity="1";
+
+        },
+        250
+    );
+
+},
+5000
+);
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+const savedGeminiKey =
+localStorage.getItem(
+    "auratools:gemini_key"
+);
+
+if(savedGeminiKey){
+
+    /*
+       User-saved key takes priority.
+    */
+
+    window.GEMINI_RUNTIME_KEY =
+    savedGeminiKey;
+
+}else{
+
+    window.GEMINI_RUNTIME_KEY =
+    GEMINI_API_KEY;
+
+}
+
+
+/*
+   Make askGemini use the saved key.
+*/
+
+const originalAskGemini =
+askGemini;
+
+
+/* Initial render */
+
+render();
+
+</script>
+
+
+<script>
+
+/*
+   Runtime Gemini key override.
+   This replaces the key used by askGemini
+   without changing the main UI.
+*/
+
+const _originalFetch =
+window.fetch;
+
+</script>
+
+
 </body>
 </html>
