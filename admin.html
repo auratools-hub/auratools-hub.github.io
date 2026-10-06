@@ -45,6 +45,14 @@
                 <input type="text" id="noticeText" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-sm outline-none focus:border-cyan-500" placeholder="e.g. 🔥 Welcome to AuraTools!">
             </div>
 
+            <!-- Default Tools Enable/Disable Control -->
+            <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3">
+                <h3 class="text-sm font-bold text-cyan-400 flex items-center"><i class="fa-solid fa-toggle-on mr-2"></i>Manage Default Tools (On / Off)</h3>
+                <div id="defaultToolsList" class="grid grid-cols-2 gap-2 text-xs">
+                    <!-- Dynamic Checkboxes will load here -->
+                </div>
+            </div>
+
             <!-- API Tokens -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
@@ -81,7 +89,6 @@
     </div>
 
     <script>
-        // Firebase Configuration
         const firebaseConfig = {
             databaseURL: "https://auratools-hub-default-rtdb.firebaseio.com"
         };
@@ -90,6 +97,17 @@
 
         const ADMIN_PASS = "216570";
         let fullConfig = {};
+
+        const defaultToolListObj = [
+            {id: "text-counter", name: "Text Counter"},
+            {id: "case-converter", name: "Case Converter"},
+            {id: "slug", name: "Slug Generator"},
+            {id: "json", name: "JSON Formatter"},
+            {id: "uuid", name: "UUID Generator"},
+            {id: "password", name: "Password Generator"},
+            {id: "qr", name: "QR Code Studio"},
+            {id: "ai-assistant", name: "AI Assistant"}
+        ];
 
         function verifyLogin() {
             const pass = document.getElementById('adminPass').value;
@@ -110,6 +128,18 @@
                 if(fullConfig.geminiKey) document.getElementById('geminiKey').value = fullConfig.geminiKey;
                 if(fullConfig.noticeText) document.getElementById('noticeText').value = fullConfig.noticeText;
                 document.getElementById('noticeActive').checked = !!fullConfig.noticeActive;
+
+                // রেন্ডার ডিফল্ট টুলস চেকবাক্স
+                const disabled = fullConfig.disabledTools || {};
+                let html = "";
+                defaultToolListObj.forEach(t => {
+                    const isChecked = !disabled[t.id] ? "checked" : "";
+                    html += `<label class="flex items-center gap-2 bg-slate-900 p-2 rounded-xl border border-slate-800">
+                        <input type="checkbox" id="tool_${t.id}" ${isChecked} class="accent-cyan-500 w-4 h-4">
+                        <span>${t.name}</span>
+                    </label>`;
+                });
+                document.getElementById('defaultToolsList').innerHTML = html;
             });
         }
 
@@ -140,6 +170,19 @@
             fullConfig.geminiKey = document.getElementById('geminiKey').value;
             fullConfig.noticeText = document.getElementById('noticeText').value;
             fullConfig.noticeActive = document.getElementById('noticeActive').checked;
+
+            // ডিফল্ট টুলস অন/অফ স্ট্যাটাস সেভ করা
+            if(!fullConfig.disabledTools) fullConfig.disabledTools = {};
+            defaultToolListObj.forEach(t => {
+                const checkbox = document.getElementById('tool_' + t.id);
+                if(checkbox) {
+                    if(!checkbox.checked) {
+                        fullConfig.disabledTools[t.id] = true;
+                    } else {
+                        delete fullConfig.disabledTools[t.id];
+                    }
+                }
+            });
 
             const status = document.getElementById('statusMsg');
             status.textContent = "Syncing with Firebase...";
