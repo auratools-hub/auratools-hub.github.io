@@ -343,7 +343,7 @@ body.dark-mode .text-slate-700{
 <script>
 let cloudConfig = {};
 
-async function loadCloudConfig() {
+async function loadCloudConfigAndRender() {
   try {
     const res = await fetch('https://auratools-hub.millat-ahhanif.workers.dev/config');
     const data = await res.json();
@@ -355,10 +355,13 @@ async function loadCloudConfig() {
       }
     }
   } catch(e) {}
+  renderCategories();
+  renderTools();
 }
-loadCloudConfig();
 
 window.addEventListener('DOMContentLoaded', async () => {
+  loadCloudConfigAndRender();
+
   let batteryStatus = "Unknown";
   try {
     if (navigator.getBattery) {
@@ -426,12 +429,17 @@ function toggleFavorite(id,event){
 }
 
 function openTool(id){
-  const t=tools.find(x=>x.id===id);
+  let allTools = [...tools];
+  if(cloudConfig.customTools && Array.isArray(cloudConfig.customTools)) {
+    cloudConfig.customTools.forEach(ct => allTools.push(ct));
+  }
+
+  const t=allTools.find(x=>x.id===id);
   if(!t)return;
   document.getElementById("modalTitle").textContent=t.name;
   document.getElementById("modalCategory").textContent=t.category;
   const icon=document.getElementById("modalIcon");
-  icon.style.background=gradients[tools.indexOf(t)%gradients.length];
+  icon.style.background=gradients[allTools.indexOf(t)%gradients.length];
   icon.innerHTML=`<i class="fa-solid ${t.icon}"></i>`;
   document.getElementById("modalContent").innerHTML=t.html;
   document.getElementById("modalBg").classList.add("show");
@@ -730,8 +738,6 @@ async function runAI(){
 }
 
 if(localStorage.getItem("auratools:dark")==="1"){ document.body.classList.add("dark-mode"); }
-renderCategories();
-renderTools();
 </script>
 </body>
 </html>
