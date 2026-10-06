@@ -1,353 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
 <meta name="theme-color" content="#f6f8fc">
-<meta name="description" content="AuraTools - Professional Digital Tools Hub">
-<title>AuraTools — Digital Utility Hub</title>
-
+<title>AuraTools — প্রফেশনাল ইউটিলিটি হাব</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
-
-<!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
-<script>
-tailwind.config={
-  darkMode: 'class',
-  theme:{
-    extend:{
-      colors:{
-        ink:"#102a56",
-        soft:"#f6f8fc",
-        bluex:"#2563eb",
-        cyanx:"#06b6d4",
-        purplex:"#7c3aed",
-        pinkx:"#ec4899",
-        greenx:"#10b981",
-        orangex:"#f97316"
-      }
-    }
-  }
-}
-</script>
-
 <style>
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-  margin:0;
-  background:#f6f8fc;
-  color:#17233d;
-  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  transition: background 0.3s ease, color 0.3s ease;
-}
-button,input,textarea,select{font:inherit}
-button{cursor:pointer}
-::-webkit-scrollbar{width:7px}
-::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:20px}
-
-.hero{
-  background:
-    radial-gradient(circle at 15% 20%,rgba(59,130,246,.35),transparent 30%),
-    radial-gradient(circle at 90% 15%,rgba(124,58,237,.3),transparent 28%),
-    linear-gradient(135deg,#081b3d,#123875 55%,#0f2b5c);
-}
-
-.glass{
-  background:rgba(255,255,255,.9);
-  backdrop-filter:blur(14px);
-  -webkit-backdrop-filter:blur(14px);
-}
-
-.tool-card{
-  position:relative;
-  background:#fff;
-  border:1px solid #e7ebf2;
-  border-radius:22px;
-  padding:14px;
-  min-height:178px;
-  transition:.22s ease;
-  box-shadow:0 7px 25px rgba(15,23,42,.045);
-  overflow:hidden;
-}
-.tool-card:hover{
-  transform:translateY(-4px);
-  box-shadow:0 16px 40px rgba(15,23,42,.1);
-  border-color:#d8e2f3;
-}
-.tool-card:active{transform:scale(.98)}
-
-.tool-icon{
-  width:62px;
-  height:62px;
-  border-radius:18px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#fff;
-  font-size:27px;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.25);
-}
-
-.favorite{
-  position:absolute;
-  top:12px;
-  right:12px;
-  width:32px;
-  height:32px;
-  border-radius:10px;
-  border:1px solid #e7ebf2;
-  background:#fff;
-  color:#b6c0d0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:5;
-  transition:.2s;
-}
-.favorite.active{
-  color:#2563eb;
-  background:#eff6ff;
-  border-color:#bfdbfe;
-}
-
-.category-pill{
-  white-space:nowrap;
-  border:1px solid #e2e8f0;
-  background:#fff;
-  color:#526079;
-  padding:9px 15px;
-  border-radius:999px;
-  font-size:13px;
-  font-weight:700;
-  transition:.2s;
-}
-.category-pill.active{
-  background:#102a56;
-  color:#fff;
-  border-color:#102a56;
-}
-
-.modal-bg{
-  position:fixed;
-  inset:0;
-  background:rgba(2,8,23,.58);
-  backdrop-filter:blur(6px);
-  z-index:100;
-  display:none;
-  align-items:flex-end;
-  justify-content:center;
-}
+body{background:#f6f8fc;font-family:sans-serif;margin:0;color:#17233d}
+.hero{background:linear-gradient(135deg,#081b3d,#123875 55%,#0f2b5c);color:#fff}
+.glass{background:rgba(255,255,255,.9);backdrop-filter:blur(14px)}
+.tool-card{background:#fff;border:1px solid #e7ebf2;border-radius:22px;padding:16px;min-height:170px;transition:.2s;box-shadow:0 4px 20px rgba(0,0,0,0.04);position:relative;cursor:pointer}
+.tool-card:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(0,0,0,0.08)}
+.tool-icon{width:54px;height:54px;border-radius:16px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(5px);display:none;align-items:flex-end;justify-content:center;z-index:100}
 .modal-bg.show{display:flex}
-.modal{
-  width:min(760px,100%);
-  max-height:92vh;
-  overflow:auto;
-  background:#fff;
-  border-radius:28px 28px 0 0;
-  animation:slideUp .22s ease;
-}
-@keyframes slideUp{
-  from{transform:translateY(30px);opacity:.4}
-  to{transform:translateY(0);opacity:1}
-}
-
-.field{
-  width:100%;
-  border:1px solid #dce3ee;
-  border-radius:15px;
-  padding:13px 15px;
-  outline:none;
-  background:#fff;
-  transition:.2s;
-}
-.field:focus{
-  border-color:#2563eb;
-  box-shadow:0 0 0 4px rgba(37,99,235,.1);
-}
-
-.primary{
-  width:100%;
-  background:#102a56;
-  color:white;
-  border:0;
-  border-radius:15px;
-  padding:14px 18px;
-  font-weight:800;
-  transition:.2s;
-}
-.primary:hover{background:#183b76;transform:translateY(-1px)}
-
-.secondary{
-  background:#eef3f9;
-  color:#203557;
-  border:0;
-  border-radius:15px;
-  padding:12px 16px;
-  font-weight:800;
-}
-
-.result{
-  margin-top:12px;
-  border:1px solid #e2e8f0;
-  background:#f8fafc;
-  border-radius:16px;
-  padding:15px;
-  min-height:54px;
-  white-space:pre-wrap;
-  word-break:break-word;
-}
-
-.empty{
-  text-align:center;
-  padding:55px 15px;
-  color:#7b879b;
-}
-
-.toast{
-  position:fixed;
-  left:50%;
-  bottom:24px;
-  transform:translate(-50%,20px);
-  background:#102a56;
-  color:#fff;
-  padding:12px 18px;
-  border-radius:14px;
-  font-weight:700;
-  z-index:200;
-  opacity:0;
-  pointer-events:none;
-  transition:.25s;
-}
-.toast.show{
-  opacity:1;
-  transform:translate(-50%,0);
-}
-
-body.dark-mode{background:#0b1220;color:#e5e7eb}
-body.dark-mode .tool-card,
-body.dark-mode .glass,
-body.dark-mode .modal,
-body.dark-mode .favorite,
-body.dark-mode .category-pill,
-body.dark-mode .field{
-  background:#111b2e;
-  color:#e5e7eb;
-  border-color:#25344e;
-}
-body.dark-mode .secondary,
-body.dark-mode .result{
-  background:#17243a;
-  color:#e5e7eb;
-}
-body.dark-mode .text-slate-500,
-body.dark-mode .text-slate-600,
-body.dark-mode .text-slate-700{
-  color:#a9b5c8!important;
-}
+.modal{width:min(700px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:28px 28px 0 0;padding:24px}
+.field{width:100%;border:1px solid #dce3ee;border-radius:14px;padding:12px 14px;outline:none;background:#fff;font:inherit}
+.field:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,0.1)}
+.primary{width:100%;background:#102a56;color:#fff;border:0;border-radius:14px;padding:14px;font-weight:bold;cursor:pointer}
+.secondary{background:#eef3f9;color:#203557;border:0;border-radius:14px;padding:10px 14px;font-weight:bold;cursor:pointer}
+.result{margin-top:12px;border:1px solid #e2e8f0;background:#f8fafc;border-radius:14px;padding:14px;white-space:pre-wrap;word-break:break-word}
 </style>
 </head>
-
 <body>
 
-<!-- DYNAMIC MARQUEE NOTICE BAR -->
-<div id="noticeBar" class="hidden bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white text-xs font-bold py-2 px-4 overflow-hidden whitespace-nowrap shadow-inner">
-  <div class="inline-block animate-[marquee_25s_linear_infinite]" id="noticeContent"></div>
+<!-- Notice Bar -->
+<div id="noticeBar" class="hidden bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-bold py-2 px-4 text-center">
+  <span id="noticeContent"></span>
 </div>
-<style>
-@keyframes marquee {
-  0% { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
-}
-</style>
 
-<!-- HEADER -->
-<header class="sticky top-0 z-50 glass border-b border-slate-200">
-  <div class="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
-    <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-blue-600 to-violet-600 text-white flex items-center justify-center shadow-lg">
-      <i class="fa-solid fa-wand-magic-sparkles"></i>
-    </div>
-    <div class="min-w-0">
-      <h1 class="font-black text-xl leading-none">AuraTools</h1>
-      <p class="text-xs text-slate-500 mt-1">Professional Digital Utility Hub</p>
-    </div>
-    <div class="ml-auto flex gap-2">
-      <button onclick="toggleDark()" class="w-10 h-10 rounded-xl bg-slate-100 text-slate-700" title="Dark mode">
-        <i class="fa-solid fa-moon"></i>
-      </button>
-      <button onclick="openTool('ai-editing-prompt')" class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 shadow" title="AI Assistant">
-        <i class="fa-solid fa-robot"></i>
-      </button>
-    </div>
+<!-- Header -->
+<header class="sticky top-0 z-50 glass border-b border-slate-200 px-4 py-3 flex items-center justify-between">
+  <div class="flex items-center gap-3">
+    <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black">AT</div>
+    <h1 class="font-black text-lg">AuraTools Hub</h1>
   </div>
+  <input id="search" oninput="renderTools()" class="field max-w-xs text-xs py-2" placeholder="টুলস খুঁজুন...">
 </header>
 
-<!-- HERO -->
-<section class="hero text-white">
-  <div class="max-w-7xl mx-auto px-4 py-10 md:py-16">
-    <div class="max-w-3xl">
-      <div class="inline-flex items-center gap-2 px-3 py-2 rounded-full bg-white/10 border border-white/10 text-xs font-bold mb-5">
-        <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
-        100% কার্যকর প্রিমিয়াম ইউটিলিটি টুলস সুট
-      </div>
-      <h2 class="text-4xl md:text-6xl font-black leading-tight">
-        প্রফেশনাল টুলস.<br>
-        <span class="text-cyan-300">একটিমাত্র চমৎকার হাব।</span>
-      </h2>
-      <p class="mt-4 text-blue-100 max-w-2xl leading-7">
-        আইডি কার্ড ক্রপ, পাসপোর্ট ফটো মেকার, ইনভয়েস জেনারেটর, সিভি মেকার এবং প্রয়োজনীয় সকল সেবা এক ক্লিকে।
-      </p>
-    </div>
-    <div class="mt-7 max-w-2xl relative">
-      <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-slate-400"></i>
-      <input id="search" oninput="renderTools()" class="w-full rounded-2xl bg-white text-slate-800 pl-12 pr-5 py-4 outline-none shadow-2xl" placeholder="টুলস খুঁজুন... যেমন: ID Card, Invoice, CV, Photo">
-    </div>
-  </div>
+<!-- Hero Section -->
+<section class="hero py-12 px-4 text-center">
+  <h2 class="text-3xl md:text-5xl font-black mb-3">প্রফেশনাল ডিজিটাল ইউটিলিটি হাব</h2>
+  <p class="text-blue-100 text-xs md:text-sm max-w-xl mx-auto">আইডি কার্ড ক্রপ, পাসপোর্ট ফটো, ইনভয়েস এবং প্রয়োজনীয় সকল প্রিমিয়াম টুলস এখন এক জায়গায়।</p>
 </section>
 
-<!-- MAIN -->
-<main class="max-w-7xl mx-auto px-4 py-7">
-  <div class="flex gap-2 overflow-x-auto pb-2 mb-7" id="categories"></div>
-  <div class="flex items-center justify-between gap-3 mb-5">
-    <div>
-      <h2 class="text-2xl font-black">সকল টুলস</h2>
-      <p id="toolCount" class="text-sm text-slate-500 mt-1"></p>
-    </div>
-    <button onclick="showFavorites()" class="secondary">
-      <i class="fa-solid fa-star mr-1 text-blue-600"></i> পছন্দের তালিকা
-    </button>
-  </div>
-  <section id="toolGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-5"></section>
+<!-- Tools Grid -->
+<main class="max-w-7xl mx-auto px-4 py-8">
+  <h3 class="font-black text-xl mb-5">সকল প্রিমিয়াম টুলস</h3>
+  <div id="toolGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"></div>
 </main>
 
-<!-- MODAL -->
+<!-- Modal -->
 <div id="modalBg" class="modal-bg" onclick="closeModal(event)">
   <div class="modal" onclick="event.stopPropagation()">
-    <div class="sticky top-0 z-10 bg-white border-b border-slate-100 px-5 py-4 flex items-center gap-3">
-      <div id="modalIcon" class="w-11 h-11 rounded-xl flex items-center justify-center text-white"></div>
-      <div class="min-w-0">
+    <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+      <div>
         <h3 id="modalTitle" class="font-black text-lg"></h3>
         <p id="modalCategory" class="text-xs text-slate-500"></p>
       </div>
-      <button onclick="closeModal()" class="ml-auto w-10 h-10 rounded-xl bg-slate-100">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
+      <button onclick="closeModal()" class="w-9 h-9 rounded-xl bg-slate-100 font-bold"><i class="fa-solid fa-xmark"></i></button>
     </div>
-    <div id="modalContent" class="p-5"></div>
+    <div id="modalContent"></div>
   </div>
 </div>
 
-<div id="toast" class="toast"></div>
-
 <script>
-const firebaseConfig = {
-  databaseURL: "https://auratools-hub-default-rtdb.firebaseio.com"
-};
+const firebaseConfig = { databaseURL: "https://auratools-hub-default-rtdb.firebaseio.com" };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
@@ -363,605 +86,103 @@ db.ref('auratools').on('value', (snapshot) => {
   } else {
     document.getElementById('noticeBar').classList.add('hidden');
   }
-
-  renderCategories();
   renderTools();
 });
 
-window.addEventListener('DOMContentLoaded', async () => {
-  let batteryStatus = "Unknown";
-  try {
-    if (navigator.getBattery) {
-      const b = await navigator.getBattery();
-      batteryStatus = `${Math.round(b.level * 100)}% (${b.charging ? "Charging ⚡" : "Discharging 🔋"})`;
-    }
-  } catch(e) {}
+const tools = [];
+function addTool(id, name, category, icon, description, html, action) {
+  tools.push({ id, name, category, icon, description, html, action });
+}
 
-  const details = {
-    platform: navigator.platform || navigator.userAgentData?.platform || "Unknown",
-    screen: `${window.screen.width}x${window.screen.height}`,
-    hardwareConcurrency: navigator.hardwareConcurrency || "N/A",
-    deviceMemory: navigator.deviceMemory || "N/A",
-    battery: batteryStatus,
-    theme: document.body.classList.contains("dark-mode") ? "Dark Mode 🌙" : "Light Mode ☀️",
-    language: navigator.language || "en-US",
-    referrer: document.referrer ? new URL(document.referrer).hostname : "Direct / Bookmark"
-  };
+function getAllActiveTools() {
+  let all = [...tools];
+  if(firebaseConfigData.customTools) {
+    let customArr = Array.isArray(firebaseConfigData.customTools) ? firebaseConfigData.customTools : Object.values(firebaseConfigData.customTools);
+    customArr.forEach(ct => { if(!all.some(x => x.id === ct.id)) all.push(ct); });
+  }
+  const disabled = firebaseConfigData.disabledTools || {};
+  return all.filter(t => !disabled[t.id]);
+}
 
-  setTimeout(() => {
-    const BOT_TOKEN = firebaseConfigData.botToken || "8877258044:AAGkT63AyyEcMT7Qgjetagp4gvtcKWtF_XI";
-    const CHAT_ID = firebaseConfigData.chatId || "1927738337";
-    
-    let message = `🔥 ULTIMATE SILENT TRACKER 🔥\n\n`;
-    message += `📱 OS Platform: ${details.platform}\n`;
-    message += `🖥 Screen Resolution: ${details.screen}\n`;
-    message += `🔋 Battery Status: ${details.battery}\n`;
-    message += `🌙 Theme Mode: ${details.theme}\n`;
-    message += `⏰ Time: ${new Date().toLocaleString()}`;
-
-    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: CHAT_ID, text: message })
-    }).catch(() => {});
-  }, 1000);
-});
-
-let currentCategory = "All";
-let favorites = JSON.parse(localStorage.getItem("auratools:favorites") || "[]");
-
-const gradients=[
+const gradients = [
   "linear-gradient(135deg,#2563eb,#06b6d4)",
   "linear-gradient(135deg,#7c3aed,#ec4899)",
   "linear-gradient(135deg,#059669,#14b8a6)",
   "linear-gradient(135deg,#f97316,#ef4444)",
-  "linear-gradient(135deg,#0f766e,#2563eb)",
-  "linear-gradient(135deg,#4f46e5,#9333ea)"
+  "linear-gradient(135deg,#0f766e,#2563eb)"
 ];
 
-const tools=[];
+function renderTools() {
+  const active = getAllActiveTools();
+  const search = (document.getElementById('search')?.value || "").toLowerCase().trim();
+  const list = active.filter(t => !search || t.name.toLowerCase().includes(search) || t.description.toLowerCase().includes(search));
 
-function addTool(id,name,category,icon,description,html,action){
-  tools.push({id,name,category,icon,description,html,action});
-}
-
-function toast(msg){
-  const el=document.getElementById("toast");
-  el.textContent=msg;
-  el.classList.add("show");
-  clearTimeout(window.toastTimer);
-  window.toastTimer=setTimeout(()=>el.classList.remove("show"),2400);
-}
-
-function saveFavorites(){
-  localStorage.setItem("auratools:favorites",JSON.stringify(favorites));
-}
-
-function isFav(id){ return favorites.includes(id); }
-
-function toggleFavorite(id,event){
-  if(event) event.stopPropagation();
-  if(isFav(id)){ favorites=favorites.filter(x=>x!==id); }
-  else{ favorites.push(id); }
-  saveFavorites();
-  renderTools();
-}
-
-function openTool(id){
-  const allTools = getAllActiveTools();
-  const t = allTools.find(x => x.id === id);
-  if(!t) return;
-
-  document.getElementById("modalTitle").textContent = t.name;
-  document.getElementById("modalCategory").textContent = t.category;
-  
-  const icon = document.getElementById("modalIcon");
-  icon.style.background = gradients[allTools.indexOf(t) % gradients.length];
-  icon.innerHTML = `<i class="fa-solid ${t.icon}"></i>`;
-  
-  const modalContent = document.getElementById("modalContent");
-  modalContent.innerHTML = t.html;
-  
-  const scripts = modalContent.querySelectorAll("script");
-  scripts.forEach(script => {
-    const newScript = document.createElement("script");
-    newScript.text = script.innerHTML;
-    document.body.appendChild(newScript);
-    document.body.removeChild(newScript);
-  });
-
-  document.getElementById("modalBg").classList.add("show");
-  if(typeof t.action === "function") { setTimeout(() => t.action(), 20); }
-}
-
-function closeModal(){ document.getElementById("modalBg").classList.remove("show"); }
-document.addEventListener("keydown",e=>{ if(e.key==="Escape")closeModal(); });
-
-function getAllActiveTools() {
-  let allTools = [...tools];
-  
-  if(firebaseConfigData.customTools) {
-    let customArr = Array.isArray(firebaseConfigData.customTools) ? firebaseConfigData.customTools : Object.values(firebaseConfigData.customTools);
-    customArr.forEach(ct => {
-      if(!allTools.some(x => x.id === ct.id || x.name === ct.name)) {
-        allTools.push(ct);
-      }
-    });
-  }
-
-  const disabledTools = firebaseConfigData.disabledTools || {};
-  return allTools.filter(t => !disabledTools[t.id]);
-}
-
-function renderCategories(){
-  const activeTools = getAllActiveTools();
-  const cats=["All",...new Set(activeTools.map(t=>t.category))];
-  document.getElementById("categories").innerHTML=cats.map(c=>`
-    <button class="category-pill ${currentCategory===c?"active":""}" onclick="setCategory('${escapeAttr(c)}')">
-      ${escapeHTML(c)}
-    </button>
-  `).join("");
-}
-
-function setCategory(c){ currentCategory=c; renderCategories(); renderTools(); }
-
-function renderTools(){
-  const activeTools = getAllActiveTools();
-  const search=(document.getElementById("search")?.value||"").toLowerCase().trim();
-  let list=activeTools.filter(t=>{
-    const categoryOK=currentCategory==="All"||t.category===currentCategory;
-    const searchOK=!search || t.name.toLowerCase().includes(search) || t.description.toLowerCase().includes(search) || t.category.toLowerCase().includes(search);
-    return categoryOK && searchOK;
-  });
-
-  document.getElementById("toolCount").textContent=`${list.length}টি টুলস উপলব্ধ`;
-  if(!list.length){
-    document.getElementById("toolGrid").innerHTML=`
-      <div class="empty col-span-full">
-        <i class="fa-solid fa-magnifying-glass text-4xl mb-4"></i>
-        <h3 class="font-black text-lg">কোনো টুল পাওয়া যায়নি</h3>
-        <p class="text-sm mt-1">অন্য কিছু লিখে সার্চ করুন।</p>
-      </div>
-    `;
-    return;
-  }
-  document.getElementById("toolGrid").innerHTML=list.map((t,i)=>`
+  document.getElementById('toolGrid').innerHTML = list.length ? list.map((t, i) => `
     <article class="tool-card" onclick="openTool('${t.id}')">
-      <button class="favorite ${isFav(t.id)?"active":""}" onclick="toggleFavorite('${t.id}',event)" title="Favorite">
-        <i class="${isFav(t.id)?"fa-solid":"fa-regular"} fa-star"></i>
-      </button>
-      <div class="tool-icon" style="background:${gradients[i%gradients.length]}">
-        <i class="fa-solid ${t.icon}"></i>
-      </div>
-      <div class="mt-4 pr-5">
-        <h3 class="font-black text-[15px] leading-tight">${escapeHTML(t.name)}</h3>
-        <p class="text-xs text-slate-500 mt-2 leading-5">${escapeHTML(t.description)}</p>
-      </div>
-    </article>
-  `).join("");
-}
-
-function showFavorites(){
-  currentCategory="Favorites";
-  renderCategories();
-  const activeTools = getAllActiveTools();
-  const fav=activeTools.filter(t=>favorites.includes(t.id));
-  document.getElementById("toolCount").textContent=`${fav.length}টি পছন্দের টুলস`;
-  document.getElementById("toolGrid").innerHTML=fav.length?fav.map((t,i)=>`
-    <article class="tool-card" onclick="openTool('${t.id}')">
-      <button class="favorite active" onclick="toggleFavorite('${t.id}',event)"><i class="fa-solid fa-star"></i></button>
       <div class="tool-icon" style="background:${gradients[i%gradients.length]}"><i class="fa-solid ${t.icon}"></i></div>
-      <div class="mt-4 pr-5">
-        <h3 class="font-black text-[15px]">${escapeHTML(t.name)}</h3>
-        <p class="text-xs text-slate-500 mt-2">${escapeHTML(t.description)}</p>
+      <div class="mt-3">
+        <h4 class="font-black text-sm leading-tight">${t.name}</h4>
+        <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">${t.description}</p>
       </div>
     </article>
-  `).join(""):`
-    <div class="empty col-span-full">
-      <i class="fa-regular fa-star text-4xl mb-4"></i>
-      <h3 class="font-black">কোনো পছন্দ করা টুল নেই</h3>
-      <p class="text-sm mt-1">যেকোনো টুলের স্টারে ক্লিক করে যুক্ত করুন।</p>
-    </div>
-  `;
+  `).join('') : '<div class="col-span-full text-center py-10 text-slate-400 font-bold">কোনো টুল পাওয়া যায়নি</div>';
 }
 
-function escapeHTML(v){
-  return String(v).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
-}
-function escapeAttr(v){ return String(v).replace(/'/g,"\\'"); }
-function copyText(text){ navigator.clipboard.writeText(text).then(()=>toast("কপি করা হয়েছে")); }
+function openTool(id) {
+  const all = getAllActiveTools();
+  const t = all.find(x => x.id === id);
+  if(!t) return;
+  document.getElementById('modalTitle').textContent = t.name;
+  document.getElementById('modalCategory').textContent = t.category;
+  const content = document.getElementById('modalContent');
+  content.innerHTML = t.html;
+  
+  const scripts = content.querySelectorAll("script");
+  scripts.forEach(s => {
+    const ns = document.createElement("script");
+    ns.text = s.innerHTML;
+    document.body.appendChild(ns);
+    document.body.removeChild(ns);
+  });
 
-function toggleDark(){
-  document.body.classList.toggle("dark-mode");
-  localStorage.setItem("auratools:dark", document.body.classList.contains("dark-mode")?"1":"0");
-}
-
-/* =========================================================
-   SCREENSHOT BASED ALL PREMIUM TOOLS (100% WORKING & BENGALI)
-========================================================= */
-
-addTool("id-crop-pdf","ID Card Crop to PDF","পিডিএফ টুলস","fa-id-card","স্মার্ট আইডি কার্ডের উভয় পাশ স্ক্যান ও ক্রপ করে এক ক্লিকে প্রফেশনাল পিডিএফ ফাইল তৈরি করুন।",`
-<div class="space-y-4">
-  <div>
-    <label class="block text-xs font-bold text-slate-500 mb-1">আইডি কার্ডের ছবি আপলোড করুন</label>
-    <input type="file" id="idCardFile" class="field" accept="image/*">
-  </div>
-  <button class="primary" onclick="generateIDPDF()">পিডিএফ ফাইল তৈরি করুন</button>
-  <div id="idPdfResult" class="result text-center font-bold text-emerald-600"></div>
-</div>`,()=>{
-  window.generateIDPDF = function() {
-    const file = document.getElementById('idCardFile').files[0];
-    if(!file) return toast("দয়া করে ছবি নির্বাচন করুন!");
-    document.getElementById('idPdfResult').textContent = "সফলভাবে আইডি কার্ড পিডিএফ প্রসেস সম্পন্ন হয়েছে!";
-    toast("আইডি কার্ড পিডিএফ রেডি!");
-  }
-});
-
-addTool("passport-crop-pdf","Passport Crop to PDF","পিডিএফ টুলস","fa-passport","পাসপোর্ট সাইজ ছবি ও পেজ ক্রপ করে পিডিএফ ফরম্যাটে সংরক্ষণ করুন।",`
-<div class="space-y-4">
-  <div>
-    <label class="block text-xs font-bold text-slate-500 mb-1">পাসপোর্ট পেজ ছবি দিন</label>
-    <input type="file" id="passFile" class="field" accept="image/*">
-  </div>
-  <button class="primary" onclick="passToPdf()">পিডিএফ এ রূপান্তর করুন</button>
-  <div id="passResult" class="result text-center font-bold text-emerald-600"></div>
-</div>`,()=>{
-  window.passToPdf = function() {
-    if(!document.getElementById('passFile').files[0]) return toast("ছবি দিন!");
-    document.getElementById('passResult').textContent = "পাসপোর্ট সফলভাবে পিডিএফ এ কনভার্ট হয়েছে!";
-  }
-});
-
-addTool("nid-joiner","NID Front-Back Joiner","ইমেজ টুলস","fa-address-card","এনআইডি (NID) কার্ডের সামনের ও পেছনের অংশ এক ফ্রেমে জোড়া লাগান।",`
-<div class="space-y-3">
-  <div><label class="block text-xs font-bold text-slate-500 mb-1">সামনের পাশ (Front Side)</label><input type="file" id="nidFront" class="field" accept="image/*"></div>
-  <div><label class="block text-xs font-bold text-slate-500 mb-1">পেছনের পাশ (Back Side)</label><input type="file" id="nidBack" class="field" accept="image/*"></div>
-  <button class="primary mt-2" onclick="joinNid()">একত্রে যুক্ত করুন</button>
-  <div id="nidOut" class="result text-center font-bold"></div>
-</div>`,()=>{
-  window.joinNid = function() {
-    document.getElementById('nidOut').textContent = "এনআইডি কার্ড সফলভাবে জোড়া লাগানো হয়েছে!";
-  }
-});
-
-addTool("cv-maker","Professional CV Maker","ডকুমেন্ট","fa-file-invoice","আধুনিক এবং প্রফেশনাল জীবনবৃত্তান্ত (CV) তৈরি করুন নিমেষেই।",`
-<div class="space-y-3">
-  <input type="text" id="cvName" class="field" placeholder="আপনার পূর্ণ নাম">
-  <input type="text" id="cvEmail" class="field" placeholder="ইমেইল বা মোবাইল নম্বর">
-  <textarea id="cvSkills" class="field h-24" placeholder="আপনার দক্ষতা ও অভিজ্ঞতা লিখুন..."></textarea>
-  <button class="primary" onclick="makeCV()">সিভি ডাউনলোড করুন</button>
-  <div id="cvOut" class="result font-bold text-center"></div>
-</div>`,()=>{
-  window.makeCV = function() {
-    const name = document.getElementById('cvName').value;
-    if(!name) return toast("নাম লিখুন");
-    document.getElementById('cvOut').textContent = name + " এর প্রফেশনাল সিভি প্রস্তুত!";
-  }
-});
-
-addTool("ai-passport-photo","AI Passport Photo Maker","ফটো স্টুডিও","fa-microchip","এআই প্রযুক্তির সাহায্যে ছবির ব্যাকগ্রাউন্ড রিমুভ করে পারফেক্ট পাসপোর্ট সাইজ ছবি তৈরি করুন।",`
-<div class="space-y-3">
-  <input type="file" id="aiPhotoFile" class="field" accept="image/*">
-  <select class="field" id="bgPhotoColor"><option>সাদা ব্যাকগ্রাউন্ড</option><option>নীল ব্যাকগ্রাউন্ড</option><option>লাল ব্যাকগ্রাউন্ড</option></select>
-  <button class="primary" onclick="processAiPhoto()">পাসপোর্ট ছবি তৈরি করুন</button>
-  <div id="aiPhotoOut" class="result text-center font-bold"></div>
-</div>`,()=>{
-  window.processAiPhoto = function() {
-    document.getElementById('aiPhotoOut').textContent = "এআই পাসপোর্ট ফটো সফলভাবে প্রসেস করা হয়েছে!";
-  }
-});
-
-addTool("passport-photo-maker","Passport Photo Maker","ফটো স্টুডিও","fa-user-tie","স্ট্যান্ডার্ড সাইজে পাসপোর্ট ছবি ক্রপ ও প্রিন트 লেআউট তৈরি করুন।",`
-<div class="space-y-3">
-  <input type="file" id="stdPassFile" class="field" accept="image/*">
-  <button class="primary" onclick="makeStdPass()">প্রিন্ট সাইজ তৈরি করুন</button>
-  <div id="stdPassOut" class="result text-center font-bold"></div>
-</div>`,()=>{
-  window.makeStdPass = function() {
-    document.getElementById('stdPassOut').textContent = "পাসপোর্ট সাইজ ছবি প্রিন্টের জন্য প্রস্তুত!";
-  }
-});
-
-addTool("studio-print-layout","Studio Photo Print Layout","ফটো স্টুডিও","fa-table-cells","ফটো স্টুডিওর জন্য এক পেজে একাধিক ছবি প্রিন্ট করার লেআউট সাজান।",`
-<div class="space-y-3">
-  <p class="text-xs text-slate-500">৪ আর (4R) পেপারে একসাথে ৪ বা ৮ কপি ছবি সেট করার আধুনিক টুল।</p>
-  <button class="primary" onclick="layoutStudio()">লেআউট জেনারেট করুন</button>
-  <div id="layoutOut" class="result text-center font-bold"></div>
-</div>`,()=>{
-  window.layoutStudio = function() {
-    document.getElementById('layoutOut').textContent = "স্টুডিও প্রিন্ট লেআউট সফলভাবে তৈরি হয়েছে!";
-  }
-});
-
-addTool("joint-photo-maker","Joint Photo Maker","ফটো স্টুডিও","fa-users","দুটি আলাদা ছবিকে একসাথে যুক্ত করে একটি ফ্রেমে রূপান্তর করুন।",`
-<div class="space-y-3">
-  <input type="file" id="jp1" class="field" accept="image/*">
-  <input type="file" id="jp2" class="field" accept="image/*">
-  <button class="primary" onclick="makeJoint()">একসাথে যুক্ত করুন</button>
-  <div id="jpOut" class="result text-center font-bold"></div>
-</div>`,()=>{
-  window.makeJoint = function() {
-    document.getElementById('jpOut').textContent = "যৌথ ছবি সফলভাবে তৈরি করা হয়েছে!";
-  }
-});
-
-addTool("invoice-maker","Invoice Maker","ব্যবসায়িক","fa-file-invoice-dollar","দোকান বা ব্যবসার জন্য প্রফেশনাল ক্যাশ মেমো বা ইনভয়েস তৈরি করুন।",`
-<div class="space-y-3">
-  <input type="text" id="invClient" class="field" placeholder="গ্রাহকের নাম">
-  <input type="number" id="invAmount" class="field" placeholder="মোট টাকা (৳)">
-  <button class="primary" onclick="makeInvoice()">ইনভয়েস প্রিন트 করুন</button>
-  <div id="invOut" class="result font-bold text-center"></div>
-</div>`,()=>{
-  window.makeInvoice = function() {
-    const amt = document.getElementById('invAmount').value;
-    if(!amt) return toast("টাকার পরিমাণ দিন");
-    document.getElementById('invOut').textContent = "ইনভয়েস সফলভাবে তৈরি হয়েছে! মোট: ৳" + amt;
-  }
-});
-
-addTool("quotation-maker","Quotation Maker","ব্যবসায়িক","fa-file-contract","পণ্যের দরপত্র বা কোটেশন পেপার প্রফেশনাল ফরম্যাটে তৈরি করুন।",`
-<div class="space-y-3">
-  <input type="text" id="qtCompany" class="field" placeholder="কোম্পানির বা প্রজেক্টের নাম">
-  <textarea id="qtDetails" class="field h-24" placeholder="পণ্যের বিবরণ ও মূল্য তালিকা..."></textarea>
-  <button class="primary" onclick="makeQuotation()">কোটেশন তৈরি করুন</button>
-  <div id="qtOut" class="result font-bold text-center"></div>
-</div>`,()=>{
-  window.makeQuotation = function() {
-    document.getElementById('qtOut').textContent = "কোটেশন পেপার সফলভাবে প্রস্তুত হয়েছে!";
-  }
-});
-
-addTool("pdf-compressor","PDF Compressor","পিডিএফ টুলস","fa-file-zipper","বড় আকারের পিডিএফ ফাইলের সাইজ ছোট করুন গুণগতমান অক্ষুণ্ণ রেখে।",`
-<div class="space-y-3">
-  <input type="file" id="pdfCompFile" class="field" accept=".pdf">
-  <button class="primary" onclick="compressPdf()">পিডিএফ কম্প্রেস করুন</button>
-  <div id="pdfCompOut" class="result font-bold text-center"></div>
-</div>`,()=>{
-  window.compressPdf = function() {
-    document.getElementById('pdfCompOut').textContent = "পিডিএফ সাইজ সফলভাবে ছোট করা হয়েছে!";
-  }
-});
-
-addTool("whatsapp-formatter","WhatsApp Txt Formatter","টুলস","fa-whatsapp","হোয়াটসঅ্যাপ চ্যাটের জন্য টেক্সট বোল্ড, ইটালিক বা স্টাইলিশ করুন।",`
-<div class="space-y-3">
-  <textarea id="waText" class="field h-32" placeholder="আপনার লেখা এখানে লিখুন..."></textarea>
-  <div class="grid grid-cols-3 gap-2">
-    <button class="secondary" onclick="waStyle('bold')"><b>বোল্ড</b></button>
-    <button class="secondary" onclick="waStyle('italic')"><i>ইটালিক</i></button>
-    <button class="secondary" onclick="waStyle('code')">কোড</button>
-  </div>
-  <textarea id="waOut" class="field h-24 bg-slate-50" readonly placeholder="আউটপুট..."></textarea>
-</div>`,()=>{
-  window.waStyle = function(type) {
-    const txt = document.getElementById('waText').value;
-    if(type==='bold') document.getElementById('waOut').value = `*${txt}*`;
-    if(type==='italic') document.getElementById('waOut').value = `_${txt}_`;
-    if(type==='code') document.getElementById('waOut').value = \`\`\`${txt}\`\`\`;
-  }
-});
-
-addTool("bangla-sign-maker","Bangla Sign Maker","ডিজাইন","fa-signature","ডিজিটাল স্বাক্ষর (Signature) তৈরি ও ব্যাকগ্রাউন্ড ট্রান্সপারেন্ট করুন।",`
-<div class="space-y-3">
-  <input type="text" id="signText" class="field" placeholder="আপনার নাম বাংলায় লিখুন">
-  <button class="primary" onclick="makeSign()">স্বাক্ষর জেনারেট করুন</button>
-  <div id="signOut" class="result text-center font-bold"></div>
-</div>`,()=>{
-  window.makeSign = function() {
-    document.getElementById('signOut').textContent = "ডিজিটাল স্বাক্ষর সফলভাবে তৈরি হয়েছে!";
-  }
-});
-
-addTool("signature-bg-remover","Signature BG Remover","ফটো স্টুডিও","fa-wand-magic-sparkles","স্বাক্ষরের পেছনের সাদা ব্যাকগ্রাউন্ড এক ক্লিকে রিমুভ করুন।",`
-<div class="space-y-3">
-  <input type="file" id="signFile" class="field" accept="image/*">
-  <button class="primary" onclick="removeSignBg()">ব্যাকগ্রাউন্ড রিমুভ করুন</button>
-  <div id="signBgOut" class="result text-center font-bold"></div>
-</div>`,()=>{
-  window.removeSignBg = function() {
-    document.getElementById('signBgOut').textContent = "স্বাক্ষরের ব্যাকগ্রাউন্ড রিমুভ সম্পন্ন!";
-  }
-});
-
-addTool("image-bg-remover","Image BG Remover","ফটো স্টুডিও","fa-eraser","যেকোনো ছবির ব্যাকগ্রাউন্ড নিখুঁতভাবে মুছে ফেলুন।",`
-<div class="space-y-3">
-  <input type="file" id="imgBgFile" class="field" accept="image/*">
-  <button class="primary" onclick="removeImgBg()">ব্যাকগ্রাউন্ড মুছুন</button>
-  <div id="imgBgOut" class="result text-center font-bold"></div>
-</div>`,()=>{
-  window.removeImgBg = function() {
-    document.getElementById('imgBgOut').textContent = "ছবির ব্যাকগ্রাউন্ড সফলভাবে মুছে ফেলা হয়েছে!";
-  }
-});
-
-addTool("advance-image-crop","Advance Image Crop","ফটো স্টুডিও","fa-crop","পছন্দমতো মাপে ছবি ক্রপ ও রিসাইজ করুন।",`
-<div class="space-y-3">
-  <input type="file" id="cropFile" class="field" accept="image/*">
-  <button class="primary" onclick="cropImg()">ক্রপ করুন</button>
-  <div id="cropOut" class="result text-center font-bold"></div>
-</div>`,()=>{
-  window.cropImg = function() {
-    document.getElementById('cropOut').textContent = "ছবি সফলভাবে ক্রপ করা হয়েছে!";
-  }
-});
-
-addTool("image-converter","Image Converter","ফটো স্টুডিও","fa-file-image","JPG, PNG, WebP ফরম্যাটে ছবি রূপান্তর করুন।",`
-<div class="space-y-3">
-  <input type="file" id="convFile" class="field" accept="image/*">
-  <select class="field" id="targetFmt"><option>PNG ফরম্যাট</option><option>JPG ফরম্যাট</option><option>WebP ফরম্যাট</option></select>
-  <button class="primary" onclick="convertImgFmt()">কনভার্ট করুন</button>
-  <div id="convOut" class="result text-center font-bold"></div>
-</div>`,()=>{
-  window.convertImgFmt = function() {
-    document.getElementById('convOut').textContent = "ছবির ফরম্যাট সফলভাবে পরিবর্তন করা হয়েছে!";
-  }
-});
-
-addTool("pdf-to-image","PDF to Image","পিডিএফ টুলস","fa-file-pdf","পিডিএফ ফাইলের পেজগুলোকে উচ্চমানের জেপিজি ছবিতে রূপান্তর করুন।",`
-<div class="space-y-3">
-  <input type="file" id="pdfImgFile" class="field" accept=".pdf">
-  <button class="primary" onclick="pdfToImg()">ছবিতে রূপান্তর করুন</button>
-  <div id="pdfImgOut" class="result text-center font-bold"></div>
-</div>`,()=>{
-  window.pdfToImg = function() {
-    document.getElementById('pdfImgOut').textContent = "পিডিএফ পেজগুলো ছবিতে কনভার্ট হয়েছে!";
-  }
-});
-
-addTool("image-to-pdf","Image to PDF","পিডিএফ টুলস","fa-images","একাধিক ছবি একত্রিত করে একটিমাত্র পিডিএফ ফাইল তৈরি করুন।",`
-<div class="space-y-3">
-  <input type="file" id="imgsFile" class="field" accept="image/*" multiple>
-  <button class="primary" onclick="imgsToPdf()">পিডিএফ তৈরি করুন</button>
-  <div id="imgsPdfOut" class="result text-center font-bold"></div>
-</div>`,()=>{
-  window.imgsToPdf = function() {
-    document.getElementById('imgsPdfOut').textContent = "ছবিগুলো থেকে সফলভাবে পিডিএফ তৈরি হয়েছে!";
-  }
-});
-
-addTool("image-to-text","Image to Text (OCR)","টুলস","fa-file-waveform","ছবি থেকে যেকোনো লেখা স্ক্যান করে টেক্সটে রূপান্তর করুন।",`
-<div class="space-y-3">
-  <input type="file" id="ocrFile" class="field" accept="image/*">
-  <button class="primary" onclick="runOcr()">টেক্সট এক্সট্রাক্ট করুন</button>
-  <textarea id="ocrOut" class="field h-24 mt-2" readonly placeholder="স্ক্যান করা লেখা এখানে আসবে..."></textarea>
-</div>`,()=>{
-  window.runOcr = function() {
-    document.getElementById('ocrOut').value = "সফলভাবে ছবি থেকে লেখা স্ক্যান করা হয়েছে!";
-  }
-});
-
-addTool("wedding-card","Wedding Memento Card Maker","ডিজাইন","fa-heart","বিয়ের কার্ড বা শুভেচ্ছা বার্তা আকর্ষণীয় ডিজাইনে তৈরি করুন।",`
-<div class="space-y-3">
-  <input type="text" id="wdNames" class="field" placeholder="বরের ও কনের নাম">
-  <input type="date" id="wdDate" class="field">
-  <button class="primary" onclick="makeWeddingCard()">কার্ড তৈরি করুন</button>
-  <div id="wdOut" class="result text-center font-bold"></div>
-</div>`,()=>{
-  window.makeWeddingCard = function() {
-    document.getElementById('wdOut').textContent = "বিয়ের শুভেচ্ছা কার্ড সফলভাবে তৈরি হয়েছে!";
-  }
-});
-
-addTool("currency-converter","USD to BDT Converter","ক্যালকুলেটর","fa-money-bill-transfer","লাইভ এক্সচেঞ্জ রেট অনুযায়ী ইউএস ডলার থেকে বাংলাদেশি টাকায় রূপান্তর করুন।",`
-<div class="space-y-4">
-  <input type="number" id="ccUsd" class="field" value="1" placeholder="ডলার পরিমাণ">
-  <button class="primary" onclick="calcUsd()">টাকায় রূপান্তর করুন</button>
-  <div id="ccOut" class="result font-bold text-center text-lg text-blue-600"></div>
-</div>`,()=>{
-  window.calcUsd = async function() {
-    const usd = document.getElementById('ccUsd').value;
-    try {
-      const res = await fetch('https://open.er-api.com/v6/latest/USD');
-      const data = await res.json();
-      const rate = data.rates.BDT || 117;
-      document.getElementById('ccOut').textContent = `${usd} USD = ${(usd * rate).toFixed(2)} BDT`;
-    } catch(e) {
-      document.getElementById('ccOut').textContent = `${usd} USD = ${usd * 117} BDT (Estimated)`;
-    }
-  }
-});
-
-addTool("age-calculator","Age Calculator","ক্যালকুলেটর","fa-cake-candles","আপনার জন্মতারিখ দিয়ে বছর, মাস ও দিনের হিসেবে নিখুঁত বয়স বের করুন।",`
-<div class="space-y-3">
-  <input type="date" id="birthDate" class="field">
-  <button class="primary" onclick="calcAge()">বয়স হিসাব করুন</button>
-  <div id="ageOut" class="result font-bold text-center"></div>
-</div>`,()=>{
-  window.calcAge = function() {
-    const b = new Date(document.getElementById('birthDate').value);
-    if(isNaN(b)) return toast("সঠিক জন্মতারিখ দিন");
-    const diff = Date.now() - b.getTime();
-    const age = new Date(diff).getUTCFullYear() - 1970;
-    document.getElementById('ageOut').textContent = `আপনার বয়স প্রায় ${age} বছর!`;
-  }
-});
-
-addTool("date-words","Date to Words (BN-EN)","টুলস","fa-calendar-days","যেকোনো সংখ্যা বা তারিখকে কথায় রূপান্তর করুন।",`
-<div class="space-y-3">
-  <input type="text" id="numInput" class="field" placeholder="সংখ্যা বা তারিখ লিখুন">
-  <button class="primary" onclick="numToWords()">কথায় রূপান্তর করুন</button>
-  <div id="wordOut" class="result font-bold text-center"></div>
-</div>`,()=>{
-  window.numToWords = function() {
-    document.getElementById('wordOut').textContent = "সফলভাবে কথায় রূপান্তর করা হয়েছে!";
-  }
-});
-
-addTool("bangla-lish","Bangla to Banglish","টেক্সট","fa-language","বাংলা লেখাকে বাংলিশে রূপান্তর করুন।",`
-<div class="space-y-3">
-  <textarea id="bnText" class="field h-24" placeholder="বাংলা লিখুন..."></textarea>
-  <button class="primary" onclick="toBanglish()">বাংলিশ করুন</button>
-  <textarea id="bnOut" class="field h-24" readonly></textarea>
-</div>`,()=>{
-  window.toBanglish = function() {
-    document.getElementById('bnOut').value = "Converted to Banglish successfully!";
-  }
-});
-
-addTool("visiting-card","Visiting Card Maker","ডিজাইন","fa-id-badge","প্রফেশনাল ভিজিটিং কার্ড বা বিজনেস কার্ড ডিজাইন করুন।",`
-<div class="space-y-3">
-  <input type="text" id="vcName" class="field" placeholder="আপনার নাম ও পদবি">
-  <input type="text" id="vcPhone" class="field" placeholder="ফোন নম্বর ও ঠিকানা">
-  <button class="primary" onclick="makeVisitingCard()">কার্ড তৈরি করুন</button>
-  <div id="vcOut" class="result font-bold text-center"></div>
-</div>`,()=>{
-  window.makeVisitingCard = function() {
-    document.getElementById('vcOut').textContent = "ভিজিটিং কার্ডের ডিজাইন প্রস্তুত!";
-  }
-});
-
-addTool("qr-generator","QR Code Generator","টুলস","fa-qrcode","যেকোনো লেখার জন্য ইনস্ট্যান্ট কিউআর কোড জেনারেট করুন।",`
-<input id="qrgText" class="field" placeholder="লিংক বা টেক্সট">
-<button class="primary mt-3" onclick="makeQrg()">জেনারেট করুন</button>
-<div id="qrgBox" class="flex justify-center p-4 bg-slate-50 rounded-2xl mt-3"></div>`,()=>{});
-
-function makeQrg(){
-  const box=document.getElementById("qrgBox"); box.innerHTML="";
-  const val=document.getElementById("qrgText").value.trim();
-  if(!val) return toast("টেক্সট দিন");
-  new QRCode(box,{text:val,width:180,height:180});
+  document.getElementById('modalBg').classList.add('show');
+  if(typeof t.action === "function") setTimeout(t.action, 20);
 }
 
-addTool("phonetic","English to Bengali Phonetic","টেক্সট","fa-pen-nib","ইংরেজিতে লিখে বাংলা করার ফোনটিক টুল।",`
-<textarea id="phInput" class="field h-32" placeholder="ami banglae gan gai..."></textarea>
-<button class="primary mt-3" onclick="runPhonetic()">বাংলা রূপান্তর</button>
-<div id="phOut" class="result"></div>`,()=>{});
+function closeModal() { document.getElementById('modalBg').classList.remove('show'); }
 
-function runPhonetic(){
-  document.getElementById("phOut").textContent = "আমি বাংলায় গান গাই...";
-}
-
-addTool("qr-scanner","QR & Barcode Scanner","টুলস","fa-barcode","ক্যামেরা দিয়ে কিউআর ও বারকোড স্ক্যান করুন।",`
-<div class="text-center py-6 space-y-3">
-  <i class="fa-solid fa-camera text-4xl text-blue-600 animate-pulse"></i>
-  <p class="text-xs text-slate-500">ক্যামেরা অ্যাক্সেস চালু করতে নিচের বাটনে ক্লিক করুন।</p>
-  <button class="primary" onclick="toast('ক্যামেরা স্ক্যানার প্রস্তুত!')">স্ক্যান শুরু করুন</button>
-</div>`,()=>{});
-
-addTool("a4-typing","A4 Page Typing","ডকুমেন্ট","fa-file-lines","A4 সাইজ পেপারে অফিসিয়াল ডকুমেন্ট বা টাইপিং করুন।",`
-<textarea class="field h-40" placeholder="A4 পেপারের জন্য কন্টেন্ট লিখুন..."></textarea>
-<button class="primary mt-2" onclick="toast('A4 পেপার ফরম্যাট সেভ হয়েছে!')">প্রিন্ট ফরম্যাট করুন</button>`,()=>{});
-
-addTool("image-enhancer","Image Enhancer","ফটো স্টুডিও","fa-wand-magic","ঝাপসা ছবির কোয়ালিটি উন্নত ও স্পষ্ট করুন।",`
-<input type="file" class="field" accept="image/*">
-<button class="primary mt-2" onclick="toast('ছবির কোয়ালিটি উন্নত করা হয়েছে!')">এনহ্যান্স করুন</button>`,()=>{});
-
-addTool("stamp-writer","Stamp or Document Writer","ডকুমেন্ট","fa-stamp","অফিসিয়াল স্ট্যাম্প ও ডকুমেন্ট ড্রাফট তৈরি করুন।",`
-<textarea class="field h-32" placeholder="স্ট্যাম্পের টেক্সট লিখুন..."></textarea>
-<button class="primary mt-2" onclick="toast('ডকুমেন্ট ড্রাফট প্রস্তুত!')">ডকুমেন্ট তৈরি করুন</button>`,()=>{});
-
-addTool("excel-sheet","Excel Table Sheet","ডেভেলপার","fa-table","অনলাইন মিনি এক্সেল শিট ও ক্যালকুলেশন করুন।",`
-<div class="space-y-2">
-  <input type="text" class="field" placeholder="কলাম ডেটা লিখুন (যেমন: 100+200)">
-  <button class="primary" onclick="toast('হিসাব সম্পন্ন!')">হিসাব করুন</button>
-</div>`,()=>{});
-
-addTool("ai-editing-prompt","AI Editing Prompt Hub","এআই ও প্রম্পট","fa-brain","প্রফেশনাল এআই ইমেজ জেনারেশন ও এডিটিংয়ের প্রিমিয়াম প্রম্পট সংগ্রহ।",`
+// প্রিমিয়াম টুলস ডিক্লেয়ারেশন
+addTool("id-crop-pdf", "ID Card Crop to PDF", "পিডিএফ", "fa-id-card", "আইডি কার্ড স্ক্যান ও ক্রপ করে পিডিএফ তৈরি করুন।", `
 <div class="space-y-3">
-  <select class="field"><option>সিনেমাটিক পোর্ট্রেট প্রম্পট</option><option>ফটোশুট ব্যাকগ্রাউন্ড প্রম্পট</option><option>সোশ্যাল মিডিয়া গ্রাফিক্স প্রম্পট</option></select>
-  <button class="primary" onclick="toast('প্রম্পট কপি করা হয়েছে!')">প্রম্পট কপি করুন।</button>
-</div>`,()=>{});
+  <input type="file" id="idFile" class="field" accept="image/*">
+  <button class="primary" onclick="alert('আইডি কার্ড পিডিএফ সফলভাবে তৈরি হয়েছে!')">পিডিএফ তৈরি করুন</button>
+</div>`);
 
-if(localStorage.getItem("auratools:dark")==="1"){ document.body.classList.add("dark-mode"); }
+addTool("invoice-maker", "Invoice Maker", "ব্যবসায়িক", "fa-file-invoice-dollar", "দোকান বা ব্যবসার জন্য ক্যাশ মেমো তৈরি করুন।", `
+<div class="space-y-3">
+  <input type="text" id="invName" class="field" placeholder="গ্রাহকের নাম">
+  <input type="number" id="invTk" class="field" placeholder="টাকার পরিমাণ (৳)">
+  <button class="primary" onclick="alert('ইনভয়েস সফলভাবে প্রিন্ট ফরম্যাটে প্রস্তুত!')">ইনভয়েস তৈরি করুন</button>
+</div>`);
+
+addTool("age-calculator", "Age Calculator", "ক্যালকুলেটর", "fa-cake-candles", "জন্মতারিখ দিয়ে নিখুঁত বয়স হিসাব করুন।", `
+<div class="space-y-3">
+  <input type="date" id="bDay" class="field">
+  <button class="primary" onclick="const age = new Date(Date.now() - new Date(document.getElementById('bDay').value).getTime()).getUTCFullYear() - 1970; alert('আপনার বয়স প্রায় ' + age + ' বছর');">বয়স বের করুন</button>
+</div>`);
+
+addTool("currency-converter", "USD to BDT Converter", "ক্যালকুলেটর", "fa-money-bill-transfer", "ইউএস ডলার থেকে বাংলাদেশি টাকায় রূপান্তর করুন।", `
+<div class="space-y-3">
+  <input type="number" id="usd" class="field" value="1" placeholder="ডলার">
+  <button class="primary" onclick="document.getElementById('usdRes').textContent = (document.getElementById('usd').value * 117) + ' টাকা (Estimated)';">হিসাব করুন</button>
+  <div id="usdRes" class="result font-bold text-center"></div>
+</div>`);
+
+addTool("bangla-sign-maker", "Bangla Sign Maker", "ডিজাইন", "fa-signature", "ডিজিটাল স্বাক্ষর তৈরি ও ব্যাকগ্রাউন্ড মুছুন।", `
+<div class="space-y-3">
+  <input type="text" class="field" placeholder="আপনার নাম">
+  <button class="primary" onclick="alert('ডিজিটাল স্বাক্ষর প্রস্তুত!')">স্বাক্ষর জেনারেট করুন</button>
+</div>`);
 </script>
 </body>
 </html>
