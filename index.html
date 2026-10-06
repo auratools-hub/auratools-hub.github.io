@@ -593,7 +593,7 @@ function makeQR(){
 }
 
 /* =========================================================
-   AI ASSISTANT (CLOUD ADMIN PANEL CONNECTED)
+   AI ASSISTANT (BEARER TOKEN SUPPORTED)
 ========================================================= */
 addTool("ai-assistant","AI Assistant","AI & Prompts","fa-robot","Ask Gemini AI to write, explain or brainstorm.",`
 <textarea id="aiPrompt" class="field h-40" placeholder="Ask anything..."></textarea>
@@ -645,25 +645,31 @@ async function runAI(){
   status.textContent = "Gemini is thinking...";
 
   try{
-    const res = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" +
-      encodeURIComponent(key),
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: `Act as a ${mode}.\n\nProvide a professional, accurate and useful response.\n\nUser request:\n${prompt}`
-            }]
-          }],
-          generationConfig: {
-            temperature: .7,
-            maxOutputTokens: 2048
-          }
-        })
-      }
-    );
+    // টোকেনটি Bearer নাকি সাধারণ key চেক করে রিকোয়েস্ট পাঠানো
+    let fetchUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
+    let headers = { "Content-Type": "application/json" };
+
+    if(key.startsWith("AQ.")) {
+      headers["Authorization"] = "Bearer " + key;
+    } else {
+      fetchUrl += "?key=" + encodeURIComponent(key);
+    }
+
+    const res = await fetch(fetchUrl, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({
+        contents: [{
+          parts: [{
+            text: `Act as a ${mode}.\n\nProvide a professional, accurate and useful response.\n\nUser request:\n${prompt}`
+          }]
+        }],
+        generationConfig: {
+          temperature: .7,
+          maxOutputTokens: 2048
+        }
+      })
+    });
 
     const data = await res.json();
 
