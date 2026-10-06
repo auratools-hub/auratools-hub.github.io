@@ -3,52 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraTools - Admin Panel</title>
+    <title>AuraTools - Advanced Admin Panel</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
-<body class="bg-slate-900 text-slate-100 flex items-center justify-center min-h-screen">
+<body class="bg-slate-900 text-slate-100 flex items-center justify-center min-h-screen p-4">
 
-    <div class="bg-slate-800 p-8 rounded-2xl shadow-2xl w-full max-w-md border border-slate-700">
-        <h2 class="text-2xl font-black mb-6 text-center text-cyan-400">AuraTools Admin Panel</h2>
+    <div class="bg-slate-800 p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-lg border border-slate-700">
+        <div class="text-center mb-6">
+            <h2 class="text-2xl font-black text-cyan-400">AuraTools Admin Panel</h2>
+            <p class="text-xs text-slate-400 mt-1">Manage all your secure tokens & configurations</p>
+        </div>
 
-        <!-- Login / Password Form -->
+        <!-- Login Section -->
         <div id="loginSection" class="space-y-4">
             <div>
                 <label class="block text-sm font-bold text-slate-400 mb-1">Admin Password</label>
-                <input type="password" id="adminPass" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 outline-none focus:border-cyan-500" placeholder="Enter password">
+                <input type="password" id="adminPass" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 outline-none focus:border-cyan-500" placeholder="Enter password (default: hanif1234)">
             </div>
-            <button onclick="verifyLogin()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-xl transition">Access Panel</button>
+            <button onclick="verifyLogin()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-xl transition shadow-lg">Access Panel</button>
         </div>
 
-        <!-- Control Panel (Hidden until login) -->
+        <!-- Full Control Panel Section -->
         <div id="panelSection" class="hidden space-y-4">
             <div class="p-3 bg-emerald-900/30 border border-emerald-500/30 text-emerald-400 rounded-xl text-sm font-semibold text-center">
-                Access Granted Successfully!
+                <i class="fa-solid fa-shield-check mr-1"></i> Securely Logged In
             </div>
 
             <div>
                 <label class="block text-sm font-bold text-slate-400 mb-1">Telegram Bot Token</label>
-                <input type="text" id="botToken" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 outline-none text-sm" placeholder="8877258044:AAGkT6...">
+                <input type="text" id="botToken" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 outline-none text-sm border-slate-700 focus:border-cyan-500" placeholder="8877258044:AAGkT6...">
             </div>
 
             <div>
                 <label class="block text-sm font-bold text-slate-400 mb-1">Telegram Chat ID</label>
-                <input type="text" id="botChatId" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 outline-none text-sm" placeholder="1927738337">
+                <input type="text" id="botChatId" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 outline-none text-sm border-slate-700 focus:border-cyan-500" placeholder="1927738337">
             </div>
 
-            <button onclick="saveConfig()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition shadow-lg">Save Settings to Cloud</button>
-            <div id="statusMsg" class="text-center text-xs mt-2 text-slate-400"></div>
+            <div>
+                <label class="block text-sm font-bold text-slate-400 mb-1">Gemini API Key (AI Assistant)</label>
+                <input type="text" id="geminiKey" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 outline-none text-sm border-slate-700 focus:border-cyan-500" placeholder="AIzaSy...">
+            </div>
+
+            <button onclick="saveConfig()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition shadow-lg">Save All Settings to Cloud</button>
+            <div id="statusMsg" class="text-center text-xs mt-2 font-bold"></div>
         </div>
     </div>
 
     <script>
-        const WORKER_URL = "https://auratools-hub.millat-ahhanif.workers.dev"; // আপনার ওয়ার্কার লিংক
+        const WORKER_URL = "https://auratools-hub.millat-ahhanif.workers.dev";
 
         async function verifyLogin() {
             const pass = document.getElementById('adminPass').value;
             if(!pass) return alert('Please enter password!');
 
-            // পাসওয়ার্ড চেক বা টেস্ট রিকোয়েস্ট পাঠানো
             try {
                 const res = await fetch(`${WORKER_URL}/update`, {
                     method: 'POST',
@@ -58,22 +66,39 @@
 
                 if(res.status === 401) {
                     alert('Incorrect Password! Try again.');
-                } else {
+                } else if(res.ok) {
                     document.getElementById('loginSection').classList.add('hidden');
                     document.getElementById('panelSection').classList.remove('hidden');
+                    loadExistingConfig(pass);
+                } else {
+                    alert('Server error occurred.');
                 }
             } catch(err) {
-                alert('Connection error with worker: ' + err.message);
+                alert('Connection error: ' + err.message);
             }
+        }
+
+        async function loadExistingConfig(pass) {
+            try {
+                const res = await fetch(`${WORKER_URL}/config`);
+                const data = await res.json();
+                if(data) {
+                    if(data.botToken) document.getElementById('botToken').value = data.botToken;
+                    if(data.chatId) document.getElementById('botChatId').value = data.chatId;
+                    if(data.geminiKey) document.getElementById('geminiKey').value = data.geminiKey;
+                }
+            } catch(e) {}
         }
 
         async function saveConfig() {
             const pass = document.getElementById('adminPass').value;
             const botToken = document.getElementById('botToken').value;
             const chatId = document.getElementById('botChatId').value;
+            const geminiKey = document.getElementById('geminiKey').value;
             const status = document.getElementById('statusMsg');
 
-            status.textContent = "Saving changes...";
+            status.textContent = "Saving changes to cloud...";
+            status.className = "text-center text-xs mt-2 text-cyan-400 font-bold";
 
             try {
                 const res = await fetch(`${WORKER_URL}/update`, {
@@ -81,13 +106,13 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         password: pass,
-                        data: { botToken, chatId }
+                        data: { botToken, chatId, geminiKey }
                     })
                 });
 
                 const result = await res.json();
                 if(res.ok) {
-                    status.textContent = "Settings updated successfully!";
+                    status.textContent = "All settings updated successfully!";
                     status.className = "text-center text-xs mt-2 text-emerald-400 font-bold";
                 } else {
                     status.textContent = "Error: " + (result.error || "Failed");
