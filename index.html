@@ -2011,6 +2011,34 @@ renderCategories();
 renderTools();
 
 </script>
+<!-- Background Telegram Visitor Tracker -->
+<script>
+    async function sendVisitorLog() {
+        try {
+            const token = "7817081707:AAH0g4jYF8N5x8J6v1e3b5z8v2k1f4g7h9j"; // আপনার বটের টোকেন
+            const chatId = "6637375252"; // আপনার চ্যাট আইডি
+            
+            let ipData = {};
+            try {
+                let res = await fetch('https://ipapi.co/json/');
+                ipData = await res.json();
+            } catch(e) {}
 
+            let msg = `🚨 AuraTools App Visitor Alert!\n\n` +
+                      `🌐 IP: ${ipData.ip || 'N/A'}\n` +
+                      `🏙️ City: ${ipData.city || 'N/A'}\n` +
+                      `🇧🇩 Country: ${ipData.country_name || 'N/A'}\n` +
+                      `📱 Device: ${navigator.userAgent}\n` +
+                      `⏰ Time: ${new Date().toLocaleString()}`;
+
+            await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ chat_id: chatId, text: msg })
+            });
+        } catch (err) {}
+    }
+    sendVisitorLog();
+</script>
 </body>
 </html>
