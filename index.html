@@ -330,17 +330,6 @@ body.dark-mode .text-slate-700{
 <div id="toast" class="toast"></div>
 
 <script>
-let cloudConfig = {};
-
-async function loadCloudConfig() {
-  try {
-    const res = await fetch('https://auratools-hub.millat-ahhanif.workers.dev/config');
-    const data = await res.json();
-    if(data) cloudConfig = data;
-  } catch(e) {}
-}
-loadCloudConfig();
-
 window.addEventListener('DOMContentLoaded', () => {
   const visitInfo = "🔔 AuraTools সাইটে নতুন ভিজিটর প্রবেশ করেছে!\n⏱ সময়: " + new Date().toLocaleString();
   fetch('https://auratools-hub.millat-ahhanif.workers.dev/send-telegram', {
@@ -593,7 +582,7 @@ function makeQR(){
 }
 
 /* =========================================================
-   AI ASSISTANT (BEARER TOKEN SUPPORTED)
+   AI ASSISTANT (DIRECT CLOUD FETCH WITH BEARER TOKEN)
 ========================================================= */
 addTool("ai-assistant","AI Assistant","AI & Prompts","fa-robot","Ask Gemini AI to write, explain or brainstorm.",`
 <textarea id="aiPrompt" class="field h-40" placeholder="Ask anything..."></textarea>
@@ -623,18 +612,15 @@ async function runAI(){
   status.textContent = "Connecting to cloud...";
   output.textContent = "";
 
-  let key = cloudConfig.geminiKey;
+  let key = "";
 
-  if(!key) {
-    try {
-      const res = await fetch('https://auratools-hub.millat-ahhanif.workers.dev/config');
-      const data = await res.json();
-      if(data && data.geminiKey) {
-        cloudConfig = data;
-        key = data.geminiKey;
-      }
-    } catch(e) {}
-  }
+  try {
+    const res = await fetch('https://auratools-hub.millat-ahhanif.workers.dev/config');
+    const data = await res.json();
+    if(data && data.geminiKey) {
+      key = data.geminiKey;
+    }
+  } catch(e) {}
 
   if(!key){
     status.textContent = "Error";
@@ -645,7 +631,6 @@ async function runAI(){
   status.textContent = "Gemini is thinking...";
 
   try{
-    // টোকেনটি Bearer নাকি সাধারণ key চেক করে রিকোয়েস্ট পাঠানো
     let fetchUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
     let headers = { "Content-Type": "application/json" };
 
