@@ -345,7 +345,6 @@ body.dark-mode .text-slate-700{
 <div id="toast" class="toast"></div>
 
 <script>
-// Firebase Realtime Database Configuration
 const firebaseConfig = {
   databaseURL: "https://auratools-hub-default-rtdb.firebaseio.com"
 };
@@ -449,26 +448,21 @@ function toggleFavorite(id,event){
 }
 
 function openTool(id){
-  let allTools = [...tools];
-  if(firebaseConfigData.customTools) {
-    if(Array.isArray(firebaseConfigData.customTools)) {
-      firebaseConfigData.customTools.forEach(ct => allTools.push(ct));
-    } else {
-      Object.values(firebaseConfigData.customTools).forEach(ct => allTools.push(ct));
-    }
-  }
+  const allTools = getAllActiveTools();
+  const t = allTools.find(x => x.id === id);
+  if(!t) return;
 
-  const t=allTools.find(x=>x.id===id);
-  if(!t)return;
-  document.getElementById("modalTitle").textContent=t.name;
-  document.getElementById("modalCategory").textContent=t.category;
-  const icon=document.getElementById("modalIcon");
-  icon.style.background=gradients[allTools.indexOf(t)%gradients.length];
-  icon.innerHTML=`<i class="fa-solid ${t.icon}"></i>`;
+  document.getElementById("modalTitle").textContent = t.name;
+  document.getElementById("modalCategory").textContent = t.category;
+  
+  const icon = document.getElementById("modalIcon");
+  icon.style.background = gradients[allTools.indexOf(t) % gradients.length];
+  icon.innerHTML = `<i class="fa-solid ${t.icon}"></i>`;
   
   const modalContent = document.getElementById("modalContent");
   modalContent.innerHTML = t.html;
   
+  // কাস্টম বা ডিফল্ট টুলের ভেতরের স্ক্রিপ্ট পারফেক্টলি রান করার জন্য
   const scripts = modalContent.querySelectorAll("script");
   scripts.forEach(script => {
     const newScript = document.createElement("script");
@@ -478,33 +472,33 @@ function openTool(id){
   });
 
   document.getElementById("modalBg").classList.add("show");
-  if(typeof t.action==="function"){ setTimeout(()=>t.action(),20); }
+  if(typeof t.action === "function") { setTimeout(() => t.action(), 20); }
 }
 
 function closeModal(){ document.getElementById("modalBg").classList.remove("show"); }
 document.addEventListener("keydown",e=>{ if(e.key==="Escape")closeModal(); });
 
-// ডিফল্ট টুলগুলোর স্ট্যাটাস ফিল্টার করার লজিক (এডমিন প্যানেল থেকে কন্ট্রোল হবে)
-function getActiveTools() {
+function getAllActiveTools() {
   let allTools = [...tools];
-  const disabledTools = firebaseConfigData.disabledTools || {};
-
-  // ডিফল্ট টুলস ফিল্টার করা (যদি এডমিন থেকে অফ করা হয়)
-  let filteredTools = allTools.filter(t => !disabledTools[t.id]);
-
-  // কাস্টম টুলস যুক্ত করা
+  
+  // ফায়ারবেস থেকে কাস্টম টুলস যুক্ত করা (ডুপ্লিকেট এড়ানোর লজিকসহ)
   if(firebaseConfigData.customTools) {
-    if(Array.isArray(firebaseConfigData.customTools)) {
-      firebaseConfigData.customTools.forEach(ct => filteredTools.push(ct));
-    } else {
-      Object.values(firebaseConfigData.customTools).forEach(ct => filteredTools.push(ct));
-    }
+    let customArr = Array.isArray(firebaseConfigData.customTools) ? firebaseConfigData.customTools : Object.values(firebaseConfigData.customTools);
+    customArr.forEach(ct => {
+      // যদি অলরেডি না থাকে তবেই পুশ করবে
+      if(!allTools.some(x => x.id === ct.id || x.name === ct.name)) {
+        allTools.push(ct);
+      }
+    });
   }
-  return filteredTools;
+
+  // ডিফল্ট বা কাস্টম টুলস এডমিন থেকে অফ করা আছে কিনা চেক করা
+  const disabledTools = firebaseConfigData.disabledTools || {};
+  return allTools.filter(t => !disabledTools[t.id]);
 }
 
 function renderCategories(){
-  const activeTools = getActiveTools();
+  const activeTools = getAllActiveTools();
   const cats=["All",...new Set(activeTools.map(t=>t.category))];
   document.getElementById("categories").innerHTML=cats.map(c=>`
     <button class="category-pill ${currentCategory===c?"active":""}" onclick="setCategory('${escapeAttr(c)}')">
@@ -516,7 +510,7 @@ function renderCategories(){
 function setCategory(c){ currentCategory=c; renderCategories(); renderTools(); }
 
 function renderTools(){
-  const activeTools = getActiveTools();
+  const activeTools = getAllActiveTools();
   const search=(document.getElementById("search")?.value||"").toLowerCase().trim();
   let list=activeTools.filter(t=>{
     const categoryOK=currentCategory==="All"||t.category===currentCategory;
@@ -554,7 +548,7 @@ function renderTools(){
 function showFavorites(){
   currentCategory="Favorites";
   renderCategories();
-  const activeTools = getActiveTools();
+  const activeTools = getAllActiveTools();
   const fav=activeTools.filter(t=>favorites.includes(t.id));
   document.getElementById("toolCount").textContent=`${fav.length} favorite tools`;
   document.getElementById("toolGrid").innerHTML=fav.length?fav.map((t,i)=>`
@@ -587,15 +581,15 @@ function toggleDark(){
 }
 
 /* =========================================================
-   STANDARD TOOLS
+   STANDARD TOOLS (বাংলা ডিসক্রিপশনসহ ১০০% কার্যকর)
 ========================================================= */
-addTool("text-counter","Text Counter","Text & Data","fa-file-lines","Count words, characters, lines and reading time.",`
-<textarea id="tcInput" class="field h-48" placeholder="Type or paste your text..."></textarea>
+addTool("text-counter","Text Counter","টেক্সট ও ডাটা","fa-file-lines","আপনার লেখার শব্দ, ক্যারেক্টার, লাইন সংখ্যা এবং পড়ার সময় নিখুঁতভাবে গণনা করুন।",`
+<textarea id="tcInput" class="field h-48" placeholder="এখানে আপনার লেখা লিখুন বা পেস্ট করুন..."></textarea>
 <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
-  <div class="result"><b id="tcWords">0</b><br><small>Words</small></div>
-  <div class="result"><b id="tcChars">0</b><br><small>Characters</small></div>
-  <div class="result"><b id="tcLines">0</b><br><small>Lines</small></div>
-  <div class="result"><b id="tcRead">0 min</b><br><small>Reading</small></div>
+  <div class="result"><b id="tcWords">0</b><br><small>শব্দ</small></div>
+  <div class="result"><b id="tcChars">0</b><br><small>ক্যারেক্টার</small></div>
+  <div class="result"><b id="tcLines">0</b><br><small>লাইন</small></div>
+  <div class="result"><b id="tcRead">0 মিনিট</b><br><small>পড়ার সময়</small></div>
 </div>`,()=>{
   const input=document.getElementById("tcInput");
   function update(){
@@ -606,19 +600,19 @@ addTool("text-counter","Text Counter","Text & Data","fa-file-lines","Count words
     document.getElementById("tcWords").textContent=words;
     document.getElementById("tcChars").textContent=text.length;
     document.getElementById("tcLines").textContent=lines;
-    document.getElementById("tcRead").textContent=mins+" min";
+    document.getElementById("tcRead").textContent=mins+" মিনিট";
   }
   input.addEventListener("input",update);
   update();
 });
 
-addTool("case-converter","Case Converter","Text & Data","fa-font","Convert text into multiple professional cases.",`
-<textarea id="caseInput" class="field h-44" placeholder="Write something..."></textarea>
+addTool("case-converter","Case Converter","টেক্সট ও ডাটা","fa-font","আপনার পছন্দমতো যেকোনো লেখাকে বড় হাতের, ছোট হাতের বা টাইটেল কেসে রূপান্তর করুন।",`
+<textarea id="caseInput" class="field h-44" placeholder="কিছু লিখুন..."></textarea>
 <div class="grid grid-cols-2 gap-3 mt-4">
-<button class="primary" onclick="caseDo('upper')">UPPERCASE</button>
-<button class="secondary" onclick="caseDo('lower')">lowercase</button>
-<button class="secondary" onclick="caseDo('title')">Title Case</button>
-<button class="secondary" onclick="caseDo('sentence')">Sentence Case</button>
+<button class="primary" onclick="caseDo('upper')">বড় হাতের (UPPERCASE)</button>
+<button class="secondary" onclick="caseDo('lower')">ছোট হাতের (lowercase)</button>
+<button class="secondary" onclick="caseDo('title')">টাইটেল কেস</button>
+<button class="secondary" onclick="caseDo('sentence')">সেন্টেন্স কেস</button>
 </div>
 <div id="caseOut" class="result"></div>`,()=>{});
 
@@ -632,9 +626,9 @@ function caseDo(type){
   document.getElementById("caseOut").textContent=out;
 }
 
-addTool("slug","Slug Generator","SEO & Web","fa-link","Generate clean SEO-friendly URLs.",`
-<input id="slugInput" class="field" placeholder="My Awesome Article">
-<button class="primary mt-3" onclick="makeSlug()">Generate Slug</button>
+addTool("slug","Slug Generator","এসইও ও ওয়েব","fa-link","যেকোনো সাধারণ লেখাকে এসইও-বান্ধব সুন্দর ইউআরএল বা স্লাগে রূপান্তর করুন।",`
+<input id="slugInput" class="field" placeholder="আমার আকর্ষণীয় আর্টিকেল">
+<button class="primary mt-3" onclick="makeSlug()">স্লাগ তৈরি করুন</button>
 <div id="slugOut" class="result"></div>`,()=>{});
 
 function makeSlug(){
@@ -643,35 +637,35 @@ function makeSlug(){
   document.getElementById("slugOut").textContent=v;
 }
 
-addTool("json","JSON Formatter","Developer","fa-code","Format, validate and minify JSON.",`
+addTool("json","JSON Formatter","ডেভেলপার","fa-code","জেসন (JSON) কোড সুন্দরভাবে সাজান, যাচাই করুন বা সাইজ ছোট (মিনিফাই) করুন।",`
 <textarea id="jsonInput" class="field h-56" placeholder='{"name":"AuraTools"}'></textarea>
 <div class="grid grid-cols-2 gap-3 mt-3">
-<button class="primary" onclick="formatJSON()">Format JSON</button>
-<button class="secondary" onclick="minifyJSON()">Minify</button>
+<button class="primary" onclick="formatJSON()">জেসন ফরম্যাট করুন</button>
+<button class="secondary" onclick="minifyJSON()">মিনিফাই করুন</button>
 </div>
 <textarea id="jsonOut" class="field h-56 mt-3" readonly></textarea>`,()=>{});
 
 function formatJSON(){
   try{ const data=JSON.parse(document.getElementById("jsonInput").value); document.getElementById("jsonOut").value=JSON.stringify(data,null,2); }
-  catch(e){ document.getElementById("jsonOut").value="Invalid JSON: "+e.message; }
+  catch(e){ document.getElementById("jsonOut").value="অস্বচ্ছ বা ভুল জেসন কোড: "+e.message; }
 }
 function minifyJSON(){
   try{ const data=JSON.parse(document.getElementById("jsonInput").value); document.getElementById("jsonOut").value=JSON.stringify(data); }
-  catch(e){ document.getElementById("jsonOut").value="Invalid JSON: "+e.message; }
+  catch(e){ document.getElementById("jsonOut").value="অস্বচ্ছ বা ভুল জেসন কোড: "+e.message; }
 }
 
-addTool("uuid","UUID Generator","Developer","fa-fingerprint","Generate secure random UUIDs.",`
+addTool("uuid","UUID Generator","ডেভেলপার","fa-fingerprint","নিরাপদ এবং ইউনিক ইউনিকোড আইডি (UUID v4) ইনস্ট্যান্ট তৈরি করুন।",`
 <div class="flex gap-2">
 <input id="uuidOut" class="field" readonly>
-<button class="secondary" onclick="newUUID()">Generate</button>
+<button class="secondary" onclick="newUUID()">তৈরি করুন</button>
 </div>`,()=>newUUID());
 
 function newUUID(){ document.getElementById("uuidOut").value=crypto.randomUUID(); }
 
-addTool("password","Password Generator","Security","fa-key","Generate strong random passwords locally.",`
+addTool("password","Password Generator","নিরাপত্তা","fa-key","শক্তিশালী এবং নিরাপদ পাসওয়ার্ড তৈরি করুন যা সহজে হ্যাক করা যায় না।",`
 <div class="flex gap-2 mt-3">
 <input id="passOut" class="field" readonly>
-<button class="secondary" onclick="generatePassword()">Generate</button>
+<button class="secondary" onclick="generatePassword()">তৈরি করুন</button>
 </div>`,()=>generatePassword());
 
 function generatePassword(){
@@ -681,31 +675,31 @@ function generatePassword(){
   document.getElementById("passOut").value=out;
 }
 
-addTool("qr","QR Code Studio","Everyday","fa-qrcode","Create downloadable QR codes.",`
+addTool("qr","QR Code Studio","দৈনন্দিন","fa-qrcode","যেকোনো লিংক বা লেখার জন্য সুন্দর কিউআর কোড তৈরি করুন এবং ডাউনলোড করুন।",`
 <input id="qrText" class="field" placeholder="https://example.com">
-<button class="primary mt-3" onclick="makeQR()">Generate QR</button>
+<button class="primary mt-3" onclick="makeQR()">কিউআর কোড তৈরি করুন</button>
 <div id="qrBox" class="flex justify-center p-6 bg-slate-50 rounded-2xl mt-4"></div>`,()=>{});
 
 function makeQR(){
   const box=document.getElementById("qrBox"); box.innerHTML="";
   const val=document.getElementById("qrText").value.trim();
-  if(!val) return toast("Enter text");
+  if(!val) return toast("অনুগ্রহ করে কিছু লিখুন");
   new QRCode(box,{text:val,width:200,height:200});
 }
 
 /* =========================================================
    AI ASSISTANT
 ========================================================= */
-addTool("ai-assistant","AI Assistant","AI & Prompts","fa-robot","Ask Gemini AI to write, explain or brainstorm.",`
-<textarea id="aiPrompt" class="field h-40" placeholder="Ask anything..."></textarea>
+addTool("ai-assistant","AI Assistant","এআই ও প্রম্পট","fa-robot","জেমিনি এআই-এর সাহায্য নিয়ে যেকোনো লেখা লিখুন, উত্তর খুঁজুন বা আইডিয়া নিন।",`
+<textarea id="aiPrompt" class="field h-40" placeholder="এখানে কিছু জানতে চান..."></textarea>
 <select id="aiMode" class="field mt-3">
-<option>Helpful Assistant</option>
-<option>Professional Writer</option>
-<option>SEO Expert</option>
-<option>Developer</option>
-<option>Marketing Expert</option>
+<option>সহকারী (Helpful Assistant)</option>
+<option>প্রফেশনাল লেখক</option>
+<option>এসইও এক্সপার্ট</option>
+<option>প্রোগ্রামার বা ডেভেলপার</option>
+<option>মার্কেটিং এক্সপার্ট</option>
 </select>
-<button class="primary mt-3" onclick="runAI()">Generate with Gemini</button>
+<button class="primary mt-3" onclick="runAI()">জেমিনির সাথে কথা বলুন</button>
 <div id="aiStatus" class="text-sm text-slate-500 mt-3"></div>
 <div id="aiOutput" class="result mt-3"></div>`,()=>{});
 
@@ -714,25 +708,25 @@ async function runAI(){
   const mode = document.getElementById("aiMode").value;
 
   if(!prompt){
-    toast("Write a prompt first");
+    toast("প্রথমে কিছু লিখুন");
     return;
   }
 
   const status = document.getElementById("aiStatus");
   const output = document.getElementById("aiOutput");
 
-  status.textContent = "Connecting to Firebase...";
+  status.textContent = "ফায়ারবেস থেকে সংযোগ স্থাপন হচ্ছে...";
   output.textContent = "";
 
   let key = firebaseConfigData.geminiKey;
 
   if(!key){
-    status.textContent = "Error";
-    toast("Please update Gemini API Key in Admin Panel first!");
+    status.textContent = "ত্রুটি";
+    toast("অনুগ্রহ করে এডমিন প্যানেল থেকে জেমিনি এআই কি যুক্ত করুন!");
     return;
   }
 
-  status.textContent = "Gemini is thinking...";
+  status.textContent = "জেমিনি চিন্তা করছে...";
 
   try{
     const res = await fetch(
@@ -743,7 +737,7 @@ async function runAI(){
         body: JSON.stringify({
           contents: [{
             parts: [{
-              text: `Act as a ${mode}.\n\nProvide a professional, accurate and useful response.\n\nUser request:\n${prompt}`
+              text: `Act as a ${mode}.\n\nProvide a professional, accurate and useful response in Bengali if requested, or matching user language.\n\nUser request:\n${prompt}`
             }]
           }],
           generationConfig: {
@@ -761,13 +755,13 @@ async function runAI(){
 
     const answer = data?.candidates?.[0]?.content?.parts
       ?.map(p => p.text || "")
-      .join("") || "No answer returned.";
+      .join("") || "কোনো উত্তর পাওয়া যায়নি।";
 
     output.textContent = answer;
-    status.textContent = "Completed";
+    status.textContent = "সম্পন্ন হয়েছে";
   }catch(err){
-    output.textContent = "Gemini Error:\n" + err.message;
-    status.textContent = "Failed";
+    output.textContent = "এআই ত্রুটি:\n" + err.message;
+    status.textContent = "ব্যর্থ হয়েছে";
   }
 }
 
