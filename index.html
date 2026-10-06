@@ -465,7 +465,18 @@ function openTool(id){
   const icon=document.getElementById("modalIcon");
   icon.style.background=gradients[allTools.indexOf(t)%gradients.length];
   icon.innerHTML=`<i class="fa-solid ${t.icon}"></i>`;
-  document.getElementById("modalContent").innerHTML=t.html;
+  
+  const modalContent = document.getElementById("modalContent");
+  modalContent.innerHTML = t.html;
+  
+  const scripts = modalContent.querySelectorAll("script");
+  scripts.forEach(script => {
+    const newScript = document.createElement("script");
+    newScript.text = script.innerHTML;
+    document.body.appendChild(newScript);
+    document.body.removeChild(newScript);
+  });
+
   document.getElementById("modalBg").classList.add("show");
   if(typeof t.action==="function"){ setTimeout(()=>t.action(),20); }
 }
@@ -473,16 +484,28 @@ function openTool(id){
 function closeModal(){ document.getElementById("modalBg").classList.remove("show"); }
 document.addEventListener("keydown",e=>{ if(e.key==="Escape")closeModal(); });
 
-function renderCategories(){
+// ডিফল্ট টুলগুলোর স্ট্যাটাস ফিল্টার করার লজিক (এডমিন প্যানেল থেকে কন্ট্রোল হবে)
+function getActiveTools() {
   let allTools = [...tools];
+  const disabledTools = firebaseConfigData.disabledTools || {};
+
+  // ডিফল্ট টুলস ফিল্টার করা (যদি এডমিন থেকে অফ করা হয়)
+  let filteredTools = allTools.filter(t => !disabledTools[t.id]);
+
+  // কাস্টম টুলস যুক্ত করা
   if(firebaseConfigData.customTools) {
     if(Array.isArray(firebaseConfigData.customTools)) {
-      firebaseConfigData.customTools.forEach(ct => allTools.push(ct));
+      firebaseConfigData.customTools.forEach(ct => filteredTools.push(ct));
     } else {
-      Object.values(firebaseConfigData.customTools).forEach(ct => allTools.push(ct));
+      Object.values(firebaseConfigData.customTools).forEach(ct => filteredTools.push(ct));
     }
   }
-  const cats=["All",...new Set(allTools.map(t=>t.category))];
+  return filteredTools;
+}
+
+function renderCategories(){
+  const activeTools = getActiveTools();
+  const cats=["All",...new Set(activeTools.map(t=>t.category))];
   document.getElementById("categories").innerHTML=cats.map(c=>`
     <button class="category-pill ${currentCategory===c?"active":""}" onclick="setCategory('${escapeAttr(c)}')">
       ${escapeHTML(c)}
@@ -493,17 +516,9 @@ function renderCategories(){
 function setCategory(c){ currentCategory=c; renderCategories(); renderTools(); }
 
 function renderTools(){
-  let allTools = [...tools];
-  if(firebaseConfigData.customTools) {
-    if(Array.isArray(firebaseConfigData.customTools)) {
-      firebaseConfigData.customTools.forEach(ct => allTools.push(ct));
-    } else {
-      Object.values(firebaseConfigData.customTools).forEach(ct => allTools.push(ct));
-    }
-  }
-
+  const activeTools = getActiveTools();
   const search=(document.getElementById("search")?.value||"").toLowerCase().trim();
-  let list=allTools.filter(t=>{
+  let list=activeTools.filter(t=>{
     const categoryOK=currentCategory==="All"||t.category===currentCategory;
     const searchOK=!search || t.name.toLowerCase().includes(search) || t.description.toLowerCase().includes(search) || t.category.toLowerCase().includes(search);
     return categoryOK && searchOK;
@@ -539,16 +554,8 @@ function renderTools(){
 function showFavorites(){
   currentCategory="Favorites";
   renderCategories();
-  let allTools = [...tools];
-  if(firebaseConfigData.customTools) {
-    if(Array.isArray(firebaseConfigData.customTools)) {
-      firebaseConfigData.customTools.forEach(ct => allTools.push(ct));
-    } else {
-      Object.values(firebaseConfigData.customTools).forEach(ct => allTools.push(ct));
-    }
-  }
-
-  const fav=allTools.filter(t=>favorites.includes(t.id));
+  const activeTools = getActiveTools();
+  const fav=activeTools.filter(t=>favorites.includes(t.id));
   document.getElementById("toolCount").textContent=`${fav.length} favorite tools`;
   document.getElementById("toolGrid").innerHTML=fav.length?fav.map((t,i)=>`
     <article class="tool-card" onclick="openTool('${t.id}')">
@@ -687,7 +694,7 @@ function makeQR(){
 }
 
 /* =========================================================
-   AI ASSISTANT (FIREBASE SYNCED)
+   AI ASSISTANT
 ========================================================= */
 addTool("ai-assistant","AI Assistant","AI & Prompts","fa-robot","Ask Gemini AI to write, explain or brainstorm.",`
 <textarea id="aiPrompt" class="field h-40" placeholder="Ask anything..."></textarea>
