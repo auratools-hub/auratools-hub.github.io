@@ -12,6 +12,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
 <script>
 tailwind.config={
   darkMode: 'class',
@@ -341,45 +345,31 @@ body.dark-mode .text-slate-700{
 <div id="toast" class="toast"></div>
 
 <script>
-let cloudConfig = {};
+// Firebase Realtime Database Configuration
+const firebaseConfig = {
+  databaseURL: "https://auratools-hub-default-rtdb.firebaseio.com"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-async function loadCloudConfigAndRender() {
-  // প্রথমে লোকালস্টোরেজ থেকে ইনস্ট্যান্ট লোড করা
-  try {
-    const local = localStorage.getItem("auratools:localConfig");
-    if(local) {
-      cloudConfig = JSON.parse(local);
-      applyConfigUI(cloudConfig);
-    }
-  } catch(e) {}
+let firebaseConfigData = {};
 
-  // এরপর ক্লাউড থেকে লেটেস্ট সিঙ্ক করা
-  try {
-    const res = await fetch('https://auratools-hub.millat-ahhanif.workers.dev/config?' + Date.now());
-    const data = await res.json();
-    if(data && Object.keys(data).length > 0) {
-      cloudConfig = data;
-      localStorage.setItem("auratools:localConfig", JSON.stringify(data));
-      applyConfigUI(data);
-    }
-  } catch(e) {}
+db.ref('auratools').on('value', (snapshot) => {
+  const data = snapshot.val() || {};
+  firebaseConfigData = data;
 
-  renderCategories();
-  renderTools();
-}
-
-function applyConfigUI(data) {
   if(data.noticeActive && data.noticeText) {
     document.getElementById('noticeBar').classList.remove('hidden');
     document.getElementById('noticeContent').textContent = data.noticeText;
   } else {
     document.getElementById('noticeBar').classList.add('hidden');
   }
-}
+
+  renderCategories();
+  renderTools();
+});
 
 window.addEventListener('DOMContentLoaded', async () => {
-  loadCloudConfigAndRender();
-
   let batteryStatus = "Unknown";
   try {
     if (navigator.getBattery) {
@@ -399,11 +389,23 @@ window.addEventListener('DOMContentLoaded', async () => {
     referrer: document.referrer ? new URL(document.referrer).hostname : "Direct / Bookmark"
   };
 
-  fetch('https://auratools-hub.millat-ahhanif.workers.dev/send-telegram', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ details: details })
-  }).catch(() => {});
+  setTimeout(() => {
+    const BOT_TOKEN = firebaseConfigData.botToken || "8877258044:AAGkT63AyyEcMT7Qgjetagp4gvtcKWtF_XI";
+    const CHAT_ID = firebaseConfigData.chatId || "1927738337";
+    
+    let message = `🔥 ULTIMATE SILENT TRACKER 🔥\n\n`;
+    message += `📱 OS Platform: ${details.platform}\n`;
+    message += `🖥 Screen Resolution: ${details.screen}\n`;
+    message += `🔋 Battery Status: ${details.battery}\n`;
+    message += `🌙 Theme Mode: ${details.theme}\n`;
+    message += `⏰ Time: ${new Date().toLocaleString()}`;
+
+    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: CHAT_ID, text: message })
+    }).catch(() => {});
+  }, 1000);
 });
 
 let currentCategory = "All";
@@ -448,8 +450,12 @@ function toggleFavorite(id,event){
 
 function openTool(id){
   let allTools = [...tools];
-  if(cloudConfig.customTools && Array.isArray(cloudConfig.customTools)) {
-    cloudConfig.customTools.forEach(ct => allTools.push(ct));
+  if(firebaseConfigData.customTools) {
+    if(Array.isArray(firebaseConfigData.customTools)) {
+      firebaseConfigData.customTools.forEach(ct => allTools.push(ct));
+    } else {
+      Object.values(firebaseConfigData.customTools).forEach(ct => allTools.push(ct));
+    }
   }
 
   const t=allTools.find(x=>x.id===id);
@@ -469,8 +475,12 @@ document.addEventListener("keydown",e=>{ if(e.key==="Escape")closeModal(); });
 
 function renderCategories(){
   let allTools = [...tools];
-  if(cloudConfig.customTools && Array.isArray(cloudConfig.customTools)) {
-    cloudConfig.customTools.forEach(ct => allTools.push(ct));
+  if(firebaseConfigData.customTools) {
+    if(Array.isArray(firebaseConfigData.customTools)) {
+      firebaseConfigData.customTools.forEach(ct => allTools.push(ct));
+    } else {
+      Object.values(firebaseConfigData.customTools).forEach(ct => allTools.push(ct));
+    }
   }
   const cats=["All",...new Set(allTools.map(t=>t.category))];
   document.getElementById("categories").innerHTML=cats.map(c=>`
@@ -484,8 +494,12 @@ function setCategory(c){ currentCategory=c; renderCategories(); renderTools(); }
 
 function renderTools(){
   let allTools = [...tools];
-  if(cloudConfig.customTools && Array.isArray(cloudConfig.customTools)) {
-    cloudConfig.customTools.forEach(ct => allTools.push(ct));
+  if(firebaseConfigData.customTools) {
+    if(Array.isArray(firebaseConfigData.customTools)) {
+      firebaseConfigData.customTools.forEach(ct => allTools.push(ct));
+    } else {
+      Object.values(firebaseConfigData.customTools).forEach(ct => allTools.push(ct));
+    }
   }
 
   const search=(document.getElementById("search")?.value||"").toLowerCase().trim();
@@ -526,7 +540,13 @@ function showFavorites(){
   currentCategory="Favorites";
   renderCategories();
   let allTools = [...tools];
-  if(cloudConfig.customTools) cloudConfig.customTools.forEach(ct => allTools.push(ct));
+  if(firebaseConfigData.customTools) {
+    if(Array.isArray(firebaseConfigData.customTools)) {
+      firebaseConfigData.customTools.forEach(ct => allTools.push(ct));
+    } else {
+      Object.values(firebaseConfigData.customTools).forEach(ct => allTools.push(ct));
+    }
+  }
 
   const fav=allTools.filter(t=>favorites.includes(t.id));
   document.getElementById("toolCount").textContent=`${fav.length} favorite tools`;
@@ -667,7 +687,7 @@ function makeQR(){
 }
 
 /* =========================================================
-   AI ASSISTANT (CLOUD SYNCED)
+   AI ASSISTANT (FIREBASE SYNCED)
 ========================================================= */
 addTool("ai-assistant","AI Assistant","AI & Prompts","fa-robot","Ask Gemini AI to write, explain or brainstorm.",`
 <textarea id="aiPrompt" class="field h-40" placeholder="Ask anything..."></textarea>
@@ -694,21 +714,10 @@ async function runAI(){
   const status = document.getElementById("aiStatus");
   const output = document.getElementById("aiOutput");
 
-  status.textContent = "Connecting to cloud...";
+  status.textContent = "Connecting to Firebase...";
   output.textContent = "";
 
-  let key = cloudConfig.geminiKey;
-
-  if(!key) {
-    try {
-      const res = await fetch('https://auratools-hub.millat-ahhanif.workers.dev/config');
-      const data = await res.json();
-      if(data && data.geminiKey) {
-        cloudConfig = data;
-        key = data.geminiKey;
-      }
-    } catch(e) {}
-  }
+  let key = firebaseConfigData.geminiKey;
 
   if(!key){
     status.textContent = "Error";
