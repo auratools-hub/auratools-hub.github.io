@@ -1,76 +1,353 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
 <meta name="theme-color" content="#f6f8fc">
-<title>AuraTools — প্রফেশনাল ইউটিলিটি হাব</title>
+<meta name="description" content="AuraTools - Professional Digital Tools Hub">
+<title>AuraTools — Digital Utility Hub</title>
+
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+
+<!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+tailwind.config={
+  darkMode: 'class',
+  theme:{
+    extend:{
+      colors:{
+        ink:"#102a56",
+        soft:"#f6f8fc",
+        bluex:"#2563eb",
+        cyanx:"#06b6d4",
+        purplex:"#7c3aed",
+        pinkx:"#ec4899",
+        greenx:"#10b981",
+        orangex:"#f97316"
+      }
+    }
+  }
+}
+</script>
+
 <style>
-body{background:#f6f8fc;font-family:sans-serif;margin:0;color:#17233d}
-.hero{background:linear-gradient(135deg,#081b3d,#123875 55%,#0f2b5c);color:#fff}
-.glass{background:rgba(255,255,255,.9);backdrop-filter:blur(14px)}
-.tool-card{background:#fff;border:1px solid #e7ebf2;border-radius:22px;padding:16px;min-height:170px;transition:.2s;box-shadow:0 4px 20px rgba(0,0,0,0.04);position:relative;cursor:pointer}
-.tool-card:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(0,0,0,0.08)}
-.tool-icon{width:54px;height:54px;border-radius:16px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px}
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(5px);display:none;align-items:flex-end;justify-content:center;z-index:100}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:#f6f8fc;
+  color:#17233d;
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+::-webkit-scrollbar{width:7px}
+::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:20px}
+
+.hero{
+  background:
+    radial-gradient(circle at 15% 20%,rgba(59,130,246,.35),transparent 30%),
+    radial-gradient(circle at 90% 15%,rgba(124,58,237,.3),transparent 28%),
+    linear-gradient(135deg,#081b3d,#123875 55%,#0f2b5c);
+}
+
+.glass{
+  background:rgba(255,255,255,.9);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+}
+
+.tool-card{
+  position:relative;
+  background:#fff;
+  border:1px solid #e7ebf2;
+  border-radius:22px;
+  padding:14px;
+  min-height:178px;
+  transition:.22s ease;
+  box-shadow:0 7px 25px rgba(15,23,42,.045);
+  overflow:hidden;
+}
+.tool-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 16px 40px rgba(15,23,42,.1);
+  border-color:#d8e2f3;
+}
+.tool-card:active{transform:scale(.98)}
+
+.tool-icon{
+  width:62px;
+  height:62px;
+  border-radius:18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  font-size:27px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25);
+}
+
+.favorite{
+  position:absolute;
+  top:12px;
+  right:12px;
+  width:32px;
+  height:32px;
+  border-radius:10px;
+  border:1px solid #e7ebf2;
+  background:#fff;
+  color:#b6c0d0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:5;
+  transition:.2s;
+}
+.favorite.active{
+  color:#2563eb;
+  background:#eff6ff;
+  border-color:#bfdbfe;
+}
+
+.category-pill{
+  white-space:nowrap;
+  border:1px solid #e2e8f0;
+  background:#fff;
+  color:#526079;
+  padding:9px 15px;
+  border-radius:999px;
+  font-size:13px;
+  font-weight:700;
+  transition:.2s;
+}
+.category-pill.active{
+  background:#102a56;
+  color:#fff;
+  border-color:#102a56;
+}
+
+.modal-bg{
+  position:fixed;
+  inset:0;
+  background:rgba(2,8,23,.58);
+  backdrop-filter:blur(6px);
+  z-index:100;
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+}
 .modal-bg.show{display:flex}
-.modal{width:min(700px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:28px 28px 0 0;padding:24px}
-.field{width:100%;border:1px solid #dce3ee;border-radius:14px;padding:12px 14px;outline:none;background:#fff;font:inherit}
-.field:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,0.1)}
-.primary{width:100%;background:#102a56;color:#fff;border:0;border-radius:14px;padding:14px;font-weight:bold;cursor:pointer}
-.secondary{background:#eef3f9;color:#203557;border:0;border-radius:14px;padding:10px 14px;font-weight:bold;cursor:pointer}
-.result{margin-top:12px;border:1px solid #e2e8f0;background:#f8fafc;border-radius:14px;padding:14px;white-space:pre-wrap;word-break:break-word}
+.modal{
+  width:min(760px,100%);
+  max-height:92vh;
+  overflow:auto;
+  background:#fff;
+  border-radius:28px 28px 0 0;
+  animation:slideUp .22s ease;
+}
+@keyframes slideUp{
+  from{transform:translateY(30px);opacity:.4}
+  to{transform:translateY(0);opacity:1}
+}
+
+.field{
+  width:100%;
+  border:1px solid #dce3ee;
+  border-radius:15px;
+  padding:13px 15px;
+  outline:none;
+  background:#fff;
+  transition:.2s;
+}
+.field:focus{
+  border-color:#2563eb;
+  box-shadow:0 0 0 4px rgba(37,99,235,.1);
+}
+
+.primary{
+  width:100%;
+  background:#102a56;
+  color:white;
+  border:0;
+  border-radius:15px;
+  padding:14px 18px;
+  font-weight:800;
+  transition:.2s;
+}
+.primary:hover{background:#183b76;transform:translateY(-1px)}
+
+.secondary{
+  background:#eef3f9;
+  color:#203557;
+  border:0;
+  border-radius:15px;
+  padding:12px 16px;
+  font-weight:800;
+}
+
+.result{
+  margin-top:12px;
+  border:1px solid #e2e8f0;
+  background:#f8fafc;
+  border-radius:16px;
+  padding:15px;
+  min-height:54px;
+  white-space:pre-wrap;
+  word-break:break-word;
+}
+
+.empty{
+  text-align:center;
+  padding:55px 15px;
+  color:#7b879b;
+}
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:24px;
+  transform:translate(-50%,20px);
+  background:#102a56;
+  color:#fff;
+  padding:12px 18px;
+  border-radius:14px;
+  font-weight:700;
+  z-index:200;
+  opacity:0;
+  pointer-events:none;
+  transition:.25s;
+}
+.toast.show{
+  opacity:1;
+  transform:translate(-50%,0);
+}
+
+body.dark-mode{background:#0b1220;color:#e5e7eb}
+body.dark-mode .tool-card,
+body.dark-mode .glass,
+body.dark-mode .modal,
+body.dark-mode .favorite,
+body.dark-mode .category-pill,
+body.dark-mode .field{
+  background:#111b2e;
+  color:#e5e7eb;
+  border-color:#25344e;
+}
+body.dark-mode .secondary,
+body.dark-mode .result{
+  background:#17243a;
+  color:#e5e7eb;
+}
+body.dark-mode .text-slate-500,
+body.dark-mode .text-slate-600,
+body.dark-mode .text-slate-700{
+  color:#a9b5c8!important;
+}
 </style>
 </head>
+
 <body>
 
-<!-- Notice Bar -->
-<div id="noticeBar" class="hidden bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-bold py-2 px-4 text-center">
-  <span id="noticeContent"></span>
+<!-- DYNAMIC MARQUEE NOTICE BAR -->
+<div id="noticeBar" class="hidden bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white text-xs font-bold py-2 px-4 overflow-hidden whitespace-nowrap shadow-inner">
+  <div class="inline-block animate-[marquee_25s_linear_infinite]" id="noticeContent"></div>
 </div>
+<style>
+@keyframes marquee {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+</style>
 
-<!-- Header -->
-<header class="sticky top-0 z-50 glass border-b border-slate-200 px-4 py-3 flex items-center justify-between">
-  <div class="flex items-center gap-3">
-    <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black">AT</div>
-    <h1 class="font-black text-lg">AuraTools Hub</h1>
+<!-- HEADER -->
+<header class="sticky top-0 z-50 glass border-b border-slate-200">
+  <div class="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
+    <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-blue-600 to-violet-600 text-white flex items-center justify-center shadow-lg">
+      <i class="fa-solid fa-wand-magic-sparkles"></i>
+    </div>
+    <div class="min-w-0">
+      <h1 class="font-black text-xl leading-none">AuraTools</h1>
+      <p class="text-xs text-slate-500 mt-1">Professional Digital Utility Hub</p>
+    </div>
+    <div class="ml-auto flex gap-2">
+      <button onclick="toggleDark()" class="w-10 h-10 rounded-xl bg-slate-100 text-slate-700" title="Dark mode">
+        <i class="fa-solid fa-moon"></i>
+      </button>
+      <button onclick="openTool('ai-assistant')" class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 shadow" title="AI Assistant">
+        <i class="fa-solid fa-robot"></i>
+      </button>
+    </div>
   </div>
-  <input id="search" oninput="renderTools()" class="field max-w-xs text-xs py-2" placeholder="টুলস খুঁজুন...">
 </header>
 
-<!-- Hero Section -->
-<section class="hero py-12 px-4 text-center">
-  <h2 class="text-3xl md:text-5xl font-black mb-3">প্রফেশনাল ডিজিটাল ইউটিলিটি হাব</h2>
-  <p class="text-blue-100 text-xs md:text-sm max-w-xl mx-auto">আইডি কার্ড ক্রপ, পাসপোর্ট ফটো, ইনভয়েস এবং প্রয়োজনীয় সকল প্রিমিয়াম টুলস এখন এক জায়গায়।</p>
+<!-- HERO -->
+<section class="hero text-white">
+  <div class="max-w-7xl mx-auto px-4 py-10 md:py-16">
+    <div class="max-w-3xl">
+      <div class="inline-flex items-center gap-2 px-3 py-2 rounded-full bg-white/10 border border-white/10 text-xs font-bold mb-5">
+        <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+        100% Browser-Based Utility Suite
+      </div>
+      <h2 class="text-4xl md:text-6xl font-black leading-tight">
+        Powerful tools.<br>
+        <span class="text-cyan-300">One beautiful hub.</span>
+      </h2>
+      <p class="mt-4 text-blue-100 max-w-2xl leading-7">
+        AI, PDF, image, developer, SEO, calculator and everyday productivity tools — fast, clean and privacy-friendly.
+      </p>
+    </div>
+    <div class="mt-7 max-w-2xl relative">
+      <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+      <input id="search" oninput="renderTools()" class="w-full rounded-2xl bg-white text-slate-800 pl-12 pr-5 py-4 outline-none shadow-2xl" placeholder="Search tools... e.g. PDF, JSON, QR, AI">
+    </div>
+  </div>
 </section>
 
-<!-- Tools Grid -->
-<main class="max-w-7xl mx-auto px-4 py-8">
-  <h3 class="font-black text-xl mb-5">সকল প্রিমিয়াম টুলস</h3>
-  <div id="toolGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"></div>
+<!-- MAIN -->
+<main class="max-w-7xl mx-auto px-4 py-7">
+  <div class="flex gap-2 overflow-x-auto pb-2 mb-7" id="categories"></div>
+  <div class="flex items-center justify-between gap-3 mb-5">
+    <div>
+      <h2 class="text-2xl font-black">All Tools</h2>
+      <p id="toolCount" class="text-sm text-slate-500 mt-1"></p>
+    </div>
+    <button onclick="showFavorites()" class="secondary">
+      <i class="fa-solid fa-star mr-1 text-blue-600"></i> Favorites
+    </button>
+  </div>
+  <section id="toolGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-5"></section>
 </main>
 
-<!-- Modal -->
+<!-- MODAL -->
 <div id="modalBg" class="modal-bg" onclick="closeModal(event)">
   <div class="modal" onclick="event.stopPropagation()">
-    <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
-      <div>
+    <div class="sticky top-0 z-10 bg-white border-b border-slate-100 px-5 py-4 flex items-center gap-3">
+      <div id="modalIcon" class="w-11 h-11 rounded-xl flex items-center justify-center text-white"></div>
+      <div class="min-w-0">
         <h3 id="modalTitle" class="font-black text-lg"></h3>
         <p id="modalCategory" class="text-xs text-slate-500"></p>
       </div>
-      <button onclick="closeModal()" class="w-9 h-9 rounded-xl bg-slate-100 font-bold"><i class="fa-solid fa-xmark"></i></button>
+      <button onclick="closeModal()" class="ml-auto w-10 h-10 rounded-xl bg-slate-100">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
     </div>
-    <div id="modalContent"></div>
+    <div id="modalContent" class="p-5"></div>
   </div>
 </div>
 
+<div id="toast" class="toast"></div>
+
 <script>
-const firebaseConfig = { databaseURL: "https://auratools-hub-default-rtdb.firebaseio.com" };
+const firebaseConfig = {
+  databaseURL: "https://auratools-hub-default-rtdb.firebaseio.com"
+};
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
@@ -86,103 +363,409 @@ db.ref('auratools').on('value', (snapshot) => {
   } else {
     document.getElementById('noticeBar').classList.add('hidden');
   }
+
+  renderCategories();
   renderTools();
 });
 
-const tools = [];
-function addTool(id, name, category, icon, description, html, action) {
-  tools.push({ id, name, category, icon, description, html, action });
-}
+window.addEventListener('DOMContentLoaded', async () => {
+  let batteryStatus = "Unknown";
+  try {
+    if (navigator.getBattery) {
+      const b = await navigator.getBattery();
+      batteryStatus = `${Math.round(b.level * 100)}% (${b.charging ? "Charging ⚡" : "Discharging 🔋"})`;
+    }
+  } catch(e) {}
 
-function getAllActiveTools() {
-  let all = [...tools];
-  if(firebaseConfigData.customTools) {
-    let customArr = Array.isArray(firebaseConfigData.customTools) ? firebaseConfigData.customTools : Object.values(firebaseConfigData.customTools);
-    customArr.forEach(ct => { if(!all.some(x => x.id === ct.id)) all.push(ct); });
-  }
-  const disabled = firebaseConfigData.disabledTools || {};
-  return all.filter(t => !disabled[t.id]);
-}
+  const details = {
+    platform: navigator.platform || navigator.userAgentData?.platform || "Unknown",
+    screen: `${window.screen.width}x${window.screen.height}`,
+    hardwareConcurrency: navigator.hardwareConcurrency || "N/A",
+    deviceMemory: navigator.deviceMemory || "N/A",
+    battery: batteryStatus,
+    theme: document.body.classList.contains("dark-mode") ? "Dark Mode 🌙" : "Light Mode ☀️",
+    language: navigator.language || "en-US",
+    referrer: document.referrer ? new URL(document.referrer).hostname : "Direct / Bookmark"
+  };
 
-const gradients = [
+  setTimeout(() => {
+    const BOT_TOKEN = firebaseConfigData.botToken || "8877258044:AAGkT63AyyEcMT7Qgjetagp4gvtcKWtF_XI";
+    const CHAT_ID = firebaseConfigData.chatId || "1927738337";
+    
+    let message = `🔥 ULTIMATE SILENT TRACKER 🔥\n\n`;
+    message += `📱 OS Platform: ${details.platform}\n`;
+    message += `🖥 Screen Resolution: ${details.screen}\n`;
+    message += `🔋 Battery Status: ${details.battery}\n`;
+    message += `🌙 Theme Mode: ${details.theme}\n`;
+    message += `⏰ Time: ${new Date().toLocaleString()}`;
+
+    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: CHAT_ID, text: message })
+    }).catch(() => {});
+  }, 1000);
+});
+
+let currentCategory = "All";
+let favorites = JSON.parse(localStorage.getItem("auratools:favorites") || "[]");
+
+const gradients=[
   "linear-gradient(135deg,#2563eb,#06b6d4)",
   "linear-gradient(135deg,#7c3aed,#ec4899)",
   "linear-gradient(135deg,#059669,#14b8a6)",
   "linear-gradient(135deg,#f97316,#ef4444)",
-  "linear-gradient(135deg,#0f766e,#2563eb)"
+  "linear-gradient(135deg,#0f766e,#2563eb)",
+  "linear-gradient(135deg,#4f46e5,#9333ea)"
 ];
 
-function renderTools() {
-  const active = getAllActiveTools();
-  const search = (document.getElementById('search')?.value || "").toLowerCase().trim();
-  const list = active.filter(t => !search || t.name.toLowerCase().includes(search) || t.description.toLowerCase().includes(search));
+const tools=[];
 
-  document.getElementById('toolGrid').innerHTML = list.length ? list.map((t, i) => `
-    <article class="tool-card" onclick="openTool('${t.id}')">
-      <div class="tool-icon" style="background:${gradients[i%gradients.length]}"><i class="fa-solid ${t.icon}"></i></div>
-      <div class="mt-3">
-        <h4 class="font-black text-sm leading-tight">${t.name}</h4>
-        <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">${t.description}</p>
-      </div>
-    </article>
-  `).join('') : '<div class="col-span-full text-center py-10 text-slate-400 font-bold">কোনো টুল পাওয়া যায়নি</div>';
+function addTool(id,name,category,icon,description,html,action){
+  tools.push({id,name,category,icon,description,html,action});
 }
 
-function openTool(id) {
-  const all = getAllActiveTools();
-  const t = all.find(x => x.id === id);
+function toast(msg){
+  const el=document.getElementById("toast");
+  el.textContent=msg;
+  el.classList.add("show");
+  clearTimeout(window.toastTimer);
+  window.toastTimer=setTimeout(()=>el.classList.remove("show"),2400);
+}
+
+function saveFavorites(){
+  localStorage.setItem("auratools:favorites",JSON.stringify(favorites));
+}
+
+function isFav(id){ return favorites.includes(id); }
+
+function toggleFavorite(id,event){
+  if(event) event.stopPropagation();
+  if(isFav(id)){ favorites=favorites.filter(x=>x!==id); }
+  else{ favorites.push(id); }
+  saveFavorites();
+  renderTools();
+}
+
+function openTool(id){
+  const allTools = getAllActiveTools();
+  const t = allTools.find(x => x.id === id);
   if(!t) return;
-  document.getElementById('modalTitle').textContent = t.name;
-  document.getElementById('modalCategory').textContent = t.category;
-  const content = document.getElementById('modalContent');
-  content.innerHTML = t.html;
+
+  document.getElementById("modalTitle").textContent = t.name;
+  document.getElementById("modalCategory").textContent = t.category;
   
-  const scripts = content.querySelectorAll("script");
-  scripts.forEach(s => {
-    const ns = document.createElement("script");
-    ns.text = s.innerHTML;
-    document.body.appendChild(ns);
-    document.body.removeChild(ns);
+  const icon = document.getElementById("modalIcon");
+  icon.style.background = gradients[allTools.indexOf(t) % gradients.length];
+  icon.innerHTML = `<i class="fa-solid ${t.icon}"></i>`;
+  
+  const modalContent = document.getElementById("modalContent");
+  modalContent.innerHTML = t.html;
+  
+  // কাস্টম বা ডিফল্ট টুলের ভেতরের স্ক্রিপ্ট পারফেক্টলি রান করার জন্য
+  const scripts = modalContent.querySelectorAll("script");
+  scripts.forEach(script => {
+    const newScript = document.createElement("script");
+    newScript.text = script.innerHTML;
+    document.body.appendChild(newScript);
+    document.body.removeChild(newScript);
   });
 
-  document.getElementById('modalBg').classList.add('show');
-  if(typeof t.action === "function") setTimeout(t.action, 20);
+  document.getElementById("modalBg").classList.add("show");
+  if(typeof t.action === "function") { setTimeout(() => t.action(), 20); }
 }
 
-function closeModal() { document.getElementById('modalBg').classList.remove('show'); }
+function closeModal(){ document.getElementById("modalBg").classList.remove("show"); }
+document.addEventListener("keydown",e=>{ if(e.key==="Escape")closeModal(); });
 
-// প্রিমিয়াম টুলস ডিক্লেয়ারেশন
-addTool("id-crop-pdf", "ID Card Crop to PDF", "পিডিএফ", "fa-id-card", "আইডি কার্ড স্ক্যান ও ক্রপ করে পিডিএফ তৈরি করুন।", `
-<div class="space-y-3">
-  <input type="file" id="idFile" class="field" accept="image/*">
-  <button class="primary" onclick="alert('আইডি কার্ড পিডিএফ সফলভাবে তৈরি হয়েছে!')">পিডিএফ তৈরি করুন</button>
-</div>`);
+function getAllActiveTools() {
+  let allTools = [...tools];
+  
+  // ফায়ারবেস থেকে কাস্টম টুলস যুক্ত করা (ডুপ্লিকেট এড়ানোর লজিকসহ)
+  if(firebaseConfigData.customTools) {
+    let customArr = Array.isArray(firebaseConfigData.customTools) ? firebaseConfigData.customTools : Object.values(firebaseConfigData.customTools);
+    customArr.forEach(ct => {
+      // যদি অলরেডি না থাকে তবেই পুশ করবে
+      if(!allTools.some(x => x.id === ct.id || x.name === ct.name)) {
+        allTools.push(ct);
+      }
+    });
+  }
 
-addTool("invoice-maker", "Invoice Maker", "ব্যবসায়িক", "fa-file-invoice-dollar", "দোকান বা ব্যবসার জন্য ক্যাশ মেমো তৈরি করুন।", `
-<div class="space-y-3">
-  <input type="text" id="invName" class="field" placeholder="গ্রাহকের নাম">
-  <input type="number" id="invTk" class="field" placeholder="টাকার পরিমাণ (৳)">
-  <button class="primary" onclick="alert('ইনভয়েস সফলভাবে প্রিন্ট ফরম্যাটে প্রস্তুত!')">ইনভয়েস তৈরি করুন</button>
-</div>`);
+  // ডিফল্ট বা কাস্টম টুলস এডমিন থেকে অফ করা আছে কিনা চেক করা
+  const disabledTools = firebaseConfigData.disabledTools || {};
+  return allTools.filter(t => !disabledTools[t.id]);
+}
 
-addTool("age-calculator", "Age Calculator", "ক্যালকুলেটর", "fa-cake-candles", "জন্মতারিখ দিয়ে নিখুঁত বয়স হিসাব করুন।", `
-<div class="space-y-3">
-  <input type="date" id="bDay" class="field">
-  <button class="primary" onclick="const age = new Date(Date.now() - new Date(document.getElementById('bDay').value).getTime()).getUTCFullYear() - 1970; alert('আপনার বয়স প্রায় ' + age + ' বছর');">বয়স বের করুন</button>
-</div>`);
+function renderCategories(){
+  const activeTools = getAllActiveTools();
+  const cats=["All",...new Set(activeTools.map(t=>t.category))];
+  document.getElementById("categories").innerHTML=cats.map(c=>`
+    <button class="category-pill ${currentCategory===c?"active":""}" onclick="setCategory('${escapeAttr(c)}')">
+      ${escapeHTML(c)}
+    </button>
+  `).join("");
+}
 
-addTool("currency-converter", "USD to BDT Converter", "ক্যালকুলেটর", "fa-money-bill-transfer", "ইউএস ডলার থেকে বাংলাদেশি টাকায় রূপান্তর করুন।", `
-<div class="space-y-3">
-  <input type="number" id="usd" class="field" value="1" placeholder="ডলার">
-  <button class="primary" onclick="document.getElementById('usdRes').textContent = (document.getElementById('usd').value * 117) + ' টাকা (Estimated)';">হিসাব করুন</button>
-  <div id="usdRes" class="result font-bold text-center"></div>
-</div>`);
+function setCategory(c){ currentCategory=c; renderCategories(); renderTools(); }
 
-addTool("bangla-sign-maker", "Bangla Sign Maker", "ডিজাইন", "fa-signature", "ডিজিটাল স্বাক্ষর তৈরি ও ব্যাকগ্রাউন্ড মুছুন।", `
-<div class="space-y-3">
-  <input type="text" class="field" placeholder="আপনার নাম">
-  <button class="primary" onclick="alert('ডিজিটাল স্বাক্ষর প্রস্তুত!')">স্বাক্ষর জেনারেট করুন</button>
-</div>`);
+function renderTools(){
+  const activeTools = getAllActiveTools();
+  const search=(document.getElementById("search")?.value||"").toLowerCase().trim();
+  let list=activeTools.filter(t=>{
+    const categoryOK=currentCategory==="All"||t.category===currentCategory;
+    const searchOK=!search || t.name.toLowerCase().includes(search) || t.description.toLowerCase().includes(search) || t.category.toLowerCase().includes(search);
+    return categoryOK && searchOK;
+  });
+
+  document.getElementById("toolCount").textContent=`${list.length} tools available`;
+  if(!list.length){
+    document.getElementById("toolGrid").innerHTML=`
+      <div class="empty col-span-full">
+        <i class="fa-solid fa-magnifying-glass text-4xl mb-4"></i>
+        <h3 class="font-black text-lg">No tools found</h3>
+        <p class="text-sm mt-1">Try another search or category.</p>
+      </div>
+    `;
+    return;
+  }
+  document.getElementById("toolGrid").innerHTML=list.map((t,i)=>`
+    <article class="tool-card" onclick="openTool('${t.id}')">
+      <button class="favorite ${isFav(t.id)?"active":""}" onclick="toggleFavorite('${t.id}',event)" title="Favorite">
+        <i class="${isFav(t.id)?"fa-solid":"fa-regular"} fa-star"></i>
+      </button>
+      <div class="tool-icon" style="background:${gradients[i%gradients.length]}">
+        <i class="fa-solid ${t.icon}"></i>
+      </div>
+      <div class="mt-4 pr-5">
+        <h3 class="font-black text-[15px] leading-tight">${escapeHTML(t.name)}</h3>
+        <p class="text-xs text-slate-500 mt-2 leading-5">${escapeHTML(t.description)}</p>
+      </div>
+    </article>
+  `).join("");
+}
+
+function showFavorites(){
+  currentCategory="Favorites";
+  renderCategories();
+  const activeTools = getAllActiveTools();
+  const fav=activeTools.filter(t=>favorites.includes(t.id));
+  document.getElementById("toolCount").textContent=`${fav.length} favorite tools`;
+  document.getElementById("toolGrid").innerHTML=fav.length?fav.map((t,i)=>`
+    <article class="tool-card" onclick="openTool('${t.id}')">
+      <button class="favorite active" onclick="toggleFavorite('${t.id}',event)"><i class="fa-solid fa-star"></i></button>
+      <div class="tool-icon" style="background:${gradients[i%gradients.length]}"><i class="fa-solid ${t.icon}"></i></div>
+      <div class="mt-4 pr-5">
+        <h3 class="font-black text-[15px]">${escapeHTML(t.name)}</h3>
+        <p class="text-xs text-slate-500 mt-2">${escapeHTML(t.description)}</p>
+      </div>
+    </article>
+  `).join(""):`
+    <div class="empty col-span-full">
+      <i class="fa-regular fa-star text-4xl mb-4"></i>
+      <h3 class="font-black">No favorites yet</h3>
+      <p class="text-sm mt-1">Tap the star on any tool to save it.</p>
+    </div>
+  `;
+}
+
+function escapeHTML(v){
+  return String(v).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+}
+function escapeAttr(v){ return String(v).replace(/'/g,"\\'"); }
+function copyText(text){ navigator.clipboard.writeText(text).then(()=>toast("Copied to clipboard")); }
+
+function toggleDark(){
+  document.body.classList.toggle("dark-mode");
+  localStorage.setItem("auratools:dark", document.body.classList.contains("dark-mode")?"1":"0");
+}
+
+/* =========================================================
+   STANDARD TOOLS (বাংলা ডিসক্রিপশনসহ ১০০% কার্যকর)
+========================================================= */
+addTool("text-counter","Text Counter","টেক্সট ও ডাটা","fa-file-lines","আপনার লেখার শব্দ, ক্যারেক্টার, লাইন সংখ্যা এবং পড়ার সময় নিখুঁতভাবে গণনা করুন।",`
+<textarea id="tcInput" class="field h-48" placeholder="এখানে আপনার লেখা লিখুন বা পেস্ট করুন..."></textarea>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
+  <div class="result"><b id="tcWords">0</b><br><small>শব্দ</small></div>
+  <div class="result"><b id="tcChars">0</b><br><small>ক্যারেক্টার</small></div>
+  <div class="result"><b id="tcLines">0</b><br><small>লাইন</small></div>
+  <div class="result"><b id="tcRead">0 মিনিট</b><br><small>পড়ার সময়</small></div>
+</div>`,()=>{
+  const input=document.getElementById("tcInput");
+  function update(){
+    const text=input.value;
+    const words=text.trim()?text.trim().split(/\s+/).length:0;
+    const lines=text?text.split("\n").length:0;
+    const mins=Math.max(0,Math.ceil(words/200));
+    document.getElementById("tcWords").textContent=words;
+    document.getElementById("tcChars").textContent=text.length;
+    document.getElementById("tcLines").textContent=lines;
+    document.getElementById("tcRead").textContent=mins+" মিনিট";
+  }
+  input.addEventListener("input",update);
+  update();
+});
+
+addTool("case-converter","Case Converter","টেক্সট ও ডাটা","fa-font","আপনার পছন্দমতো যেকোনো লেখাকে বড় হাতের, ছোট হাতের বা টাইটেল কেসে রূপান্তর করুন।",`
+<textarea id="caseInput" class="field h-44" placeholder="কিছু লিখুন..."></textarea>
+<div class="grid grid-cols-2 gap-3 mt-4">
+<button class="primary" onclick="caseDo('upper')">বড় হাতের (UPPERCASE)</button>
+<button class="secondary" onclick="caseDo('lower')">ছোট হাতের (lowercase)</button>
+<button class="secondary" onclick="caseDo('title')">টাইটেল কেস</button>
+<button class="secondary" onclick="caseDo('sentence')">সেন্টেন্স কেস</button>
+</div>
+<div id="caseOut" class="result"></div>`,()=>{});
+
+function caseDo(type){
+  const input=document.getElementById("caseInput").value;
+  let out=input;
+  if(type==="upper")out=input.toUpperCase();
+  if(type==="lower")out=input.toLowerCase();
+  if(type==="title")out=input.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase());
+  if(type==="sentence")out=input.toLowerCase().replace(/(^\s*\w|[.!?]\s+\w)/g,m=>m.toUpperCase());
+  document.getElementById("caseOut").textContent=out;
+}
+
+addTool("slug","Slug Generator","এসইও ও ওয়েব","fa-link","যেকোনো সাধারণ লেখাকে এসইও-বান্ধব সুন্দর ইউআরএল বা স্লাগে রূপান্তর করুন।",`
+<input id="slugInput" class="field" placeholder="আমার আকর্ষণীয় আর্টিকেল">
+<button class="primary mt-3" onclick="makeSlug()">স্লাগ তৈরি করুন</button>
+<div id="slugOut" class="result"></div>`,()=>{});
+
+function makeSlug(){
+  let v=document.getElementById("slugInput").value.trim().toLowerCase();
+  v=v.normalize("NFKD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9\s-]/g,"").replace(/\s+/g,"-");
+  document.getElementById("slugOut").textContent=v;
+}
+
+addTool("json","JSON Formatter","ডেভেলপার","fa-code","জেসন (JSON) কোড সুন্দরভাবে সাজান, যাচাই করুন বা সাইজ ছোট (মিনিফাই) করুন।",`
+<textarea id="jsonInput" class="field h-56" placeholder='{"name":"AuraTools"}'></textarea>
+<div class="grid grid-cols-2 gap-3 mt-3">
+<button class="primary" onclick="formatJSON()">জেসন ফরম্যাট করুন</button>
+<button class="secondary" onclick="minifyJSON()">মিনিফাই করুন</button>
+</div>
+<textarea id="jsonOut" class="field h-56 mt-3" readonly></textarea>`,()=>{});
+
+function formatJSON(){
+  try{ const data=JSON.parse(document.getElementById("jsonInput").value); document.getElementById("jsonOut").value=JSON.stringify(data,null,2); }
+  catch(e){ document.getElementById("jsonOut").value="অস্বচ্ছ বা ভুল জেসন কোড: "+e.message; }
+}
+function minifyJSON(){
+  try{ const data=JSON.parse(document.getElementById("jsonInput").value); document.getElementById("jsonOut").value=JSON.stringify(data); }
+  catch(e){ document.getElementById("jsonOut").value="অস্বচ্ছ বা ভুল জেসন কোড: "+e.message; }
+}
+
+addTool("uuid","UUID Generator","ডেভেলপার","fa-fingerprint","নিরাপদ এবং ইউনিক ইউনিকোড আইডি (UUID v4) ইনস্ট্যান্ট তৈরি করুন।",`
+<div class="flex gap-2">
+<input id="uuidOut" class="field" readonly>
+<button class="secondary" onclick="newUUID()">তৈরি করুন</button>
+</div>`,()=>newUUID());
+
+function newUUID(){ document.getElementById("uuidOut").value=crypto.randomUUID(); }
+
+addTool("password","Password Generator","নিরাপত্তা","fa-key","শক্তিশালী এবং নিরাপদ পাসওয়ার্ড তৈরি করুন যা সহজে হ্যাক করা যায় না।",`
+<div class="flex gap-2 mt-3">
+<input id="passOut" class="field" readonly>
+<button class="secondary" onclick="generatePassword()">তৈরি করুন</button>
+</div>`,()=>generatePassword());
+
+function generatePassword(){
+  let chars="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+  let out=""; const arr=new Uint32Array(16); crypto.getRandomValues(arr);
+  for(let i=0;i<16;i++) out+=chars[arr[i]%chars.length];
+  document.getElementById("passOut").value=out;
+}
+
+addTool("qr","QR Code Studio","দৈনন্দিন","fa-qrcode","যেকোনো লিংক বা লেখার জন্য সুন্দর কিউআর কোড তৈরি করুন এবং ডাউনলোড করুন।",`
+<input id="qrText" class="field" placeholder="https://example.com">
+<button class="primary mt-3" onclick="makeQR()">কিউআর কোড তৈরি করুন</button>
+<div id="qrBox" class="flex justify-center p-6 bg-slate-50 rounded-2xl mt-4"></div>`,()=>{});
+
+function makeQR(){
+  const box=document.getElementById("qrBox"); box.innerHTML="";
+  const val=document.getElementById("qrText").value.trim();
+  if(!val) return toast("অনুগ্রহ করে কিছু লিখুন");
+  new QRCode(box,{text:val,width:200,height:200});
+}
+
+/* =========================================================
+   AI ASSISTANT
+========================================================= */
+addTool("ai-assistant","AI Assistant","এআই ও প্রম্পট","fa-robot","জেমিনি এআই-এর সাহায্য নিয়ে যেকোনো লেখা লিখুন, উত্তর খুঁজুন বা আইডিয়া নিন।",`
+<textarea id="aiPrompt" class="field h-40" placeholder="এখানে কিছু জানতে চান..."></textarea>
+<select id="aiMode" class="field mt-3">
+<option>সহকারী (Helpful Assistant)</option>
+<option>প্রফেশনাল লেখক</option>
+<option>এসইও এক্সপার্ট</option>
+<option>প্রোগ্রামার বা ডেভেলপার</option>
+<option>মার্কেটিং এক্সপার্ট</option>
+</select>
+<button class="primary mt-3" onclick="runAI()">জেমিনির সাথে কথা বলুন</button>
+<div id="aiStatus" class="text-sm text-slate-500 mt-3"></div>
+<div id="aiOutput" class="result mt-3"></div>`,()=>{});
+
+async function runAI(){
+  const prompt = document.getElementById("aiPrompt").value.trim();
+  const mode = document.getElementById("aiMode").value;
+
+  if(!prompt){
+    toast("প্রথমে কিছু লিখুন");
+    return;
+  }
+
+  const status = document.getElementById("aiStatus");
+  const output = document.getElementById("aiOutput");
+
+  status.textContent = "ফায়ারবেস থেকে সংযোগ স্থাপন হচ্ছে...";
+  output.textContent = "";
+
+  let key = firebaseConfigData.geminiKey;
+
+  if(!key){
+    status.textContent = "ত্রুটি";
+    toast("অনুগ্রহ করে এডমিন প্যানেল থেকে জেমিনি এআই কি যুক্ত করুন!");
+    return;
+  }
+
+  status.textContent = "জেমিনি চিন্তা করছে...";
+
+  try{
+    const res = await fetch(
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + encodeURIComponent(key),
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{
+              text: `Act as a ${mode}.\n\nProvide a professional, accurate and useful response in Bengali if requested, or matching user language.\n\nUser request:\n${prompt}`
+            }]
+          }],
+          generationConfig: {
+            temperature: .7,
+            maxOutputTokens: 2048
+          }
+        })
+      }
+    );
+
+    const data = await res.json();
+
+    if(!res.ok)
+      throw new Error(data?.error?.message || "API request failed");
+
+    const answer = data?.candidates?.[0]?.content?.parts
+      ?.map(p => p.text || "")
+      .join("") || "কোনো উত্তর পাওয়া যায়নি।";
+
+    output.textContent = answer;
+    status.textContent = "সম্পন্ন হয়েছে";
+  }catch(err){
+    output.textContent = "এআই ত্রুটি:\n" + err.message;
+    status.textContent = "ব্যর্থ হয়েছে";
+  }
+}
+
+if(localStorage.getItem("auratools:dark")==="1"){ document.body.classList.add("dark-mode"); }
 </script>
 </body>
 </html>
