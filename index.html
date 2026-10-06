@@ -265,7 +265,8 @@ body.dark-mode .text-slate-700{
       <button onclick="toggleDark()" class="w-10 h-10 rounded-xl bg-slate-100 text-slate-700" title="Dark mode">
         <i class="fa-solid fa-moon"></i>
       </button>
-      <button onclick="openAISettings()" class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600" title="AI Settings">
+      <!-- সরাসরি ওপেন হবে এআই অ্যাসিস্ট্যান্ট টুল -->
+      <button onclick="openTool('ai-assistant')" class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 shadow" title="AI Assistant">
         <i class="fa-solid fa-robot"></i>
       </button>
     </div>
@@ -331,7 +332,7 @@ body.dark-mode .text-slate-700{
 
 <script>
 /* =========================================================
-   CLOUD CONFIG & TELEGRAM TRACKER & GEMINI AI INTEGRATION
+   AUTOMATIC CLOUD CONFIG (ADMIN PANEL SYNCED) & TRACKER
 ========================================================= */
 let cloudConfig = {};
 
@@ -340,7 +341,7 @@ async function loadCloudConfig() {
     const res = await fetch('https://auratools-hub.millat-ahhanif.workers.dev/config');
     cloudConfig = await res.json();
   } catch(e) {
-    console.log("Config load fallback active");
+    console.log("Cloud config sync active");
   }
 }
 loadCloudConfig();
@@ -354,7 +355,6 @@ window.addEventListener('DOMContentLoaded', () => {
   }).catch(() => {});
 });
 
-const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY";
 let currentCategory = "All";
 let favorites = JSON.parse(localStorage.getItem("auratools:favorites") || "[]");
 
@@ -491,7 +491,7 @@ function toggleDark(){
 }
 
 /* =========================================================
-   TOOL IMPLEMENTATIONS
+   STANDARD TOOLS
 ========================================================= */
 addTool("text-counter","Text Counter","Text & Data","fa-file-lines","Count words, characters, lines and reading time.",`
 <textarea id="tcInput" class="field h-48" placeholder="Type or paste your text..."></textarea>
@@ -597,7 +597,10 @@ function makeQR(){
   new QRCode(box,{text:val,width:200,height:200});
 }
 
-addTool("ai-assistant","AI Assistant","AI & Prompts","fa-robot","Ask Gemini to write or brainstorm.",`
+/* =========================================================
+   AI ASSISTANT (CLOUD ADMIN PANEL CONNECTED)
+========================================================= */
+addTool("ai-assistant","AI Assistant","AI & Prompts","fa-robot","Ask Gemini AI to write, explain or brainstorm.",`
 <textarea id="aiPrompt" class="field h-40" placeholder="Ask anything..."></textarea>
 <select id="aiMode" class="field mt-3">
 <option>Helpful Assistant</option>
@@ -610,9 +613,6 @@ addTool("ai-assistant","AI Assistant","AI & Prompts","fa-robot","Ask Gemini to w
 <div id="aiStatus" class="text-sm text-slate-500 mt-3"></div>
 <div id="aiOutput" class="result mt-3"></div>`,()=>{});
 
-/* =========================================================
-   GEMINI AI CLOUD / ADMIN CONNECTED FUNCTION
-========================================================= */
 window.runAI = async function(){
   const prompt = document.getElementById("aiPrompt").value.trim();
   const mode = document.getElementById("aiMode").value;
@@ -622,11 +622,11 @@ window.runAI = async function(){
     return;
   }
 
-  // ক্লাউড এডমিন প্যানেল বা লোকাল স্টোরেজ থেকে জেমিনি কি নেওয়া
-  const key = cloudConfig.geminiKey || localStorage.getItem("auratools:geminiKey");
+  // সরাসরি এডমিন প্যানেল থেকে ক্লাউড ডাটাবেজ হয়ে আসা কি (Key) ব্যবহার করবে
+  const key = cloudConfig.geminiKey;
 
   if(!key){
-    toast("Please set Gemini API Key in Admin Panel first!");
+    toast("AI is currently configuring from cloud. Please check Admin Panel key!");
     return;
   }
 
@@ -673,20 +673,6 @@ window.runAI = async function(){
     status.textContent = "Failed";
   }
 };
-
-function openAISettings(){
-  openTool("ai-settings");
-}
-
-addTool("ai-settings","AI Settings","AI & Prompts","fa-sliders","Configure Gemini API locally.",`
-<input id="aiKeyField" class="field" type="password" placeholder="Gemini API Key">
-<button class="primary mt-3" onclick="saveAIKey()">Save Key Locally</button>
-`,()=>{ document.getElementById("aiKeyField").value=localStorage.getItem("auratools:geminiKey")||""; });
-
-function saveAIKey(){
-  localStorage.setItem("auratools:geminiKey",document.getElementById("aiKeyField").value.trim());
-  toast("API Key saved"); closeModal();
-}
 
 if(localStorage.getItem("auratools:dark")==="1"){ document.body.classList.add("dark-mode"); }
 renderCategories();
