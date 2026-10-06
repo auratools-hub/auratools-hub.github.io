@@ -344,19 +344,37 @@ body.dark-mode .text-slate-700{
 let cloudConfig = {};
 
 async function loadCloudConfigAndRender() {
+  // প্রথমে লোকালস্টোরেজ থেকে ইনস্ট্যান্ট লোড করা
+  try {
+    const local = localStorage.getItem("auratools:localConfig");
+    if(local) {
+      cloudConfig = JSON.parse(local);
+      applyConfigUI(cloudConfig);
+    }
+  } catch(e) {}
+
+  // এরপর ক্লাউড থেকে লেটেস্ট সিঙ্ক করা
   try {
     const res = await fetch('https://auratools-hub.millat-ahhanif.workers.dev/config?' + Date.now());
     const data = await res.json();
-    if(data) {
+    if(data && Object.keys(data).length > 0) {
       cloudConfig = data;
-      if(data.noticeActive && data.noticeText) {
-        document.getElementById('noticeBar').classList.remove('hidden');
-        document.getElementById('noticeContent').textContent = data.noticeText;
-      }
+      localStorage.setItem("auratools:localConfig", JSON.stringify(data));
+      applyConfigUI(data);
     }
   } catch(e) {}
+
   renderCategories();
   renderTools();
+}
+
+function applyConfigUI(data) {
+  if(data.noticeActive && data.noticeText) {
+    document.getElementById('noticeBar').classList.remove('hidden');
+    document.getElementById('noticeContent').textContent = data.noticeText;
+  } else {
+    document.getElementById('noticeBar').classList.add('hidden');
+  }
 }
 
 window.addEventListener('DOMContentLoaded', async () => {
