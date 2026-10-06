@@ -265,7 +265,6 @@ body.dark-mode .text-slate-700{
       <button onclick="toggleDark()" class="w-10 h-10 rounded-xl bg-slate-100 text-slate-700" title="Dark mode">
         <i class="fa-solid fa-moon"></i>
       </button>
-      <!-- সরাসরি ওপেন হবে এআই অ্যাসিস্ট্যান্ট টুল -->
       <button onclick="openTool('ai-assistant')" class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 shadow" title="AI Assistant">
         <i class="fa-solid fa-robot"></i>
       </button>
@@ -331,18 +330,14 @@ body.dark-mode .text-slate-700{
 <div id="toast" class="toast"></div>
 
 <script>
-/* =========================================================
-   AUTOMATIC CLOUD CONFIG (ADMIN PANEL SYNCED) & TRACKER
-========================================================= */
 let cloudConfig = {};
 
 async function loadCloudConfig() {
   try {
     const res = await fetch('https://auratools-hub.millat-ahhanif.workers.dev/config');
-    cloudConfig = await res.json();
-  } catch(e) {
-    console.log("Cloud config sync active");
-  }
+    const data = await res.json();
+    if(data) cloudConfig = data;
+  } catch(e) {}
 }
 loadCloudConfig();
 
@@ -613,7 +608,7 @@ addTool("ai-assistant","AI Assistant","AI & Prompts","fa-robot","Ask Gemini AI t
 <div id="aiStatus" class="text-sm text-slate-500 mt-3"></div>
 <div id="aiOutput" class="result mt-3"></div>`,()=>{});
 
-window.runAI = async function(){
+async function runAI(){
   const prompt = document.getElementById("aiPrompt").value.trim();
   const mode = document.getElementById("aiMode").value;
 
@@ -622,19 +617,32 @@ window.runAI = async function(){
     return;
   }
 
-  // সরাসরি এডমিন প্যানেল থেকে ক্লাউড ডাটাবেজ হয়ে আসা কি (Key) ব্যবহার করবে
-  const key = cloudConfig.geminiKey;
-
-  if(!key){
-    toast("AI is currently configuring from cloud. Please check Admin Panel key!");
-    return;
-  }
-
   const status = document.getElementById("aiStatus");
   const output = document.getElementById("aiOutput");
 
-  status.textContent = "Gemini is thinking...";
+  status.textContent = "Connecting to cloud...";
   output.textContent = "";
+
+  let key = cloudConfig.geminiKey;
+
+  if(!key) {
+    try {
+      const res = await fetch('https://auratools-hub.millat-ahhanif.workers.dev/config');
+      const data = await res.json();
+      if(data && data.geminiKey) {
+        cloudConfig = data;
+        key = data.geminiKey;
+      }
+    } catch(e) {}
+  }
+
+  if(!key){
+    status.textContent = "Error";
+    toast("Please update Gemini API Key in Admin Panel first!");
+    return;
+  }
+
+  status.textContent = "Gemini is thinking...";
 
   try{
     const res = await fetch(
@@ -672,7 +680,7 @@ window.runAI = async function(){
     output.textContent = "Gemini Error:\n" + err.message;
     status.textContent = "Failed";
   }
-};
+}
 
 if(localStorage.getItem("auratools:dark")==="1"){ document.body.classList.add("dark-mode"); }
 renderCategories();
