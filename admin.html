@@ -3,88 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraTools - Firebase Admin Center</title>
+    <title>AuraTools - Pro Admin Command Center</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center p-4 font-sans">
+<body class="bg-slate-950 text-slate-100 min-h-screen p-4 md:p-8 font-sans">
 
-    <div class="bg-slate-900 border border-slate-800 p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-2xl">
-        <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-800">
-            <div>
-                <h2 class="text-2xl font-black text-cyan-400"><i class="fa-solid fa-fire mr-2"></i>Firebase Command Center</h2>
-                <p class="text-xs text-slate-400 mt-1">Real-time Cloud Management Hub</p>
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <div class="bg-slate-900 border border-slate-800 p-6 rounded-3xl shadow-2xl flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white text-xl shadow-lg shadow-cyan-500/20">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl md:text-2xl font-black text-cyan-400">AuraTools Command Hub</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Advanced Firebase Real-time Management System</p>
+                </div>
             </div>
-            <div id="authBadge" class="hidden px-3 py-1 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-full text-xs font-bold">
-                <i class="fa-solid fa-circle text-[8px] mr-1 animate-pulse"></i> LIVE
+            <div id="authBadge" class="hidden px-3.5 py-1.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full text-xs font-extrabold flex items-center gap-1.5">
+                <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span> SECURE & LIVE
             </div>
         </div>
 
         <!-- Login Section -->
-        <div id="loginSection" class="space-y-4">
-            <div>
-                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Admin Password (216570)</label>
-                <input type="password" id="adminPass" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 outline-none focus:border-cyan-500 text-sm tracking-widest" placeholder="••••••••">
+        <div id="loginSection" class="bg-slate-900 border border-slate-800 p-8 rounded-3xl shadow-2xl max-w-md mx-auto space-y-5 mt-16">
+            <div class="text-center space-y-1">
+                <h3 class="text-lg font-black text-white">Admin Authentication</h3>
+                <p class="text-xs text-slate-400">Enter security password to access command center</p>
             </div>
-            <button onclick="verifyLogin()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-extrabold py-3 rounded-xl transition shadow-lg shadow-cyan-900/20">Authorize Access</button>
+            <div>
+                <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Security Password</label>
+                <input type="password" id="adminPass" class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3.5 outline-none focus:border-cyan-500 text-sm tracking-widest text-center" placeholder="••••••">
+            </div>
+            <button onclick="verifyLogin()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-extrabold py-3.5 rounded-2xl transition shadow-lg shadow-cyan-900/20">Authorize Access</button>
         </div>
 
-        <!-- Master Control Panel -->
+        <!-- Master Control Panel (Tab Based Advanced UI) -->
         <div id="panelSection" class="hidden space-y-6">
             
-            <!-- Global Notice Bar Control -->
-            <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3">
-                <h3 class="text-sm font-bold text-cyan-400 flex items-center"><i class="fa-solid fa-bullhorn mr-2"></i>Global Marquee Notice</h3>
-                <div class="flex items-center justify-between">
-                    <label class="text-xs text-slate-400">Enable Scrolling Notice</label>
-                    <input type="checkbox" id="noticeActive" class="w-4 h-4 accent-cyan-500">
-                </div>
-                <input type="text" id="noticeText" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-sm outline-none focus:border-cyan-500" placeholder="e.g. 🔥 Welcome to AuraTools!">
+            <!-- Navigation Tabs -->
+            <div class="flex gap-2 overflow-x-auto bg-slate-900 p-2 rounded-2xl border border-slate-800">
+                <button onclick="switchTab('general')" id="tabBtn-general" class="flex-1 py-3 px-4 rounded-xl font-bold text-xs transition bg-cyan-600 text-white shadow-lg"><i class="fa-solid fa-sliders mr-2"></i>General & Notice</button>
+                <button onclick="switchTab('tools')" id="tabBtn-tools" class="flex-1 py-3 px-4 rounded-xl font-bold text-xs transition text-slate-400 hover:text-white"><i class="fa-solid fa-toolbox mr-2"></i>Tools Control</button>
+                <button onclick="switchTab('custom')" id="tabBtn-custom" class="flex-1 py-3 px-4 rounded-xl font-bold text-xs transition text-slate-400 hover:text-white"><i class="fa-solid fa-plus-circle mr-2"></i>Add Custom Tool</button>
+                <button onclick="switchTab('api')" id="tabBtn-api" class="flex-1 py-3 px-4 rounded-xl font-bold text-xs transition text-slate-400 hover:text-white"><i class="fa-solid fa-key mr-2"></i>API Keys & Bot</button>
             </div>
 
-            <!-- Default Tools Enable/Disable Control -->
-            <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3">
-                <h3 class="text-sm font-bold text-cyan-400 flex items-center"><i class="fa-solid fa-toggle-on mr-2"></i>Manage Default Tools (On / Off)</h3>
-                <div id="defaultToolsList" class="grid grid-cols-2 gap-2 text-xs">
-                    <!-- Dynamic Checkboxes will load here -->
-                </div>
-            </div>
-
-            <!-- API Tokens -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
-                    <label class="text-xs font-bold text-slate-400 uppercase">Telegram Bot Token</label>
-                    <input type="text" id="botToken" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs outline-none focus:border-cyan-500" placeholder="Bot Token">
-                </div>
-                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
-                    <label class="text-xs font-bold text-slate-400 uppercase">Telegram Chat ID</label>
-                    <input type="text" id="botChatId" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs outline-none focus:border-cyan-500" placeholder="Chat ID">
+            <!-- TAB 1: General & Notice -->
+            <div id="tab-general" class="bg-slate-900 border border-slate-800 p-6 rounded-3xl space-y-5 shadow-xl">
+                <h3 class="text-sm font-black text-cyan-400 uppercase tracking-wider flex items-center"><i class="fa-solid fa-bullhorn mr-2"></i>Global Marquee Notice Bar</h3>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between bg-slate-950 p-4 rounded-2xl border border-slate-800">
+                        <div>
+                            <span class="text-sm font-bold text-white block">Scrolling Notice Status</span>
+                            <span class="text-xs text-slate-400">Show or hide breaking news banner on site top</span>
+                        </div>
+                        <input type="checkbox" id="noticeActive" class="w-5 h-5 accent-cyan-500 rounded">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Notice Content (বাংলায় লিখতে পারেন)</label>
+                        <input type="text" id="noticeText" class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-sm outline-none focus:border-cyan-500" placeholder="যেমন: আসসালামু আলাইকুম ❤️ আপনাদের জন্য নতুন আপডেট!">
+                    </div>
                 </div>
             </div>
 
-            <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
-                <label class="text-xs font-bold text-slate-400 uppercase">Gemini API Key</label>
-                <input type="text" id="geminiKey" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs outline-none focus:border-cyan-500" placeholder="AIzaSy...">
-            </div>
-
-            <!-- Add Custom Tool -->
-            <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3">
-                <h3 class="text-sm font-bold text-cyan-400 flex items-center"><i class="fa-solid fa-plus-circle mr-2"></i>Add Custom Dynamic Tool</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <input type="text" id="newToolName" class="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs outline-none" placeholder="Tool Name">
-                    <input type="text" id="newToolCategory" class="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs outline-none" placeholder="Category (e.g. Calculators)">
-                    <input type="text" id="newToolIcon" class="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs outline-none" placeholder="Icon Class (fa-money-bill-transfer)">
-                    <input type="text" id="newToolDesc" class="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs outline-none" placeholder="Short Description">
+            <!-- TAB 2: Tools Control (On/Off Switch for Default & Custom Tools) -->
+            <div id="tab-tools" class="hidden bg-slate-900 border border-slate-800 p-6 rounded-3xl space-y-5 shadow-xl">
+                <h3 class="text-sm font-black text-cyan-400 uppercase tracking-wider flex items-center"><i class="fa-solid fa-toggle-on mr-2"></i>Enable / Disable All Tools (Master Switch)</h3>
+                <p class="text-xs text-slate-400">যেকোনো টুল সাইট থেকে বন্ধ বা চালু করতে টিকমার্ক পরিবর্তন করুন।</p>
+                <div id="allToolsControlList" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <!-- Dynamic Tool Switches will load here -->
                 </div>
-                <textarea id="newToolHtml" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs outline-none h-20" placeholder="HTML Body Content..."></textarea>
-                <button onclick="addCustomTool()" class="bg-slate-800 hover:bg-slate-700 text-cyan-400 font-bold px-4 py-2 rounded-xl text-xs transition border border-slate-700">Add Tool Locally</button>
             </div>
 
-            <button onclick="saveConfig()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold py-3 rounded-xl transition shadow-lg shadow-blue-900/20">Save All Changes to Firebase</button>
-            <div id="statusMsg" class="text-center text-xs font-bold"></div>
+            <!-- TAB 3: Add Custom Tool -->
+            <div id="tab-custom" class="hidden bg-slate-900 border border-slate-800 p-6 rounded-3xl space-y-5 shadow-xl">
+                <h3 class="text-sm font-black text-cyan-400 uppercase tracking-wider flex items-center"><i class="fa-solid fa-code mr-2"></i>Create & Deploy Custom Dynamic Tool</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Tool Name</label>
+                        <input type="text" id="newToolName" class="field bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs outline-none w-full text-white" placeholder="যেমন: Currency Converter">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Category (বাংলা বা ইংরেজি)</label>
+                        <input type="text" id="newToolCategory" class="field bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs outline-none w-full text-white" placeholder="যেমন: Calculators">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">FontAwesome Icon Class</label>
+                        <input type="text" id="newToolIcon" class="field bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs outline-none w-full text-white" placeholder="যেমন: fa-money-bill-transfer">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Short Description (বাংলায়)</label>
+                        <input type="text" id="newToolDesc" class="field bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs outline-none w-full text-white" placeholder="টুলের কাজ সম্পর্কে সংক্ষেপে লিখুন">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">HTML & JavaScript Body Code</label>
+                    <textarea id="newToolHtml" class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-xs font-mono outline-none h-36 text-white" placeholder="<div>...</div><script>...</script>"></textarea>
+                </div>
+                <button onclick="addCustomTool()" class="bg-slate-800 hover:bg-slate-700 text-cyan-400 font-bold px-5 py-3 rounded-xl text-xs transition border border-slate-700 shadow">Add to Local List</button>
+            </div>
+
+            <!-- TAB 4: API Keys & Bot -->
+            <div id="tab-api" class="hidden bg-slate-900 border border-slate-800 p-6 rounded-3xl space-y-5 shadow-xl">
+                <h3 class="text-sm font-black text-cyan-400 uppercase tracking-wider flex items-center"><i class="fa-solid fa-robot mr-2"></i>Telegram & Gemini API Settings</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold text-slate-400 uppercase">Telegram Bot Token</label>
+                        <input type="text" id="botToken" class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-xs outline-none text-white focus:border-cyan-500" placeholder="Bot Token">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold text-slate-400 uppercase">Telegram Chat ID</label>
+                        <input type="text" id="botChatId" class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-xs outline-none text-white focus:border-cyan-500" placeholder="Chat ID">
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-slate-400 uppercase">Gemini API Key</label>
+                    <input type="text" id="geminiKey" class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-xs outline-none text-white focus:border-cyan-500" placeholder="AIzaSy...">
+                </div>
+            </div>
+
+            <!-- Global Action Bar -->
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-3xl shadow-xl space-y-3">
+                <button onclick="saveConfig()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold py-4 rounded-2xl transition shadow-xl shadow-blue-600/20 text-sm tracking-wider uppercase">Save All Changes to Firebase Cloud</button>
+                <div id="statusMsg" class="text-center text-xs font-bold"></div>
+            </div>
         </div>
     </div>
 
@@ -98,21 +145,30 @@
         const ADMIN_PASS = "216570";
         let fullConfig = {};
 
-        const defaultToolListObj = [
-            {id: "text-counter", name: "Text Counter"},
-            {id: "case-converter", name: "Case Converter"},
-            {id: "slug", name: "Slug Generator"},
-            {id: "json", name: "JSON Formatter"},
-            {id: "uuid", name: "UUID Generator"},
-            {id: "password", name: "Password Generator"},
-            {id: "qr", name: "QR Code Studio"},
-            {id: "ai-assistant", name: "AI Assistant"}
+        const defaultToolsMaster = [
+            {id: "text-counter", name: "Text Counter (শব্দ ও লাইন গণনাকারী)"},
+            {id: "case-converter", name: "Case Converter (বড়/ছোট হাতের অক্ষর রূপান্তর)"},
+            {id: "slug", name: "Slug Generator (এসইও স্লাগ মেকার)"},
+            {id: "json", name: "JSON Formatter (জেসন ফরম্যাটার)"},
+            {id: "uuid", name: "UUID Generator (ইউনিক আইডি জেনারেটর)"},
+            {id: "password", name: "Password Generator (পাসওয়ার্ড জেনারেটর)"},
+            {id: "qr", name: "QR Code Studio (কিউআর কোড ক্রিয়েটর)"},
+            {id: "ai-assistant", name: "AI Assistant (জেমিনি এআই অ্যাসিস্ট্যান্ট)"}
         ];
+
+        function switchTab(tabName) {
+            ['general', 'tools', 'custom', 'api'].forEach(t => {
+                document.getElementById('tab-' + t).classList.add('hidden');
+                document.getElementById('tabBtn-' + t).className = "flex-1 py-3 px-4 rounded-xl font-bold text-xs transition text-slate-400 hover:text-white";
+            });
+            document.getElementById('tab-' + tabName).classList.remove('hidden');
+            document.getElementById('tabBtn-' + tabName).className = "flex-1 py-3 px-4 rounded-xl font-bold text-xs transition bg-cyan-600 text-white shadow-lg";
+        }
 
         function verifyLogin() {
             const pass = document.getElementById('adminPass').value;
             if(pass !== ADMIN_PASS) {
-                alert('Incorrect Admin Password!');
+                alert('পাসওয়ার্ড ভুল হয়েছে!');
                 return;
             }
 
@@ -129,18 +185,36 @@
                 if(fullConfig.noticeText) document.getElementById('noticeText').value = fullConfig.noticeText;
                 document.getElementById('noticeActive').checked = !!fullConfig.noticeActive;
 
-                // রেন্ডার ডিফল্ট টুলস চেকবাক্স
-                const disabled = fullConfig.disabledTools || {};
-                let html = "";
-                defaultToolListObj.forEach(t => {
-                    const isChecked = !disabled[t.id] ? "checked" : "";
-                    html += `<label class="flex items-center gap-2 bg-slate-900 p-2 rounded-xl border border-slate-800">
-                        <input type="checkbox" id="tool_${t.id}" ${isChecked} class="accent-cyan-500 w-4 h-4">
-                        <span>${t.name}</span>
+                renderAllToolsCheckboxes();
+            });
+        }
+
+        function renderAllToolsCheckboxes() {
+            const disabled = fullConfig.disabledTools || {};
+            let html = "";
+
+            // ১. ডিফল্ট টুলস রেন্ডার
+            defaultToolsMaster.forEach(t => {
+                const isChecked = !disabled[t.id] ? "checked" : "";
+                html += `<label class="flex items-center justify-between bg-slate-950 p-3.5 rounded-2xl border border-slate-800 cursor-pointer hover:border-slate-700 transition">
+                    <span class="text-xs font-bold text-slate-200">${t.name}</span>
+                    <input type="checkbox" id="tool_${t.id}" ${isChecked} class="accent-cyan-500 w-4 h-4">
+                </label>`;
+            });
+
+            // ২. কাস্টম টুলস রেন্ডার (যাতে নতুন যোগ করা টুলসগুলোও এখানে কন্ট্রোল করা যায়)
+            if(fullConfig.customTools) {
+                let customArr = Array.isArray(fullConfig.customTools) ? fullConfig.customTools : Object.values(fullConfig.customTools);
+                customArr.forEach(ct => {
+                    const isChecked = !disabled[ct.id] ? "checked" : "";
+                    html += `<label class="flex items-center justify-between bg-slate-950 p-3.5 rounded-2xl border border-slate-800 cursor-pointer hover:border-slate-700 transition">
+                        <span class="text-xs font-bold text-cyan-400">⭐ ${ct.name}</span>
+                        <input type="checkbox" id="tool_${ct.id}" ${isChecked} class="accent-cyan-500 w-4 h-4">
                     </label>`;
                 });
-                document.getElementById('defaultToolsList').innerHTML = html;
-            });
+            }
+
+            document.getElementById('allToolsControlList').innerHTML = html;
         }
 
         function addCustomTool() {
@@ -150,15 +224,25 @@
             const description = document.getElementById('newToolDesc').value.trim();
             const html = document.getElementById('newToolHtml').value.trim();
 
-            if(!name || !html) return alert('Tool Name and HTML content are required!');
+            if(!name || !html) return alert('টুলের নাম এবং এইচটিএমএল কোড আবশ্যক!');
 
             if(!fullConfig.customTools) fullConfig.customTools = [];
-            fullConfig.customTools.push({
-                id: "custom-" + Date.now(),
-                name, category, icon, description, html
-            });
+            let customArr = Array.isArray(fullConfig.customTools) ? fullConfig.customTools : Object.values(fullConfig.customTools);
 
-            alert('Tool added locally! Click "Save All Changes to Firebase" to publish.');
+            // ডুপ্লিকেট এন্ট্রি চেক (একই নামে বা আইডিতে যেন দুইবার না বসে)
+            const exists = customArr.some(x => x.name.toLowerCase() === name.toLowerCase());
+            if(exists) {
+                alert('এই নামের টুল ইতিমধ্যে যুক্ত করা হয়েছে!');
+                return;
+            }
+
+            const toolId = "custom-" + name.toLowerCase().replace(/[^a-z0-9]/g, "-");
+            customArr.push({ id: toolId, name, category, icon, description, html });
+            
+            fullConfig.customTools = customArr;
+            renderAllToolsCheckboxes();
+
+            alert('টুল সফলভাবে লিস্টে যুক্ত হয়েছে! এখন নিচে "Save All Changes to Firebase Cloud" বাটনে ক্লিক করে পাবলিশ করুন।');
             document.getElementById('newToolName').value = '';
             document.getElementById('newToolDesc').value = '';
             document.getElementById('newToolHtml').value = '';
@@ -171,28 +255,38 @@
             fullConfig.noticeText = document.getElementById('noticeText').value;
             fullConfig.noticeActive = document.getElementById('noticeActive').checked;
 
-            // ডিফল্ট টুলস অন/অফ স্ট্যাটাস সেভ করা
             if(!fullConfig.disabledTools) fullConfig.disabledTools = {};
-            defaultToolListObj.forEach(t => {
-                const checkbox = document.getElementById('tool_' + t.id);
-                if(checkbox) {
-                    if(!checkbox.checked) {
-                        fullConfig.disabledTools[t.id] = true;
-                    } else {
-                        delete fullConfig.disabledTools[t.id];
-                    }
+            
+            // ডিফল্ট টুলস স্ট্যাটাস সেভ
+            defaultToolsMaster.forEach(t => {
+                const cb = document.getElementById('tool_' + t.id);
+                if(cb) {
+                    if(!cb.checked) fullConfig.disabledTools[t.id] = true;
+                    else delete fullConfig.disabledTools[t.id];
                 }
             });
 
+            // কাস্টম টুলস স্ট্যাটাস সেভ
+            if(fullConfig.customTools) {
+                let customArr = Array.isArray(fullConfig.customTools) ? fullConfig.customTools : Object.values(fullConfig.customTools);
+                customArr.forEach(ct => {
+                    const cb = document.getElementById('tool_' + ct.id);
+                    if(cb) {
+                        if(!cb.checked) fullConfig.disabledTools[ct.id] = true;
+                        else delete fullConfig.disabledTools[ct.id];
+                    }
+                });
+            }
+
             const status = document.getElementById('statusMsg');
-            status.textContent = "Syncing with Firebase...";
+            status.textContent = "ফায়ারবেসে সিঙ্ক হচ্ছে...";
             status.className = "text-center text-xs text-cyan-400 font-bold";
 
             db.ref('auratools').set(fullConfig).then(() => {
-                status.textContent = "Successfully updated on Firebase Realtime Database!";
+                status.textContent = "সফলভাবে ফায়ারবেসে সেভ এবং আপডেট হয়েছে!";
                 status.className = "text-center text-xs text-emerald-400 font-bold";
             }).catch((err) => {
-                status.textContent = "Error: " + err.message;
+                status.textContent = "ত্রুটি: " + err.message;
                 status.className = "text-center text-xs text-rose-400 font-bold";
             });
         }
