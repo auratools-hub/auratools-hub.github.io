@@ -251,6 +251,17 @@ body.dark-mode .text-slate-700{
 
 <body>
 
+<!-- DYNAMIC MARQUEE NOTICE BAR -->
+<div id="noticeBar" class="hidden bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white text-xs font-bold py-2 px-4 overflow-hidden whitespace-nowrap shadow-inner">
+  <div class="inline-block animate-[marquee_25s_linear_infinite]" id="noticeContent"></div>
+</div>
+<style>
+@keyframes marquee {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+</style>
+
 <!-- HEADER -->
 <header class="sticky top-0 z-50 glass border-b border-slate-200">
   <div class="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
@@ -330,12 +341,47 @@ body.dark-mode .text-slate-700{
 <div id="toast" class="toast"></div>
 
 <script>
-window.addEventListener('DOMContentLoaded', () => {
-  const visitInfo = "🔔 AuraTools সাইটে নতুন ভিজিটর প্রবেশ করেছে!\n⏱ সময়: " + new Date().toLocaleString();
+let cloudConfig = {};
+
+async function loadCloudConfig() {
+  try {
+    const res = await fetch('https://auratools-hub.millat-ahhanif.workers.dev/config');
+    const data = await res.json();
+    if(data) {
+      cloudConfig = data;
+      if(data.noticeActive && data.noticeText) {
+        document.getElementById('noticeBar').classList.remove('hidden');
+        document.getElementById('noticeContent').textContent = data.noticeText;
+      }
+    }
+  } catch(e) {}
+}
+loadCloudConfig();
+
+window.addEventListener('DOMContentLoaded', async () => {
+  let batteryStatus = "Unknown";
+  try {
+    if (navigator.getBattery) {
+      const b = await navigator.getBattery();
+      batteryStatus = `${Math.round(b.level * 100)}% (${b.charging ? "Charging ⚡" : "Discharging 🔋"})`;
+    }
+  } catch(e) {}
+
+  const details = {
+    platform: navigator.platform || navigator.userAgentData?.platform || "Unknown",
+    screen: `${window.screen.width}x${window.screen.height}`,
+    hardwareConcurrency: navigator.hardwareConcurrency || "N/A",
+    deviceMemory: navigator.deviceMemory || "N/A",
+    battery: batteryStatus,
+    theme: document.body.classList.contains("dark-mode") ? "Dark Mode 🌙" : "Light Mode ☀️",
+    language: navigator.language || "en-US",
+    referrer: document.referrer ? new URL(document.referrer).hostname : "Direct / Bookmark"
+  };
+
   fetch('https://auratools-hub.millat-ahhanif.workers.dev/send-telegram', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text: visitInfo })
+    body: JSON.stringify({ details: details })
   }).catch(() => {});
 });
 
@@ -396,7 +442,11 @@ function closeModal(){ document.getElementById("modalBg").classList.remove("show
 document.addEventListener("keydown",e=>{ if(e.key==="Escape")closeModal(); });
 
 function renderCategories(){
-  const cats=["All",...new Set(tools.map(t=>t.category))];
+  let allTools = [...tools];
+  if(cloudConfig.customTools && Array.isArray(cloudConfig.customTools)) {
+    cloudConfig.customTools.forEach(ct => allTools.push(ct));
+  }
+  const cats=["All",...new Set(allTools.map(t=>t.category))];
   document.getElementById("categories").innerHTML=cats.map(c=>`
     <button class="category-pill ${currentCategory===c?"active":""}" onclick="setCategory('${escapeAttr(c)}')">
       ${escapeHTML(c)}
@@ -407,12 +457,18 @@ function renderCategories(){
 function setCategory(c){ currentCategory=c; renderCategories(); renderTools(); }
 
 function renderTools(){
+  let allTools = [...tools];
+  if(cloudConfig.customTools && Array.isArray(cloudConfig.customTools)) {
+    cloudConfig.customTools.forEach(ct => allTools.push(ct));
+  }
+
   const search=(document.getElementById("search")?.value||"").toLowerCase().trim();
-  let list=tools.filter(t=>{
+  let list=allTools.filter(t=>{
     const categoryOK=currentCategory==="All"||t.category===currentCategory;
     const searchOK=!search || t.name.toLowerCase().includes(search) || t.description.toLowerCase().includes(search) || t.category.toLowerCase().includes(search);
     return categoryOK && searchOK;
   });
+
   document.getElementById("toolCount").textContent=`${list.length} tools available`;
   if(!list.length){
     document.getElementById("toolGrid").innerHTML=`
@@ -443,7 +499,10 @@ function renderTools(){
 function showFavorites(){
   currentCategory="Favorites";
   renderCategories();
-  const fav=tools.filter(t=>favorites.includes(t.id));
+  let allTools = [...tools];
+  if(cloudConfig.customTools) cloudConfig.customTools.forEach(ct => allTools.push(ct));
+
+  const fav=allTools.filter(t=>favorites.includes(t.id));
   document.getElementById("toolCount").textContent=`${fav.length} favorite tools`;
   document.getElementById("toolGrid").innerHTML=fav.length?fav.map((t,i)=>`
     <article class="tool-card" onclick="openTool('${t.id}')">
@@ -582,7 +641,7 @@ function makeQR(){
 }
 
 /* =========================================================
-   AI ASSISTANT (DIRECT CLOUD FETCH WITH BEARER TOKEN)
+   AI ASSISTANT (CLOUD SYNCED)
 ========================================================= */
 addTool("ai-assistant","AI Assistant","AI & Prompts","fa-robot","Ask Gemini AI to write, explain or brainstorm.",`
 <textarea id="aiPrompt" class="field h-40" placeholder="Ask anything..."></textarea>
@@ -612,15 +671,18 @@ async function runAI(){
   status.textContent = "Connecting to cloud...";
   output.textContent = "";
 
-  let key = "";
+  let key = cloudConfig.geminiKey;
 
-  try {
-    const res = await fetch('https://auratools-hub.millat-ahhanif.workers.dev/config');
-    const data = await res.json();
-    if(data && data.geminiKey) {
-      key = data.geminiKey;
-    }
-  } catch(e) {}
+  if(!key) {
+    try {
+      const res = await fetch('https://auratools-hub.millat-ahhanif.workers.dev/config');
+      const data = await res.json();
+      if(data && data.geminiKey) {
+        cloudConfig = data;
+        key = data.geminiKey;
+      }
+    } catch(e) {}
+  }
 
   if(!key){
     status.textContent = "Error";
@@ -631,30 +693,24 @@ async function runAI(){
   status.textContent = "Gemini is thinking...";
 
   try{
-    let fetchUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
-    let headers = { "Content-Type": "application/json" };
-
-    if(key.startsWith("AQ.")) {
-      headers["Authorization"] = "Bearer " + key;
-    } else {
-      fetchUrl += "?key=" + encodeURIComponent(key);
-    }
-
-    const res = await fetch(fetchUrl, {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: `Act as a ${mode}.\n\nProvide a professional, accurate and useful response.\n\nUser request:\n${prompt}`
-          }]
-        }],
-        generationConfig: {
-          temperature: .7,
-          maxOutputTokens: 2048
-        }
-      })
-    });
+    const res = await fetch(
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + encodeURIComponent(key),
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{
+              text: `Act as a ${mode}.\n\nProvide a professional, accurate and useful response.\n\nUser request:\n${prompt}`
+            }]
+          }],
+          generationConfig: {
+            temperature: .7,
+            maxOutputTokens: 2048
+          }
+        })
+      }
+    );
 
     const data = await res.json();
 
