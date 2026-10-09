@@ -2,770 +2,479 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
-<meta name="theme-color" content="#f6f8fc">
-<meta name="description" content="AuraTools - Professional Digital Tools Hub">
-<title>AuraTools — Digital Utility Hub</title>
-
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
-
-<!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
-<script>
-tailwind.config={
-  darkMode: 'class',
-  theme:{
-    extend:{
-      colors:{
-        ink:"#102a56",
-        soft:"#f6f8fc",
-        bluex:"#2563eb",
-        cyanx:"#06b6d4",
-        purplex:"#7c3aed",
-        pinkx:"#ec4899",
-        greenx:"#10b981",
-        orangex:"#f97316"
-      }
-    }
-  }
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0b382b">
+<title>Emdad City | 3D Interactive Real Estate</title>
+<style>
+:root{--green:#0b382b;--green2:#165c43;--lime:#d5f477;--cream:#f5f4eb;--ink:#15271f}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#a8dfe8;font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif;color:var(--ink)}
+button,a{font:inherit}button{cursor:pointer}
+#scene{position:fixed;inset:0;z-index:0;touch-action:none}
+canvas{display:block;width:100%;height:100%;outline:none}
+.hud{position:fixed;z-index:2;inset:0;pointer-events:none}
+.topbar{position:absolute;top:16px;left:16px;right:16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:11px;background:rgba(255,255,255,.9);backdrop-filter:blur(14px);border:1px solid #ffffffb8;padding:10px 15px;border-radius:16px;box-shadow:0 10px 30px #183a2a15}
+.brandmark{width:35px;height:35px;border-radius:11px;background:var(--green);color:var(--lime);display:grid;place-items:center;font-weight:900;font-size:17px}
+.brand strong{display:block;font-size:14px;letter-spacing:.2px}.brand small{display:block;color:#617268;font-size:10px;letter-spacing:1.5px;text-transform:uppercase}
+.top-actions{display:flex;gap:8px;pointer-events:auto}
+.pill{border:1px solid #ffffffc9;border-radius:999px;background:#ffffffdf;color:var(--green);padding:11px 15px;font-size:12px;font-weight:800;box-shadow:0 8px 24px #173b2a12}
+.pill.primary{background:var(--green);color:white;border-color:var(--green)}
+.intro{position:absolute;left:clamp(16px,5vw,68px);top:50%;transform:translateY(-50%);width:min(390px,calc(100% - 32px));pointer-events:auto;transition:opacity .35s,transform .35s}
+.intro.hide{opacity:0;transform:translateY(calc(-50% + 14px));pointer-events:none}
+.kicker{display:inline-flex;align-items:center;gap:8px;background:#ffffffde;padding:8px 12px;border-radius:999px;font-size:10px;font-weight:900;letter-spacing:1.7px;color:var(--green);text-transform:uppercase}
+.kicker:before{content:"";width:7px;height:7px;background:#75a942;border-radius:50%}
+h1{font-size:clamp(38px,5.4vw,67px);letter-spacing:-3px;line-height:.99;color:#0b382b;margin:20px 0 15px;text-shadow:0 2px 0 #ffffff40}
+h1 span{color:#397b51}
+.intro p{font-size:14px;line-height:1.7;color:#294638;max-width:340px;margin:0 0 20px}
+.intro-buttons{display:flex;gap:9px;flex-wrap:wrap}
+.action{border:0;border-radius:11px;padding:13px 17px;font-size:12px;font-weight:850;background:var(--green);color:#fff;box-shadow:0 10px 24px #0b382b20}
+.action.alt{background:#ffffffed;color:var(--green);border:1px solid #ffffff}
+.hint{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);background:#0b382be8;color:#fff;border:1px solid #ffffff30;padding:10px 15px;border-radius:999px;font-size:11px;white-space:nowrap;box-shadow:0 8px 25px #0002}
+.hint b{color:var(--lime)}
+.status{pointer-events:auto;position:absolute;right:18px;bottom:70px;background:#ffffffde;border:1px solid white;border-radius:14px;padding:12px 15px;font-size:11px;line-height:1.55;max-width:210px}
+.status strong{display:block;color:var(--green);font-size:12px;margin-bottom:3px}
+#location-name{font-weight:800;color:#43784b}
+.mobile-controls{position:absolute;bottom:70px;left:16px;display:none;gap:8px;align-items:end;pointer-events:auto;touch-action:none}
+.dpad{display:grid;grid-template-columns:repeat(3,45px);grid-template-rows:repeat(2,45px);gap:5px}
+.ctrl{border:1px solid #ffffffb8;border-radius:13px;background:#ffffffdf;color:var(--green);font-size:19px;font-weight:900;box-shadow:0 6px 18px #0001;touch-action:none;user-select:none}
+.ctrl:active{background:var(--lime);transform:scale(.96)}
+#accelerate{height:95px;width:53px;background:var(--green);color:white;font-size:11px;line-height:1.2}
+.modal-wrap{position:fixed;inset:0;z-index:5;display:none;align-items:center;justify-content:center;padding:18px;background:#06281eb3;backdrop-filter:blur(7px)}
+.modal-wrap.show{display:flex}
+.modal{position:relative;width:min(540px,100%);max-height:85vh;overflow:auto;background:var(--cream);border-radius:24px;padding:clamp(22px,5vw,36px);box-shadow:0 25px 90px #001b12a0}
+.close{position:absolute;right:17px;top:17px;border:0;background:#e4e9de;border-radius:50%;width:36px;height:36px;font-size:22px;color:var(--green)}
+.modal .eyebrow{color:#477950;font-size:10px;letter-spacing:2px;font-weight:900;text-transform:uppercase}
+.modal h2{font-size:clamp(27px,5vw,39px);line-height:1.08;letter-spacing:-1.5px;color:var(--green);margin:12px 42px 12px 0}
+.modal p{font-size:14px;line-height:1.7;color:#58685d}
+.modal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:20px 0}
+.info-card{background:white;border:1px solid #e2e7dc;border-radius:14px;padding:14px}
+.info-card small{display:block;color:#728075;font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
+.info-card strong{color:var(--green);font-size:13px}
+.modal-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px}
+.modal-actions a{display:inline-flex;text-decoration:none;align-items:center;justify-content:center;border-radius:10px;padding:12px 15px;background:var(--green);color:white;font-weight:800;font-size:12px}
+.modal-actions button{border:1px solid #d9e1d4;background:white;color:var(--green);border-radius:10px;padding:12px 15px;font-weight:800;font-size:12px}
+.loading{position:fixed;inset:0;z-index:10;display:grid;place-items:center;background:#d9edda;color:var(--green);transition:opacity .4s}
+.loading.done{opacity:0;pointer-events:none}
+.loaderbox{text-align:center;padding:24px}
+.loaderlogo{width:58px;height:58px;border-radius:18px;background:var(--green);color:var(--lime);display:grid;place-items:center;font-size:24px;font-weight:900;margin:0 auto 16px}
+.loaderbox strong{display:block;font-size:17px}.loaderbox small{color:#597164}
+#error{display:none;position:fixed;z-index:20;inset:auto 12px 12px;background:#fff2f0;color:#8a241b;border:1px solid #ffc7c0;border-radius:12px;padding:14px;font-size:12px}
+@media(max-width:700px){
+ .topbar{top:10px;left:10px;right:10px}.brand{padding:8px 10px;gap:8px}.brandmark{width:31px;height:31px}.brand strong{font-size:12px}.brand small{font-size:8px}.top-actions{gap:5px}.pill{padding:10px 11px;font-size:10px}
+ .intro{top:105px;left:14px;transform:none;width:min(310px,calc(100% - 28px))}.intro.hide{transform:translateY(10px)}h1{font-size:40px;letter-spacing:-2px;margin:13px 0 10px}.intro p{font-size:12px;line-height:1.5;margin-bottom:13px}.kicker{font-size:9px;padding:7px 10px}.action{padding:11px 13px;font-size:11px}
+ .hint{bottom:12px;font-size:9px;padding:9px 11px;max-width:calc(100% - 24px);white-space:normal;text-align:center;width:max-content}
+ .mobile-controls{display:flex;bottom:54px;left:12px}.dpad{grid-template-columns:repeat(3,39px);grid-template-rows:repeat(2,39px);gap:4px}.ctrl{border-radius:11px;font-size:17px}#accelerate{width:48px;height:82px;font-size:10px}.status{right:12px;bottom:54px;max-width:140px;font-size:9px;padding:9px 10px}.status strong{font-size:10px}
 }
+@media(max-height:560px) and (orientation:landscape){.intro{top:100px;transform:none}.intro.hide{transform:translateY(10px)}h1{font-size:34px;margin:8px 0}.intro p{font-size:11px;margin-bottom:8px}.mobile-controls{bottom:10px}.status{bottom:10px}.hint{bottom:10px}}
+</style>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js"}}
 </script>
-
-<style>
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-  margin:0;
-  background:#f6f8fc;
-  color:#17233d;
-  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  transition: background 0.3s ease, color 0.3s ease;
-}
-button,input,textarea,select{font:inherit}
-button{cursor:pointer}
-::-webkit-scrollbar{width:7px}
-::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:20px}
-
-.hero{
-  background:
-    radial-gradient(circle at 15% 20%,rgba(59,130,246,.35),transparent 30%),
-    radial-gradient(circle at 90% 15%,rgba(124,58,237,.3),transparent 28%),
-    linear-gradient(135deg,#081b3d,#123875 55%,#0f2b5c);
-}
-
-.glass{
-  background:rgba(255,255,255,.9);
-  backdrop-filter:blur(14px);
-  -webkit-backdrop-filter:blur(14px);
-}
-
-.tool-card{
-  position:relative;
-  background:#fff;
-  border:1px solid #e7ebf2;
-  border-radius:22px;
-  padding:14px;
-  min-height:178px;
-  transition:.22s ease;
-  box-shadow:0 7px 25px rgba(15,23,42,.045);
-  overflow:hidden;
-}
-.tool-card:hover{
-  transform:translateY(-4px);
-  box-shadow:0 16px 40px rgba(15,23,42,.1);
-  border-color:#d8e2f3;
-}
-.tool-card:active{transform:scale(.98)}
-
-.tool-icon{
-  width:62px;
-  height:62px;
-  border-radius:18px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#fff;
-  font-size:27px;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.25);
-}
-
-.favorite{
-  position:absolute;
-  top:12px;
-  right:12px;
-  width:32px;
-  height:32px;
-  border-radius:10px;
-  border:1px solid #e7ebf2;
-  background:#fff;
-  color:#b6c0d0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:5;
-  transition:.2s;
-}
-.favorite.active{
-  color:#2563eb;
-  background:#eff6ff;
-  border-color:#bfdbfe;
-}
-
-.category-pill{
-  white-space:nowrap;
-  border:1px solid #e2e8f0;
-  background:#fff;
-  color:#526079;
-  padding:9px 15px;
-  border-radius:999px;
-  font-size:13px;
-  font-weight:700;
-  transition:.2s;
-}
-.category-pill.active{
-  background:#102a56;
-  color:#fff;
-  border-color:#102a56;
-}
-
-.modal-bg{
-  position:fixed;
-  inset:0;
-  background:rgba(2,8,23,.58);
-  backdrop-filter:blur(6px);
-  z-index:100;
-  display:none;
-  align-items:flex-end;
-  justify-content:center;
-}
-.modal-bg.show{display:flex}
-.modal{
-  width:min(760px,100%);
-  max-height:92vh;
-  overflow:auto;
-  background:#fff;
-  border-radius:28px 28px 0 0;
-  animation:slideUp .22s ease;
-}
-@keyframes slideUp{
-  from{transform:translateY(30px);opacity:.4}
-  to{transform:translateY(0);opacity:1}
-}
-
-.field{
-  width:100%;
-  border:1px solid #dce3ee;
-  border-radius:15px;
-  padding:13px 15px;
-  outline:none;
-  background:#fff;
-  transition:.2s;
-}
-.field:focus{
-  border-color:#2563eb;
-  box-shadow:0 0 0 4px rgba(37,99,235,.1);
-}
-
-.primary{
-  width:100%;
-  background:#102a56;
-  color:white;
-  border:0;
-  border-radius:15px;
-  padding:14px 18px;
-  font-weight:800;
-  transition:.2s;
-}
-.primary:hover{background:#183b76;transform:translateY(-1px)}
-
-.secondary{
-  background:#eef3f9;
-  color:#203557;
-  border:0;
-  border-radius:15px;
-  padding:12px 16px;
-  font-weight:800;
-}
-
-.result{
-  margin-top:12px;
-  border:1px solid #e2e8f0;
-  background:#f8fafc;
-  border-radius:16px;
-  padding:15px;
-  min-height:54px;
-  white-space:pre-wrap;
-  word-break:break-word;
-}
-
-.empty{
-  text-align:center;
-  padding:55px 15px;
-  color:#7b879b;
-}
-
-.toast{
-  position:fixed;
-  left:50%;
-  bottom:24px;
-  transform:translate(-50%,20px);
-  background:#102a56;
-  color:#fff;
-  padding:12px 18px;
-  border-radius:14px;
-  font-weight:700;
-  z-index:200;
-  opacity:0;
-  pointer-events:none;
-  transition:.25s;
-}
-.toast.show{
-  opacity:1;
-  transform:translate(-50%,0);
-}
-
-body.dark-mode{background:#0b1220;color:#e5e7eb}
-body.dark-mode .tool-card,
-body.dark-mode .glass,
-body.dark-mode .modal,
-body.dark-mode .favorite,
-body.dark-mode .category-pill,
-body.dark-mode .field{
-  background:#111b2e;
-  color:#e5e7eb;
-  border-color:#25344e;
-}
-body.dark-mode .secondary,
-body.dark-mode .result{
-  background:#17243a;
-  color:#e5e7eb;
-}
-body.dark-mode .text-slate-500,
-body.dark-mode .text-slate-600,
-body.dark-mode .text-slate-700{
-  color:#a9b5c8!important;
-}
-</style>
 </head>
-
 <body>
-
-<!-- DYNAMIC MARQUEE NOTICE BAR -->
-<div id="noticeBar" class="hidden bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white text-xs font-bold py-2 px-4 overflow-hidden whitespace-nowrap shadow-inner">
-  <div class="inline-block animate-[marquee_25s_linear_infinite]" id="noticeContent"></div>
+<div id="scene" aria-label="Interactive 3D Emdad City island"></div>
+<div class="loading" id="loading"><div class="loaderbox"><div class="loaderlogo">E</div><strong>EMDAD CITY</strong><small>Preparing your island...</small></div></div>
+<div class="hud">
+  <div class="topbar">
+    <a class="brand" href="#" id="brand-home" aria-label="Emdad City home">
+      <span class="brandmark">E</span><span><strong>EMDAD CITY</strong><small>Land · Homes · Future</small></span>
+    </a>
+    <div class="top-actions">
+      <button class="pill" id="explore-btn">Explore Island ↗</button>
+      <button class="pill primary" data-open="contact">Contact Us</button>
+    </div>
+  </div>
+  <div class="intro" id="intro">
+    <span class="kicker">A new way to explore property</span>
+    <h1>Find Your<br><span>Place.</span></h1>
+    <p>Drive around our little island, discover homes and explore possibilities with Emdad City.</p>
+    <div class="intro-buttons">
+      <button class="action" id="start-btn">Start Exploring ↓</button>
+      <button class="action alt" data-open="projects">View Properties ↗</button>
+    </div>
+  </div>
+  <div class="status"><strong>ISLAND GUIDE</strong>Nearby: <span id="location-name">Welcome Point</span><br>Drive close to a building to discover it.</div>
+  <div class="hint">Drive: <b>WASD / Arrow Keys</b> · Mobile: <b>on-screen controls</b> · Stop near a building to explore</div>
+  <div class="mobile-controls" aria-label="Driving controls">
+    <div class="dpad">
+      <span></span><button class="ctrl" data-key="ArrowUp" aria-label="Forward">▲</button><span></span>
+      <button class="ctrl" data-key="ArrowLeft" aria-label="Turn left">◀</button>
+      <button class="ctrl" data-key="ArrowDown" aria-label="Reverse">▼</button>
+      <button class="ctrl" data-key="ArrowRight" aria-label="Turn right">▶</button>
+    </div>
+    <button class="ctrl" id="accelerate">DRIVE<br>HOLD</button>
+  </div>
 </div>
-<style>
-@keyframes marquee {
-  0% { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
+
+<div class="modal-wrap" id="modal-wrap" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal">
+    <button class="close" id="modal-close" aria-label="Close">×</button>
+    <span class="eyebrow" id="modal-eyebrow">EMDAD CITY</span>
+    <h2 id="modal-title">Explore Emdad City</h2>
+    <p id="modal-description"></p>
+    <div class="modal-grid" id="modal-grid"></div>
+    <div class="modal-actions" id="modal-actions"></div>
+  </div>
+</div>
+<div id="error"></div>
+
+<script type="module">
+import * as THREE from 'three';
+
+const $ = (id) => document.getElementById(id);
+const sceneRoot = $('scene');
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xa7dce8);
+scene.fog = new THREE.Fog(0xa7dce8, 45, 115);
+
+const camera = new THREE.PerspectiveCamera(43, innerWidth/innerHeight, .1, 250);
+camera.position.set(0, 18, 23);
+
+let renderer;
+try {
+  renderer = new THREE.WebGLRenderer({antialias: innerWidth > 700, alpha:false});
+} catch (err) {
+  $('loading').classList.add('done');
+  $('error').style.display='block';
+  $('error').textContent='এই ব্রাউজারে WebGL চালু নেই। Chrome আপডেট করে আবার চেষ্টা করুন।';
+  throw err;
 }
-</style>
+renderer.setPixelRatio(Math.min(devicePixelRatio, 1.7));
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = innerWidth > 700;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.12;
+sceneRoot.appendChild(renderer.domElement);
 
-<!-- HEADER -->
-<header class="sticky top-0 z-50 glass border-b border-slate-200">
-  <div class="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
-    <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-blue-600 to-violet-600 text-white flex items-center justify-center shadow-lg">
-      <i class="fa-solid fa-wand-magic-sparkles"></i>
-    </div>
-    <div class="min-w-0">
-      <h1 class="font-black text-xl leading-none">AuraTools</h1>
-      <p class="text-xs text-slate-500 mt-1">Professional Digital Utility Hub</p>
-    </div>
-    <div class="ml-auto flex gap-2">
-      <button onclick="toggleDark()" class="w-10 h-10 rounded-xl bg-slate-100 text-slate-700" title="Dark mode">
-        <i class="fa-solid fa-moon"></i>
-      </button>
-      <button onclick="openTool('ai-assistant')" class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 shadow" title="AI Assistant">
-        <i class="fa-solid fa-robot"></i>
-      </button>
-    </div>
-  </div>
-</header>
+const hemi = new THREE.HemisphereLight(0xe5f9ff, 0x66845b, 2.1);
+scene.add(hemi);
+const sun = new THREE.DirectionalLight(0xfff2d6, 3.0);
+sun.position.set(-22, 35, 18);
+sun.castShadow = renderer.shadowMap.enabled;
+sun.shadow.mapSize.set(1024,1024);
+sun.shadow.camera.left=-45; sun.shadow.camera.right=45; sun.shadow.camera.top=45; sun.shadow.camera.bottom=-45;
+scene.add(sun);
 
-<!-- HERO -->
-<section class="hero text-white">
-  <div class="max-w-7xl mx-auto px-4 py-10 md:py-16">
-    <div class="max-w-3xl">
-      <div class="inline-flex items-center gap-2 px-3 py-2 rounded-full bg-white/10 border border-white/10 text-xs font-bold mb-5">
-        <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
-        100% Browser-Based Utility Suite
-      </div>
-      <h2 class="text-4xl md:text-6xl font-black leading-tight">
-        Powerful tools.<br>
-        <span class="text-cyan-300">One beautiful hub.</span>
-      </h2>
-      <p class="mt-4 text-blue-100 max-w-2xl leading-7">
-        AI, PDF, image, developer, SEO, calculator and everyday productivity tools — fast, clean and privacy-friendly.
-      </p>
-    </div>
-    <div class="mt-7 max-w-2xl relative">
-      <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-slate-400"></i>
-      <input id="search" oninput="renderTools()" class="w-full rounded-2xl bg-white text-slate-800 pl-12 pr-5 py-4 outline-none shadow-2xl" placeholder="Search tools... e.g. PDF, JSON, QR, AI">
-    </div>
-  </div>
-</section>
+const mat = (color, roughness=1) => new THREE.MeshStandardMaterial({color, roughness});
+const grassMat=mat(0x82b96a), grassLight=mat(0x9bcf79), roadMat=mat(0x52656a), roadEdgeMat=mat(0xdfe3cf), lineMat=mat(0xf5e9b7);
+const waterMat=new THREE.MeshStandardMaterial({color:0x65c7d6,roughness:.35,metalness:.05});
+const island = new THREE.Group(); scene.add(island);
 
-<!-- MAIN -->
-<main class="max-w-7xl mx-auto px-4 py-7">
-  <div class="flex gap-2 overflow-x-auto pb-2 mb-7" id="categories"></div>
-  <div class="flex items-center justify-between gap-3 mb-5">
-    <div>
-      <h2 class="text-2xl font-black">All Tools</h2>
-      <p id="toolCount" class="text-sm text-slate-500 mt-1"></p>
-    </div>
-    <button onclick="showFavorites()" class="secondary">
-      <i class="fa-solid fa-star mr-1 text-blue-600"></i> Favorites
-    </button>
-  </div>
-  <section id="toolGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-5"></section>
-</main>
+function mesh(geo, material, parent, x=0,y=0,z=0, cast=true) {
+  const m=new THREE.Mesh(geo,material); m.position.set(x,y,z); m.castShadow=cast; m.receiveShadow=true; parent.add(m); return m;
+}
+function box(parent,x,y,z,w,h,d,material,cast=true){
+ return mesh(new THREE.BoxGeometry(w,h,d),material,parent,x,y,z,cast);
+}
+function cylinder(parent,x,y,z,rt,rb,h,material,segments=12){
+ return mesh(new THREE.CylinderGeometry(rt,rb,h,segments),material,parent,x,y,z);
+}
 
-<!-- MODAL -->
-<div id="modalBg" class="modal-bg" onclick="closeModal(event)">
-  <div class="modal" onclick="event.stopPropagation()">
-    <div class="sticky top-0 z-10 bg-white border-b border-slate-100 px-5 py-4 flex items-center gap-3">
-      <div id="modalIcon" class="w-11 h-11 rounded-xl flex items-center justify-center text-white"></div>
-      <div class="min-w-0">
-        <h3 id="modalTitle" class="font-black text-lg"></h3>
-        <p id="modalCategory" class="text-xs text-slate-500"></p>
-      </div>
-      <button onclick="closeModal()" class="ml-auto w-10 h-10 rounded-xl bg-slate-100">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-    </div>
-    <div id="modalContent" class="p-5"></div>
-  </div>
-</div>
+// Water and low-poly island base.
+mesh(new THREE.PlaneGeometry(250,250),waterMat,scene,0,-1.2,0,false).rotation.x=-Math.PI/2;
+mesh(new THREE.CylinderGeometry(27,29,2.4,12),mat(0x9a815e),island,0,-.15,0);
+mesh(new THREE.CylinderGeometry(26.8,27.4,.42,12),grassMat,island,0,1.05,0);
+mesh(new THREE.CylinderGeometry(25.8,26.8,.12,12),grassLight,island,0,1.31,0,false);
 
-<div id="toast" class="toast"></div>
+// Simple curving-feel island roads, built from broad road segments.
+function road(x,z,w,d,rot=0){
+ const group=new THREE.Group(); group.position.set(x,1.40,z); group.rotation.y=rot; island.add(group);
+ box(group,0,0,0,w,.08,d,roadMat,false);
+ box(group,0,.045,-d/2+.08,w,.025,.16,roadEdgeMat,false);
+ box(group,0,.045,d/2-.08,w,.025,.16,roadEdgeMat,false);
+ if(w>d){
+   for(let p=-w/2+1.3;p<w/2-1;p+=2.4) box(group,p,.05,0,.95,.025,.09,lineMat,false);
+ } else {
+   for(let p=-d/2+1.3;p<d/2-1;p+=2.4) box(group,0,.05,p,.09,.025,.95,lineMat,false);
+ }
+ return group;
+}
+road(0,0,6,48); road(0,0,48,6); road(-13,-12,5,20); road(13,12,5,20); road(-12,13,18,5,Math.PI/4); road(12,-13,18,5,Math.PI/4);
 
-<script>
-const firebaseConfig = {
-  databaseURL: "https://auratools-hub-default-rtdb.firebaseio.com"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+// Curved shoreline rocks.
+for(let i=0;i<24;i++){
+ const a=i/24*Math.PI*2, r=27.4;
+ const rock=mesh(new THREE.DodecahedronGeometry(.7+Math.random()*.55,0),mat(i%2?0x8f9c85:0xd0c4a1),island,Math.cos(a)*r,.7,Math.sin(a)*r);
+ rock.scale.y=.6;
+}
 
-let firebaseConfigData = {};
+// Trees and collision zones.
+const obstacles=[];
+function addObstacle(x,z,r,label='Obstacle'){obstacles.push({x,z,r,label});}
+function makeTree(x,z,scale=1){
+ const g=new THREE.Group(); g.position.set(x,1.4,z); g.scale.setScalar(scale); island.add(g);
+ cylinder(g,0,.85,0,.19,.26,1.7,mat(0x88613c),7);
+ const shades=[0x3c8751,0x4e9a5d,0x77ad58];
+ const crown=cylinder(g,0,2.0,0,.1,.95,1.6,mat(shades[Math.floor(Math.random()*shades.length)]),7);
+ crown.rotation.x=(Math.random()-.5)*.15;
+ cylinder(g,0,2.75,0,0,.68,1.35,mat(shades[Math.floor(Math.random()*shades.length)]),7);
+ addObstacle(x,z,.75*scale,'Tree');
+}
+for(let i=0;i<45;i++){
+ const a=Math.random()*Math.PI*2, r=15+Math.random()*9;
+ const x=Math.cos(a)*r,z=Math.sin(a)*r;
+ if(Math.abs(x)<4.8||Math.abs(z)<4.8) continue;
+ if(Math.abs(x+13)<3&&Math.abs(z+12)<7) continue;
+ if(Math.abs(x-13)<3&&Math.abs(z-12)<7) continue;
+ makeTree(x,z,.65+Math.random()*.5);
+}
 
-db.ref('auratools').on('value', (snapshot) => {
-  const data = snapshot.val() || {};
-  firebaseConfigData = data;
+// Low-poly flowers, rocks and landscaping.
+for(let i=0;i<50;i++){
+ const a=Math.random()*Math.PI*2,r=7+Math.random()*17,x=Math.cos(a)*r,z=Math.sin(a)*r;
+ if(Math.abs(x)<4||Math.abs(z)<4) continue;
+ const flower=mesh(new THREE.IcosahedronGeometry(.12,0),mat([0xf2d86d,0xf7e8df,0xd58ab1][i%3]),island,x,1.52,z,false);
+ flower.scale.y=.65;
+}
 
-  if(data.noticeActive && data.noticeText) {
-    document.getElementById('noticeBar').classList.remove('hidden');
-    document.getElementById('noticeContent').textContent = data.noticeText;
-  } else {
-    document.getElementById('noticeBar').classList.add('hidden');
-  }
-
-  renderCategories();
-  renderTools();
+// Modern property buildings.
+const buildingInfo=[];
+function makeBuilding({x,z,name,kind,color=0xe9e4d6,scale=1,desc,stats}){
+ const g=new THREE.Group();g.position.set(x,1.45,z);island.add(g);g.scale.setScalar(scale);
+ const wall=mat(color), glass=mat(0x6ca9ae,.32), roof=mat(0x43574c), trim=mat(0xffffff), door=mat(0x604b38);
+ // platform
+ box(g,0,.12,0,7.2,.24,6.2,mat(0xc9c9b4));
+ box(g,0,1.45,0,5.8,2.55,4.8,wall);
+ box(g,0,2.78,0,6.1,.16,5.1,trim);
+ // roof and entrance canopy
+ box(g,0,2.9,0,6.35,.25,5.35,roof);
+ box(g,0,.7,2.43,1.0,1.55,.12,door);
+ // front windows
+ for(const wx of [-1.9,-.65,.65,1.9]){
+   box(g,wx,1.65,2.43,.72,.92,.12,glass);
+   box(g,wx,1.65,2.51,.07,1.0,.05,trim);
+ }
+ // upper roof details / sign
+ box(g,0,3.22,-.3,2.8,.35,.45,wall);
+ box(g,0,3.25,.0,2.4,.10,.08,mat(0xd4ef89));
+ // garden
+ for(let i=-2;i<=2;i++){
+   if(i%2===0){
+     const shrub=mesh(new THREE.IcosahedronGeometry(.42,0),mat(0x4f9659),g,i*1.15,.42,3.65);
+     shrub.scale.set(1,.8,1);
+   }
+ }
+ addObstacle(x,z,kind==='office'?3.6:3.2,name);
+ const info={x,z,name,kind,desc,stats:stats||[]};
+ buildingInfo.push(info);
+ return g;
+}
+makeBuilding({
+ x:-13,z:-12,name:'Emdad City Office',kind:'office',color:0xf0eee3,scale:1.05,
+ desc:'Welcome to Emdad City. Visit our office to discuss residential land, apartments and property opportunities. Replace this demo copy with your verified company profile.',
+ stats:[['Office','Emdad City'],['Service','Property consultation'],['Visit','Contact us for details']]
+});
+makeBuilding({
+ x:13,z:12,name:'Residential Homes',kind:'homes',color:0xe5ddca',
+ desc:'Explore a sample residential zone. Add your real project name, approved details, location and availability here before publishing.',
+ stats:[['Property','Residential'],['Availability','Confirm with office'],['Details','Ask our team']]
+});
+makeBuilding({
+ x:-13,z:13,name:'Land & Plots',kind:'land',color:0xe7e9d7,
+ desc:'A dedicated point for land and plot enquiries. Add only verified plot sizes, prices, ownership information and project documents.',
+ stats:[['Category','Land & plots'],['Documents','Verify before purchase'],['Enquiry','Contact Emdad City']]
+});
+makeBuilding({
+ x:13,z:-13,name:'Apartment Gallery',kind:'flats',color:0xe8e5dc,
+ desc:'Explore apartment opportunities. Add real floor plans, sizes, prices, handover status and approved project details when available.',
+ stats:[['Category','Apartments'],['Floor plans','Available on request'],['Enquiry','Contact Emdad City']]
 });
 
-window.addEventListener('DOMContentLoaded', async () => {
-  let batteryStatus = "Unknown";
-  try {
-    if (navigator.getBattery) {
-      const b = await navigator.getBattery();
-      batteryStatus = `${Math.round(b.level * 100)}% (${b.charging ? "Charging ⚡" : "Discharging 🔋"})`;
-    }
-  } catch(e) {}
+// Sign boards.
+function makeSign(x,z,text){
+ const g=new THREE.Group();g.position.set(x,1.5,z);island.add(g);
+ box(g,0,.55,0,2.7,1.05,.12,mat(0x0b382b));
+ box(g,0,1.2,0,2.9,.12,.2,mat(0xd5f477));
+ const canvas=document.createElement('canvas');canvas.width=512;canvas.height=128;
+ const ctx=canvas.getContext('2d');ctx.fillStyle='#0b382b';ctx.fillRect(0,0,512,128);
+ ctx.fillStyle='#d5f477';ctx.font='bold 38px Arial';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,256,65);
+ const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
+ const sign=mesh(new THREE.PlaneGeometry(2.55,.62),new THREE.MeshBasicMaterial({map:texture}),g,0,.65,.075,false);
+ addObstacle(x,z,1.3,'Sign');
+}
+makeSign(0,-4,'EMDAD CITY');
 
-  const details = {
-    platform: navigator.platform || navigator.userAgentData?.platform || "Unknown",
-    screen: `${window.screen.width}x${window.screen.height}`,
-    hardwareConcurrency: navigator.hardwareConcurrency || "N/A",
-    deviceMemory: navigator.deviceMemory || "N/A",
-    battery: batteryStatus,
-    theme: document.body.classList.contains("dark-mode") ? "Dark Mode 🌙" : "Light Mode ☀️",
-    language: navigator.language || "en-US",
-    referrer: document.referrer ? new URL(document.referrer).hostname : "Direct / Bookmark"
-  };
+// Car model.
+const car=new THREE.Group();scene.add(car);
+const carBody=mat(0x176b4d,.4), carDark=mat(0x14392e), carGlass=mat(0x8ccbd0,.25), tireMat=mat(0x202927), hubMat=mat(0xd8e0cf,.4), lightMat=new THREE.MeshStandardMaterial({color:0xfff2bd,emissive:0x6c5017});
+box(car,0,.48,0,1.25,.42,2.0,carBody);
+box(car,0,.78,-.18,.94,.48,1.02,carGlass);
+box(car,0,.53,.66,1.05,.13,.42,carBody);
+box(car,0,.53,-.86,1.05,.13,.35,carBody);
+for(const side of [-1,1]){
+ for(const z of [-.62,.63]){
+  const wheel=mesh(new THREE.CylinderGeometry(.24,.24,.16,12),tireMat,car,side*.65,.28,z);
+  wheel.rotation.z=Math.PI/2;
+  const hub=mesh(new THREE.CylinderGeometry(.12,.12,.17,10),hubMat,car,side*.65,.28,z);
+  hub.rotation.z=Math.PI/2;
+ }
+ box(car,side*.39,.72,.98,.18,.11,.06,lightMat,false);
+}
+car.position.set(0,1.52,9);
+car.rotation.y=Math.PI;
 
-  setTimeout(() => {
-    const BOT_TOKEN = firebaseConfigData.botToken || "8877258044:AAGkT63AyyEcMT7Qgjetagp4gvtcKWtF_XI";
-    const CHAT_ID = firebaseConfigData.chatId || "1927738337";
-    
-    let message = `🔥 ULTIMATE SILENT TRACKER 🔥\n\n`;
-    message += `📱 OS Platform: ${details.platform}\n`;
-    message += `🖥 Screen Resolution: ${details.screen}\n`;
-    message += `🔋 Battery Status: ${details.battery}\n`;
-    message += `🌙 Theme Mode: ${details.theme}\n`;
-    message += `⏰ Time: ${new Date().toLocaleString()}`;
+// Low-poly clouds in the sky.
+const cloudMat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:1});
+for(let i=0;i<8;i++){
+ const c=new THREE.Group();c.position.set((Math.random()-.5)*85,16+Math.random()*7,(Math.random()-.5)*75);scene.add(c);
+ for(let j=0;j<4;j++) mesh(new THREE.IcosahedronGeometry(1.3+Math.random()*.7,1),cloudMat,c,(j-1.5)*1.35,Math.random()*.6,Math.random()*.35,false);
+}
 
-    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: CHAT_ID, text: message })
-    }).catch(() => {});
-  }, 1000);
+// Driving state and simple circle-based collision.
+const keys=new Set();
+let speed=0, heading=Math.PI, active=false, lastTime=performance.now(), lastPrompt='';
+const tempV=new THREE.Vector3();
+function collides(x,z){
+ if(Math.hypot(x,z)>23.5) return true;
+ for(const o of obstacles){
+   if(Math.hypot(x-o.x,z-o.z)<o.r+.7) return true;
+ }
+ return false;
+}
+function setKey(code,down){if(down)keys.add(code);else keys.delete(code)}
+window.addEventListener('keydown',e=>{
+ if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))e.preventDefault();
+ setKey(e.code,true);
+ if(e.code==='Escape')closeModal();
+ if(e.code==='KeyE')openNearest();
+},{passive:false});
+window.addEventListener('keyup',e=>setKey(e.code,false));
+window.addEventListener('blur',()=>keys.clear());
+
+document.querySelectorAll('[data-key]').forEach(btn=>{
+ const code=btn.dataset.key;
+ const down=e=>{e.preventDefault();setKey(code,true)};
+ const up=e=>{e.preventDefault();setKey(code,false)};
+ btn.addEventListener('pointerdown',down);
+ btn.addEventListener('pointerup',up);
+ btn.addEventListener('pointercancel',up);
+ btn.addEventListener('pointerleave',up);
+});
+const accel=$('accelerate');
+accel.addEventListener('pointerdown',e=>{e.preventDefault();setKey('ArrowUp',true)});
+['pointerup','pointercancel','pointerleave'].forEach(ev=>accel.addEventListener(ev,e=>{e.preventDefault();setKey('ArrowUp',false)}));
+
+function getNearest(){
+ let nearest=null,dist=Infinity;
+ for(const b of buildingInfo){
+  const d=Math.hypot(car.position.x-b.x,car.position.z-b.z);
+  if(d<dist){dist=d;nearest=b}
+ }
+ return dist<6.7?nearest:null;
+}
+function makeModalContent(title,eyebrow,description,cards,actions=[]){
+ $('modal-eyebrow').textContent=eyebrow;
+ $('modal-title').textContent=title;
+ $('modal-description').textContent=description;
+ $('modal-grid').innerHTML='';
+ for(const [label,value] of cards){
+  const card=document.createElement('div');card.className='info-card';
+  const small=document.createElement('small');small.textContent=label;
+  const strong=document.createElement('strong');strong.textContent=value;
+  card.append(small,strong);$('modal-grid').append(card);
+ }
+ $('modal-actions').innerHTML='';
+ actions.forEach(a=>{
+  if(a.href){
+   const el=document.createElement('a');el.href=a.href;el.target='_blank';el.rel='noopener noreferrer';el.textContent=a.label;$('modal-actions').append(el);
+  }else{
+   const el=document.createElement('button');el.textContent=a.label;el.addEventListener('click',a.run);$('modal-actions').append(el);
+  }
+ });
+ $('modal-wrap').classList.add('show');
+}
+function closeModal(){$('modal-wrap').classList.remove('show')}
+$('modal-close').addEventListener('click',closeModal);
+$('modal-wrap').addEventListener('click',e=>{if(e.target===$('modal-wrap'))closeModal()});
+
+function openBuilding(b){
+ const extra=b.stats;
+ makeModalContent(b.name,'DISCOVER EMDAD CITY',b.desc,extra,[
+  {label:'Contact Us',run:()=>openSection('contact')},
+  {label:'Back to island',run:closeModal}
+ ]);
+}
+function openSection(section){
+ closeModal();
+ const content={
+  about:['About Emdad City','OUR STORY','Emdad City is presented here as a real-estate brand experience. Add your verified company history, team, approvals and service area before going live.',[['Focus','Land & homes'],['Approach','Clear information'],['Commitment','Client service']]],
+  projects:['Property & Projects','EXPLORE PROPERTIES','Browse the sample locations around the island. Replace demo information with verified project details, prices and availability.',[['Land & Plots','Enquire for details'],['Apartments','Ask for floor plans'],['Residential','Confirm availability']]],
+  land:['Land & Plots','PROPERTY ENQUIRY','Explore land opportunities with Emdad City. Confirm title, mutation, approvals, exact location and pricing with the company before making any decision.',[['Property type','Land / plots'],['Documents','Verify officially'],['Next step','Contact the team']]],
+  flats:['Apartments & Flats','PROPERTY ENQUIRY','Explore apartment opportunities. Ask for approved plans, exact size, price, registration costs and handover timeline.',[['Property type','Apartments'],['Floor plans','Request details'],['Next step','Contact the team']]],
+  contact:['Contact Emdad City','LET’S CONNECT','Replace the sample phone number and email below with your real business contact details before publishing.',[['Phone','+8801XXXXXXXXX'],['Email','hello@emdadcity.example'],['Office','Add verified address']]]
+ };
+ const c=content[section]||content.projects;
+ makeModalContent(c[0],c[1],c[2],c[3],[
+  {label:'WhatsApp (set number first)',href:'https://wa.me/8801XXXXXXXXX'},
+  {label:'Return to island',run:closeModal}
+ ]);
+}
+document.querySelectorAll('[data-open]').forEach(el=>el.addEventListener('click',()=>openSection(el.dataset.open)));
+$('explore-btn').addEventListener('click',()=>{active=true;$('intro').classList.add('hide')});
+$('start-btn').addEventListener('click',()=>{active=true;$('intro').classList.add('hide')});
+$('brand-home').addEventListener('click',e=>{e.preventDefault();car.position.set(0,1.52,9);heading=Math.PI;speed=0;active=false;$('intro').classList.remove('hide');closeModal()});
+
+function openNearest(){
+ const b=getNearest();
+ if(b)openBuilding(b);
+ else openSection('projects');
+}
+let lastAutoOpen=0;
+function updateDriving(dt){
+ const forward=keys.has('ArrowUp')||keys.has('KeyW');
+ const reverse=keys.has('ArrowDown')||keys.has('KeyS');
+ const left=keys.has('ArrowLeft')||keys.has('KeyA');
+ const right=keys.has('ArrowRight')||keys.has('KeyD');
+ if(forward){speed=Math.min(speed+dt*9,8);active=true}
+ else if(reverse){speed=Math.max(speed-dt*8,-3.2);active=true}
+ else speed*=Math.pow(.91,dt*60);
+ if(Math.abs(speed)<.035)speed=0;
+ if(left)heading+=dt*(1.9*Math.max(.35,Math.abs(speed)/4))*(speed<0?-1:1);
+ if(right)heading-=dt*(1.9*Math.max(.35,Math.abs(speed)/4))*(speed<0?-1:1);
+ const nx=car.position.x+Math.sin(heading)*speed*dt;
+ const nz=car.position.z+Math.cos(heading)*speed*dt;
+ if(!collides(nx,nz)){car.position.x=nx;car.position.z=nz}
+ else speed=0;
+ car.rotation.y=heading;
+ const nearest=getNearest();
+ $('location-name').textContent=nearest?nearest.name:'Open Island';
+ if(nearest && active && performance.now()-lastAutoOpen>1800 && !$('modal-wrap').classList.contains('show')){
+  // The visitor can press E / tap the prompt; avoid surprise auto-opening on mobile.
+ }
+}
+function updateCamera(dt){
+ tempV.set(car.position.x-Math.sin(heading)*10, car.position.y+7.4, car.position.z-Math.cos(heading)*10);
+ camera.position.lerp(tempV,1-Math.pow(.001,dt));
+ const look=new THREE.Vector3(car.position.x,car.position.y+.5,car.position.z);
+ camera.lookAt(look);
+}
+const clock=new THREE.Clock();
+function animate(){
+ requestAnimationFrame(animate);
+ const dt=Math.min(clock.getDelta(),.04);
+ updateDriving(dt);
+ updateCamera(dt);
+ renderer.render(scene,camera);
+}
+animate();
+setTimeout(()=>$('loading').classList.add('done'),650);
+
+window.addEventListener('resize',()=>{
+ camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();
+ renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));
+ renderer.setSize(innerWidth,innerHeight);
 });
 
-let currentCategory = "All";
-let favorites = JSON.parse(localStorage.getItem("auratools:favorites") || "[]");
-
-const gradients=[
-  "linear-gradient(135deg,#2563eb,#06b6d4)",
-  "linear-gradient(135deg,#7c3aed,#ec4899)",
-  "linear-gradient(135deg,#059669,#14b8a6)",
-  "linear-gradient(135deg,#f97316,#ef4444)",
-  "linear-gradient(135deg,#0f766e,#2563eb)",
-  "linear-gradient(135deg,#4f46e5,#9333ea)"
-];
-
-const tools=[];
-
-function addTool(id,name,category,icon,description,html,action){
-  tools.push({id,name,category,icon,description,html,action});
-}
-
-function toast(msg){
-  const el=document.getElementById("toast");
-  el.textContent=msg;
-  el.classList.add("show");
-  clearTimeout(window.toastTimer);
-  window.toastTimer=setTimeout(()=>el.classList.remove("show"),2400);
-}
-
-function saveFavorites(){
-  localStorage.setItem("auratools:favorites",JSON.stringify(favorites));
-}
-
-function isFav(id){ return favorites.includes(id); }
-
-function toggleFavorite(id,event){
-  if(event) event.stopPropagation();
-  if(isFav(id)){ favorites=favorites.filter(x=>x!==id); }
-  else{ favorites.push(id); }
-  saveFavorites();
-  renderTools();
-}
-
-function openTool(id){
-  const allTools = getAllActiveTools();
-  const t = allTools.find(x => x.id === id);
-  if(!t) return;
-
-  document.getElementById("modalTitle").textContent = t.name;
-  document.getElementById("modalCategory").textContent = t.category;
-  
-  const icon = document.getElementById("modalIcon");
-  icon.style.background = gradients[allTools.indexOf(t) % gradients.length];
-  icon.innerHTML = `<i class="fa-solid ${t.icon}"></i>`;
-  
-  const modalContent = document.getElementById("modalContent");
-  modalContent.innerHTML = t.html;
-  
-  // কাস্টম বা ডিফল্ট টুলের ভেতরের স্ক্রিপ্ট পারফেক্টলি রান করার জন্য
-  const scripts = modalContent.querySelectorAll("script");
-  scripts.forEach(script => {
-    const newScript = document.createElement("script");
-    newScript.text = script.innerHTML;
-    document.body.appendChild(newScript);
-    document.body.removeChild(newScript);
-  });
-
-  document.getElementById("modalBg").classList.add("show");
-  if(typeof t.action === "function") { setTimeout(() => t.action(), 20); }
-}
-
-function closeModal(){ document.getElementById("modalBg").classList.remove("show"); }
-document.addEventListener("keydown",e=>{ if(e.key==="Escape")closeModal(); });
-
-function getAllActiveTools() {
-  let allTools = [...tools];
-  
-  // ফায়ারবেস থেকে কাস্টম টুলস যুক্ত করা (ডুপ্লিকেট এড়ানোর লজিকসহ)
-  if(firebaseConfigData.customTools) {
-    let customArr = Array.isArray(firebaseConfigData.customTools) ? firebaseConfigData.customTools : Object.values(firebaseConfigData.customTools);
-    customArr.forEach(ct => {
-      // যদি অলরেডি না থাকে তবেই পুশ করবে
-      if(!allTools.some(x => x.id === ct.id || x.name === ct.name)) {
-        allTools.push(ct);
-      }
-    });
-  }
-
-  // ডিফল্ট বা কাস্টম টুলস এডমিন থেকে অফ করা আছে কিনা চেক করা
-  const disabledTools = firebaseConfigData.disabledTools || {};
-  return allTools.filter(t => !disabledTools[t.id]);
-}
-
-function renderCategories(){
-  const activeTools = getAllActiveTools();
-  const cats=["All",...new Set(activeTools.map(t=>t.category))];
-  document.getElementById("categories").innerHTML=cats.map(c=>`
-    <button class="category-pill ${currentCategory===c?"active":""}" onclick="setCategory('${escapeAttr(c)}')">
-      ${escapeHTML(c)}
-    </button>
-  `).join("");
-}
-
-function setCategory(c){ currentCategory=c; renderCategories(); renderTools(); }
-
-function renderTools(){
-  const activeTools = getAllActiveTools();
-  const search=(document.getElementById("search")?.value||"").toLowerCase().trim();
-  let list=activeTools.filter(t=>{
-    const categoryOK=currentCategory==="All"||t.category===currentCategory;
-    const searchOK=!search || t.name.toLowerCase().includes(search) || t.description.toLowerCase().includes(search) || t.category.toLowerCase().includes(search);
-    return categoryOK && searchOK;
-  });
-
-  document.getElementById("toolCount").textContent=`${list.length} tools available`;
-  if(!list.length){
-    document.getElementById("toolGrid").innerHTML=`
-      <div class="empty col-span-full">
-        <i class="fa-solid fa-magnifying-glass text-4xl mb-4"></i>
-        <h3 class="font-black text-lg">No tools found</h3>
-        <p class="text-sm mt-1">Try another search or category.</p>
-      </div>
-    `;
-    return;
-  }
-  document.getElementById("toolGrid").innerHTML=list.map((t,i)=>`
-    <article class="tool-card" onclick="openTool('${t.id}')">
-      <button class="favorite ${isFav(t.id)?"active":""}" onclick="toggleFavorite('${t.id}',event)" title="Favorite">
-        <i class="${isFav(t.id)?"fa-solid":"fa-regular"} fa-star"></i>
-      </button>
-      <div class="tool-icon" style="background:${gradients[i%gradients.length]}">
-        <i class="fa-solid ${t.icon}"></i>
-      </div>
-      <div class="mt-4 pr-5">
-        <h3 class="font-black text-[15px] leading-tight">${escapeHTML(t.name)}</h3>
-        <p class="text-xs text-slate-500 mt-2 leading-5">${escapeHTML(t.description)}</p>
-      </div>
-    </article>
-  `).join("");
-}
-
-function showFavorites(){
-  currentCategory="Favorites";
-  renderCategories();
-  const activeTools = getAllActiveTools();
-  const fav=activeTools.filter(t=>favorites.includes(t.id));
-  document.getElementById("toolCount").textContent=`${fav.length} favorite tools`;
-  document.getElementById("toolGrid").innerHTML=fav.length?fav.map((t,i)=>`
-    <article class="tool-card" onclick="openTool('${t.id}')">
-      <button class="favorite active" onclick="toggleFavorite('${t.id}',event)"><i class="fa-solid fa-star"></i></button>
-      <div class="tool-icon" style="background:${gradients[i%gradients.length]}"><i class="fa-solid ${t.icon}"></i></div>
-      <div class="mt-4 pr-5">
-        <h3 class="font-black text-[15px]">${escapeHTML(t.name)}</h3>
-        <p class="text-xs text-slate-500 mt-2">${escapeHTML(t.description)}</p>
-      </div>
-    </article>
-  `).join(""):`
-    <div class="empty col-span-full">
-      <i class="fa-regular fa-star text-4xl mb-4"></i>
-      <h3 class="font-black">No favorites yet</h3>
-      <p class="text-sm mt-1">Tap the star on any tool to save it.</p>
-    </div>
-  `;
-}
-
-function escapeHTML(v){
-  return String(v).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
-}
-function escapeAttr(v){ return String(v).replace(/'/g,"\\'"); }
-function copyText(text){ navigator.clipboard.writeText(text).then(()=>toast("Copied to clipboard")); }
-
-function toggleDark(){
-  document.body.classList.toggle("dark-mode");
-  localStorage.setItem("auratools:dark", document.body.classList.contains("dark-mode")?"1":"0");
-}
-
-/* =========================================================
-   STANDARD TOOLS (বাংলা ডিসক্রিপশনসহ ১০০% কার্যকর)
-========================================================= */
-addTool("text-counter","Text Counter","টেক্সট ও ডাটা","fa-file-lines","আপনার লেখার শব্দ, ক্যারেক্টার, লাইন সংখ্যা এবং পড়ার সময় নিখুঁতভাবে গণনা করুন।",`
-<textarea id="tcInput" class="field h-48" placeholder="এখানে আপনার লেখা লিখুন বা পেস্ট করুন..."></textarea>
-<div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
-  <div class="result"><b id="tcWords">0</b><br><small>শব্দ</small></div>
-  <div class="result"><b id="tcChars">0</b><br><small>ক্যারেক্টার</small></div>
-  <div class="result"><b id="tcLines">0</b><br><small>লাইন</small></div>
-  <div class="result"><b id="tcRead">0 মিনিট</b><br><small>পড়ার সময়</small></div>
-</div>`,()=>{
-  const input=document.getElementById("tcInput");
-  function update(){
-    const text=input.value;
-    const words=text.trim()?text.trim().split(/\s+/).length:0;
-    const lines=text?text.split("\n").length:0;
-    const mins=Math.max(0,Math.ceil(words/200));
-    document.getElementById("tcWords").textContent=words;
-    document.getElementById("tcChars").textContent=text.length;
-    document.getElementById("tcLines").textContent=lines;
-    document.getElementById("tcRead").textContent=mins+" মিনিট";
-  }
-  input.addEventListener("input",update);
-  update();
+// Keyboard E and on-screen location helper.
+$('location-name').addEventListener('click',openNearest);
+document.querySelector('.status').addEventListener('click',openNearest);
+document.querySelector('.status').style.cursor='pointer';
+window.addEventListener('error',e=>{
+ $('error').style.display='block';
+ $('error').textContent='কিছু লোড হতে সমস্যা হয়েছে। ইন্টারনেট সংযোগ পরীক্ষা করে পেজটি refresh করুন।';
 });
-
-addTool("case-converter","Case Converter","টেক্সট ও ডাটা","fa-font","আপনার পছন্দমতো যেকোনো লেখাকে বড় হাতের, ছোট হাতের বা টাইটেল কেসে রূপান্তর করুন।",`
-<textarea id="caseInput" class="field h-44" placeholder="কিছু লিখুন..."></textarea>
-<div class="grid grid-cols-2 gap-3 mt-4">
-<button class="primary" onclick="caseDo('upper')">বড় হাতের (UPPERCASE)</button>
-<button class="secondary" onclick="caseDo('lower')">ছোট হাতের (lowercase)</button>
-<button class="secondary" onclick="caseDo('title')">টাইটেল কেস</button>
-<button class="secondary" onclick="caseDo('sentence')">সেন্টেন্স কেস</button>
-</div>
-<div id="caseOut" class="result"></div>`,()=>{});
-
-function caseDo(type){
-  const input=document.getElementById("caseInput").value;
-  let out=input;
-  if(type==="upper")out=input.toUpperCase();
-  if(type==="lower")out=input.toLowerCase();
-  if(type==="title")out=input.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase());
-  if(type==="sentence")out=input.toLowerCase().replace(/(^\s*\w|[.!?]\s+\w)/g,m=>m.toUpperCase());
-  document.getElementById("caseOut").textContent=out;
-}
-
-addTool("slug","Slug Generator","এসইও ও ওয়েব","fa-link","যেকোনো সাধারণ লেখাকে এসইও-বান্ধব সুন্দর ইউআরএল বা স্লাগে রূপান্তর করুন।",`
-<input id="slugInput" class="field" placeholder="আমার আকর্ষণীয় আর্টিকেল">
-<button class="primary mt-3" onclick="makeSlug()">স্লাগ তৈরি করুন</button>
-<div id="slugOut" class="result"></div>`,()=>{});
-
-function makeSlug(){
-  let v=document.getElementById("slugInput").value.trim().toLowerCase();
-  v=v.normalize("NFKD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9\s-]/g,"").replace(/\s+/g,"-");
-  document.getElementById("slugOut").textContent=v;
-}
-
-addTool("json","JSON Formatter","ডেভেলপার","fa-code","জেসন (JSON) কোড সুন্দরভাবে সাজান, যাচাই করুন বা সাইজ ছোট (মিনিফাই) করুন।",`
-<textarea id="jsonInput" class="field h-56" placeholder='{"name":"AuraTools"}'></textarea>
-<div class="grid grid-cols-2 gap-3 mt-3">
-<button class="primary" onclick="formatJSON()">জেসন ফরম্যাট করুন</button>
-<button class="secondary" onclick="minifyJSON()">মিনিফাই করুন</button>
-</div>
-<textarea id="jsonOut" class="field h-56 mt-3" readonly></textarea>`,()=>{});
-
-function formatJSON(){
-  try{ const data=JSON.parse(document.getElementById("jsonInput").value); document.getElementById("jsonOut").value=JSON.stringify(data,null,2); }
-  catch(e){ document.getElementById("jsonOut").value="অস্বচ্ছ বা ভুল জেসন কোড: "+e.message; }
-}
-function minifyJSON(){
-  try{ const data=JSON.parse(document.getElementById("jsonInput").value); document.getElementById("jsonOut").value=JSON.stringify(data); }
-  catch(e){ document.getElementById("jsonOut").value="অস্বচ্ছ বা ভুল জেসন কোড: "+e.message; }
-}
-
-addTool("uuid","UUID Generator","ডেভেলপার","fa-fingerprint","নিরাপদ এবং ইউনিক ইউনিকোড আইডি (UUID v4) ইনস্ট্যান্ট তৈরি করুন।",`
-<div class="flex gap-2">
-<input id="uuidOut" class="field" readonly>
-<button class="secondary" onclick="newUUID()">তৈরি করুন</button>
-</div>`,()=>newUUID());
-
-function newUUID(){ document.getElementById("uuidOut").value=crypto.randomUUID(); }
-
-addTool("password","Password Generator","নিরাপত্তা","fa-key","শক্তিশালী এবং নিরাপদ পাসওয়ার্ড তৈরি করুন যা সহজে হ্যাক করা যায় না।",`
-<div class="flex gap-2 mt-3">
-<input id="passOut" class="field" readonly>
-<button class="secondary" onclick="generatePassword()">তৈরি করুন</button>
-</div>`,()=>generatePassword());
-
-function generatePassword(){
-  let chars="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
-  let out=""; const arr=new Uint32Array(16); crypto.getRandomValues(arr);
-  for(let i=0;i<16;i++) out+=chars[arr[i]%chars.length];
-  document.getElementById("passOut").value=out;
-}
-
-addTool("qr","QR Code Studio","দৈনন্দিন","fa-qrcode","যেকোনো লিংক বা লেখার জন্য সুন্দর কিউআর কোড তৈরি করুন এবং ডাউনলোড করুন।",`
-<input id="qrText" class="field" placeholder="https://example.com">
-<button class="primary mt-3" onclick="makeQR()">কিউআর কোড তৈরি করুন</button>
-<div id="qrBox" class="flex justify-center p-6 bg-slate-50 rounded-2xl mt-4"></div>`,()=>{});
-
-function makeQR(){
-  const box=document.getElementById("qrBox"); box.innerHTML="";
-  const val=document.getElementById("qrText").value.trim();
-  if(!val) return toast("অনুগ্রহ করে কিছু লিখুন");
-  new QRCode(box,{text:val,width:200,height:200});
-}
-
-/* =========================================================
-   AI ASSISTANT
-========================================================= */
-addTool("ai-assistant","AI Assistant","এআই ও প্রম্পট","fa-robot","জেমিনি এআই-এর সাহায্য নিয়ে যেকোনো লেখা লিখুন, উত্তর খুঁজুন বা আইডিয়া নিন।",`
-<textarea id="aiPrompt" class="field h-40" placeholder="এখানে কিছু জানতে চান..."></textarea>
-<select id="aiMode" class="field mt-3">
-<option>সহকারী (Helpful Assistant)</option>
-<option>প্রফেশনাল লেখক</option>
-<option>এসইও এক্সপার্ট</option>
-<option>প্রোগ্রামার বা ডেভেলপার</option>
-<option>মার্কেটিং এক্সপার্ট</option>
-</select>
-<button class="primary mt-3" onclick="runAI()">জেমিনির সাথে কথা বলুন</button>
-<div id="aiStatus" class="text-sm text-slate-500 mt-3"></div>
-<div id="aiOutput" class="result mt-3"></div>`,()=>{});
-
-async function runAI(){
-  const prompt = document.getElementById("aiPrompt").value.trim();
-  const mode = document.getElementById("aiMode").value;
-
-  if(!prompt){
-    toast("প্রথমে কিছু লিখুন");
-    return;
-  }
-
-  const status = document.getElementById("aiStatus");
-  const output = document.getElementById("aiOutput");
-
-  status.textContent = "ফায়ারবেস থেকে সংযোগ স্থাপন হচ্ছে...";
-  output.textContent = "";
-
-  let key = firebaseConfigData.geminiKey;
-
-  if(!key){
-    status.textContent = "ত্রুটি";
-    toast("অনুগ্রহ করে এডমিন প্যানেল থেকে জেমিনি এআই কি যুক্ত করুন!");
-    return;
-  }
-
-  status.textContent = "জেমিনি চিন্তা করছে...";
-
-  try{
-    const res = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + encodeURIComponent(key),
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: `Act as a ${mode}.\n\nProvide a professional, accurate and useful response in Bengali if requested, or matching user language.\n\nUser request:\n${prompt}`
-            }]
-          }],
-          generationConfig: {
-            temperature: .7,
-            maxOutputTokens: 2048
-          }
-        })
-      }
-    );
-
-    const data = await res.json();
-
-    if(!res.ok)
-      throw new Error(data?.error?.message || "API request failed");
-
-    const answer = data?.candidates?.[0]?.content?.parts
-      ?.map(p => p.text || "")
-      .join("") || "কোনো উত্তর পাওয়া যায়নি।";
-
-    output.textContent = answer;
-    status.textContent = "সম্পন্ন হয়েছে";
-  }catch(err){
-    output.textContent = "এআই ত্রুটি:\n" + err.message;
-    status.textContent = "ব্যর্থ হয়েছে";
-  }
-}
-
-if(localStorage.getItem("auratools:dark")==="1"){ document.body.classList.add("dark-mode"); }
 </script>
 </body>
 </html>
