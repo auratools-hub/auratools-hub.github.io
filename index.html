@@ -67,6 +67,32 @@ h1 span{color:#397b51}
 }
 @media(max-height:560px) and (orientation:landscape){.intro{top:100px;transform:none}.intro.hide{transform:translateY(10px)}h1{font-size:34px;margin:8px 0}.intro p{font-size:11px;margin-bottom:8px}.mobile-controls{bottom:10px}.status{bottom:10px}.hint{bottom:10px}}
 </style>
+<script>
+// Report module/CDN startup failures instead of leaving the loading screen forever.
+(function(){
+  const showStartupError = function(message){
+    const loading = document.getElementById('loading');
+    const error = document.getElementById('error');
+    if (loading && !loading.classList.contains('done')) loading.classList.add('done');
+    if (error) {
+      error.style.display = 'block';
+      error.textContent = message || '3D লোড হতে সমস্যা হচ্ছে। ইন্টারনেট সংযোগ পরীক্ষা করে পেজটি রিফ্রেশ করুন।';
+    }
+  };
+  window.addEventListener('error', function(){
+    showStartupError('JavaScript চালু হতে সমস্যা হয়েছে। পেজটি refresh করুন; সমস্যা থাকলে কোড/CDN পরীক্ষা করুন।');
+  });
+  window.addEventListener('unhandledrejection', function(){
+    showStartupError('Three.js লাইব্রেরি লোড হয়নি। ইন্টারনেট সংযোগ পরীক্ষা করে আবার refresh করুন।');
+  });
+  window.setTimeout(function(){
+    const loading = document.getElementById('loading');
+    if (loading && !loading.classList.contains('done')) {
+      showStartupError('3D দৃশ্য চালু হতে বেশি সময় লাগছে। ইন্টারনেট/CDN সংযোগ পরীক্ষা করে পেজটি refresh করুন।');
+    }
+  }, 15000);
+})();
+</script>
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js"}}
 </script>
@@ -267,7 +293,7 @@ makeBuilding({
  stats:[['Office','Emdad City'],['Service','Property consultation'],['Visit','Contact us for details']]
 });
 makeBuilding({
- x:13,z:12,name:'Residential Homes',kind:'homes',color:0xe5ddca',
+ x:13,z:12,name:'Residential Homes',kind:'homes',color:0xe5ddca,
  desc:'Explore a sample residential zone. Add your real project name, approved details, location and availability here before publishing.',
  stats:[['Property','Residential'],['Availability','Confirm with office'],['Details','Ask our team']]
 });
